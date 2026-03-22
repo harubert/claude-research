@@ -1,21 +1,685 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Quellenverzeichnis</title>
-<style>
-body { font-family: system-ui, sans-serif; max-width: 540px; margin: 6rem auto; padding: 0 2rem; color: #444; text-align: center; }
-h1 { font-size: 1.2rem; color: #1a4e8a; margin-bottom: 1rem; }
-p { line-height: 1.7; margin-bottom: 1.5rem; }
-code { background: #f0f0f0; padding: .2em .5em; border-radius: 4px; font-size: .9em; }
-a { color: #1a4e8a; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quellenverzeichnis — KI im Geometrieunterricht</title>
+  <style>
+    :root {
+      --font-ui:   "Helvetica Neue", Arial, sans-serif;
+      --font-body: "Georgia", serif;
+      --font-mono: "Courier New", monospace;
+      --bg:        #f5f5f2;
+      --card:      #fff;
+      --border:    #ddd;
+      --muted:     #777;
+
+      /* Score-Farben */
+      --c5: #1a6b3c;   /* ★★★★★ dunkelgrün */
+      --c4: #2e7d32;   /* ★★★★☆ grün */
+      --c3: #e65100;   /* ★★★☆☆ orange */
+      --c2: #b71c1c;   /* ★★☆☆☆ rot */
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; background: var(--bg); }
+    body { font-family: var(--font-ui); max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 6rem; color: #1a1a1a; }
+
+    /* ── Kopf ── */
+    header { border-bottom: 2px solid #aaa; padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+    header h1 { font-size: 1.35rem; }
+    header p  { font-size: 0.82rem; color: var(--muted); }
+    header a  { color: #1a4e8a; font-size: 0.82rem; }
+
+    /* ── Stats-Leiste ── */
+    .stats { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .stat  { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 0.6rem 1rem; font-size: 0.82rem; }
+    .stat strong { display: block; font-size: 1.4rem; font-weight: 700; }
+
+    /* ── Diagramm ── */
+    .chart-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 1rem 1.2rem; flex: 1; min-width: 200px; }
+    .chart-box h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.75rem; }
+    .bar-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.8rem; }
+    .bar-item .label { width: 90px; flex-shrink: 0; color: #333; }
+    .bar-track { flex: 1; background: #eee; border-radius: 3px; height: 10px; overflow: hidden; }
+    .bar-fill  { height: 100%; border-radius: 3px; background: #1a4e8a; transition: width 0.4s; }
+    .bar-item .count { width: 24px; text-align: right; color: var(--muted); }
+
+    /* ── Filter ── */
+    .filter-section { margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .filter-section label { font-size: 0.78rem; color: var(--muted); margin-right: 0.25rem; }
+    .filter-btn {
+      font-size: 0.75rem; padding: 0.25rem 0.65rem;
+      border: 1px solid #bbb; border-radius: 20px;
+      background: #fff; cursor: pointer; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: #1a4e8a; color: #fff; border-color: #1a4e8a; }
+    .filter-sep { width: 1px; background: #ddd; height: 20px; margin: 0 0.25rem; }
+    #search-input {
+      border: 1px solid #bbb; border-radius: 20px; padding: 0.25rem 0.8rem;
+      font-size: 0.78rem; font-family: inherit; outline: none;
+      width: 200px;
+    }
+    #search-input:focus { border-color: #1a4e8a; }
+
+    /* ── Sortierung ── */
+    #sort-select { border: 1px solid #bbb; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.78rem; font-family: inherit; background: #fff; }
+
+    /* ── Ergebnis-Zähler ── */
+    #result-count { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.75rem; }
+
+    /* ── Quellkarte ── */
+    .source-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 5px solid #aaa;
+      border-radius: 5px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.85rem;
+      transition: box-shadow 0.15s;
+    }
+    .source-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .source-card.hidden { display: none; }
+
+    /* Farbe nach Score */
+    .source-card[data-stars="5"] { border-left-color: var(--c5); }
+    .source-card[data-stars="4"] { border-left-color: var(--c4); }
+    .source-card[data-stars="3"] { border-left-color: var(--c3); }
+    .source-card[data-stars="2"] { border-left-color: var(--c2); }
+
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+
+    /* Sterne */
+    .stars { font-size: 1rem; white-space: nowrap; flex-shrink: 0; }
+    .stars .filled { color: #f5a623; }
+    .stars .empty  { color: #ddd; }
+    .score-num { font-size: 0.72rem; color: var(--muted); margin-left: 0.25rem; vertical-align: middle; }
+
+    /* Badges */
+    .badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.5rem; }
+    .badge {
+      font-size: 0.68rem; padding: 0.1rem 0.45rem;
+      border-radius: 10px; border: 1px solid currentColor;
+      white-space: nowrap;
+    }
+    .badge-peer        { color: #1a6b3c; }
+    .badge-institution { color: #1a4e8a; }
+    .badge-book        { color: #5a2d82; }
+    .badge-preprint    { color: #e65100; }
+    .badge-web         { color: #555; }
+    .badge-austria     { color: #cc0000; }
+    .badge-openaccess  { color: #1a6b3c; }
+    .badge-paywall     { color: #b71c1c; }
+    .badge-math        { color: #1a4e8a; }
+    .badge-cited       { background:#e8f5e9;color:#2e7d32;border-color:#81c784;font-weight:600; }
+
+    /* Titel & Autoren */
+    .card-id    { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); margin-right: 0.5rem; }
+    .card-title { font-weight: 600; font-size: 0.92rem; line-height: 1.4; }
+    .card-title a { color: #1a4e8a; text-decoration: none; }
+    .card-title a:hover { text-decoration: underline; }
+    .card-meta  { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+    .card-abstract { font-size: 0.83rem; color: #444; margin-top: 0.5rem; line-height: 1.55; font-family: var(--font-body); }
+    .card-footer { margin-top: 0.6rem; display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--muted); }
+    .card-footer a { color: #1a4e8a; text-decoration: none; }
+    .card-footer a:hover { text-decoration: underline; }
+    .card-notes { font-size: 0.75rem; color: #888; font-style: italic; margin-top: 0.3rem; }
+
+    /* ── Bewertungssystem ── */
+    .criteria-section {
+      margin-bottom: 2rem;
+    }
+    .criteria-section h2 {
+      font-size: 1rem; font-weight: 700; color: #1a4e8a;
+      margin-bottom: 0.3rem; padding-bottom: 0.5rem;
+      border-bottom: 2px solid #1a4e8a;
+    }
+    .criteria-section .criteria-intro {
+      font-size: 0.83rem; color: var(--muted); margin-bottom: 1.2rem;
+    }
+    /* Dimension-Cards */
+    .dim-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .dim-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-top: 3px solid #1a4e8a;
+      border-radius: 6px;
+      padding: 1rem 1.1rem 1.1rem;
+    }
+    .dim-card h4 {
+      font-size: 0.82rem; font-weight: 700;
+      margin-bottom: 0.3rem; color: #1a4e8a;
+    }
+    .dim-card .dim-sub {
+      font-size: 0.73rem; color: var(--muted);
+      margin-bottom: 0.6rem; font-style: italic;
+    }
+    .dim-card ul { padding-left: 0; list-style: none; }
+    .dim-card li {
+      font-size: 0.78rem; color: #333;
+      padding: 0.28rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex; gap: 0.5rem; align-items: baseline;
+    }
+    .dim-card li:last-child { border-bottom: none; }
+    .dim-card li .score-badge {
+      background: #1a4e8a; color: #fff;
+      border-radius: 3px; padding: 0 0.35rem;
+      font-size: 0.7rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    /* Stars + Badges row */
+    .stars-badges-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    /* Stars table card */
+    .stars-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 6px; padding: 1rem 1.1rem;
+    }
+    .stars-card h4 {
+      font-size: 0.82rem; font-weight: 700;
+      color: #1a4e8a; margin-bottom: 0.7rem;
+    }
+    .stars-table { border-collapse: collapse; font-size: 0.8rem; width: 100%; }
+    .stars-table th {
+      background: #f4f6fb; padding: 0.35rem 0.9rem;
+      text-align: left; font-weight: 600; border: 1px solid #ddd;
+      color: #1a4e8a;
+    }
+    .stars-table td { padding: 0.35rem 0.9rem; border: 1px solid #ddd; }
+    .stars-table tr:hover td { background: #fafbff; }
+    .row-5star td:nth-child(2) { color: var(--c5); font-size: 0.95rem; }
+    .row-4star td:nth-child(2) { color: var(--c4); font-size: 0.95rem; }
+    .row-3star td:nth-child(2) { color: var(--c3); font-size: 0.95rem; }
+    .row-2star td:nth-child(2) { color: var(--c2); font-size: 0.95rem; }
+    /* Badges card */
+    .badges-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 6px; padding: 1rem 1.1rem;
+    }
+    .badges-card h4 {
+      font-size: 0.82rem; font-weight: 700;
+      color: #1a4e8a; margin-bottom: 0.7rem;
+    }
+    .badge-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem 1rem;
+    }
+    .badge-list .badge-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.76rem; color: #444;
+    }
+    .badge-list .badge-desc { color: var(--muted); }
+
+    /* ── Druck ── */
+    @media print {
+      body { max-width: 100%; }
+      .filter-section, .stats, .chart-row, #search-input, #sort-select { display: none; }
+      .source-card { break-inside: avoid; box-shadow: none; }
+    }
+  </style>
+<!-- DATA_INJECT_START --><!-- DATA_INJECT_END -->
 </head>
 <body>
-<h1>📚 Quellenverzeichnis</h1>
-<p>Diese Seite wird durch den Build-Prozess generiert.</p>
-<p>Bitte einmalig ausführen:<br><code>python3 build.py</code></p>
-<p><a href="index.html">← Zurück zur Startseite</a></p>
+
+<header>
+  <div>
+    <h1>Quellenverzeichnis</h1>
+    <p>KI im Geometrieunterricht &nbsp;·&nbsp; 20. Tag der Geometrie, TU Graz / PH Graz &nbsp;·&nbsp; 9. April 2026</p>
+  </div>
+  <a href="index.html">← Zum Artikel</a>
+</header>
+
+<!-- Bewertungssystem -->
+<section class="criteria-section">
+  <h2>Methodik der Quellenbewertung</h2>
+  <p class="criteria-intro">Jede Quelle wird anhand von drei Dimensionen bewertet. Die Summe (3–10 Punkte) ergibt die Sternbewertung.</p>
+
+  <div class="dim-cards">
+    <div class="dim-card">
+      <h4>📐 Autorität</h4>
+      <p class="dim-sub">Wie verlässlich und anerkannt ist die Quelle?</p>
+      <ul>
+        <li><span class="score-badge">4</span> Peer-reviewed in Nature, PNAS, ICLR u.ä.</li>
+        <li><span class="score-badge">3</span> Begutachtetes Journal, Institution (OECD, BMB)</li>
+        <li><span class="score-badge">2</span> Preprint (arXiv), Fachbuch mit Verlag</li>
+        <li><span class="score-badge">1</span> Blog, Web, informelle Quelle</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>🕐 Aktualität</h4>
+      <p class="dim-sub">Wie aktuell ist die Publikation?</p>
+      <ul>
+        <li><span class="score-badge">3</span> 2024 oder neuer</li>
+        <li><span class="score-badge">2</span> 2022–2023</li>
+        <li><span class="score-badge">1</span> Vor 2022</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>🎯 Relevanz</h4>
+      <p class="dim-sub">Wie direkt behandelt sie KI im Geometrieunterricht?</p>
+      <ul>
+        <li><span class="score-badge">3</span> Direkt: KI + Geometrie + Bildung</li>
+        <li><span class="score-badge">2</span> KI+Mathematik oder Geometrie+Didaktik</li>
+        <li><span class="score-badge">1</span> Allgemein KI-Bildung, Rahmendokumente</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stars-badges-row">
+    <div class="stars-card">
+      <h4>⭐ Sternbewertung (Score 3–10)</h4>
+      <table class="stars-table">
+        <thead><tr><th>Score</th><th>Sterne</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr class="row-5star"><td>9–10</td><td>★★★★★</td><td>Kernquelle</td></tr>
+          <tr class="row-4star"><td>7–8</td><td>★★★★☆</td><td>Sehr relevant</td></tr>
+          <tr class="row-3star"><td>5–6</td><td>★★★☆☆</td><td>Relevant</td></tr>
+          <tr class="row-2star"><td>3–4</td><td>★★☆☆☆</td><td>Orientierung</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="badges-card">
+      <h4>🏷️ Badges</h4>
+      <div class="badge-list">
+        <div class="badge-row"><span class="badge badge-peer">🎓 Peer-reviewed</span> <span class="badge-desc">Begutachtete Fachpublikation</span></div>
+        <div class="badge-row"><span class="badge badge-openaccess">🔓 Open Access</span> <span class="badge-desc">Frei zugänglich</span></div>
+        <div class="badge-row"><span class="badge badge-institution">🏛️ Institution</span> <span class="badge-desc">Offizielle Institution</span></div>
+        <div class="badge-row"><span class="badge badge-austria">🇦🇹 Österreich</span> <span class="badge-desc">Österreichbezug</span></div>
+        <div class="badge-row"><span class="badge badge-preprint">🔬 Preprint</span> <span class="badge-desc">arXiv, noch nicht peer-reviewed</span></div>
+        <div class="badge-row"><span class="badge badge-book">📚 Buch</span> <span class="badge-desc">Monografie oder Buchkapitel</span></div>
+        <div class="badge-row"><span class="badge badge-web">🌐 Web</span> <span class="badge-desc">Webpublikation, Blog</span></div>
+        <div class="badge-row"><span class="badge badge-paywall">🔒 Paywall</span> <span class="badge-desc">Nur mit Abonnement</span></div>
+        <div class="badge-row"><span class="badge badge-math">🧮 Mathematik</span> <span class="badge-desc">Mathematik- oder Informatikfokus</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reload-Pill (schwebend, oben rechts) -->
+<div id="rpill" style="position:fixed;top:.75rem;right:.75rem;z-index:9000;display:flex;align-items:center;gap:.4rem;background:#fff;border:1px solid #ddd;border-radius:20px;padding:.2rem .45rem .2rem .7rem;font-family:sans-serif;font-size:.72rem;box-shadow:0 1px 6px rgba(0,0,0,.12);white-space:nowrap">
+  <span id="reload-clock" style="font-variant-numeric:tabular-nums;letter-spacing:.03em;color:#333">00:00:00</span>
+  <span id="reload-countdown" style="color:#aaa;font-size:.66rem;min-width:0"></span>
+  <button id="reload-btn" onclick="toggleReload()" style="background:#1a4e8a;color:#fff;border:none;border-radius:14px;padding:.14rem .48rem;font-size:.66rem;cursor:pointer;font-family:sans-serif;font-weight:600;line-height:1.7">⏵</button>
+</div>
+
+<!-- Stats -->
+<div class="stats" id="stats-row"></div>
+
+<!-- Diagramme -->
+<div class="chart-row" id="chart-row">
+  <div class="chart-box"><h3>Score-Verteilung</h3><div id="chart-score"></div></div>
+  <div class="chart-box"><h3>Quelltyp</h3><div id="chart-type"></div></div>
+  <div class="chart-box"><h3>Sprache</h3><div id="chart-lang"></div></div>
+</div>
+
+<!-- Filter & Suche -->
+<div class="filter-section">
+  <label>Sterne:</label>
+  <button class="filter-btn active" data-filter-stars="all">Alle</button>
+  <button class="filter-btn" data-filter-stars="5">★★★★★</button>
+  <button class="filter-btn" data-filter-stars="4">★★★★</button>
+  <button class="filter-btn" data-filter-stars="3">★★★</button>
+  <button class="filter-btn" data-filter-stars="2">★★</button>
+  <div class="filter-sep"></div>
+  <label>Badge:</label>
+  <button class="filter-btn active" data-filter-badge="all">Alle</button>
+  <button class="filter-btn" data-filter-badge="peer">🎓 Peer-reviewed</button>
+  <button class="filter-btn" data-filter-badge="institution">🏛️ Institution</button>
+  <button class="filter-btn" data-filter-badge="openaccess">🔓 Open Access</button>
+  <button class="filter-btn" data-filter-badge="austria">🇦🇹 Österreich</button>
+  <div class="filter-sep"></div>
+  <label>Verwendung:</label>
+  <button class="filter-btn active" data-filter-cited="all">Alle</button>
+  <button class="filter-btn" data-filter-cited="1">✓ Im Artikel</button>
+  <button class="filter-btn" data-filter-cited="0">Nur Archiv</button>
+  <div class="filter-sep"></div>
+  <input type="search" id="search-input" placeholder="Suchen …" />
+  <div class="filter-sep"></div>
+  <label>Sortierung:</label>
+  <select id="sort-select">
+    <option value="score-desc">Score ↓</option>
+    <option value="score-asc">Score ↑</option>
+    <option value="year-desc">Jahr ↓</option>
+    <option value="year-asc">Jahr ↑</option>
+    <option value="id-asc">ID ↑</option>
+  </select>
+</div>
+
+<div id="result-count"></div>
+<div id="cards-container"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   Konfiguration
+══════════════════════════════════════════ */
+const SOURCES_URL = "sources/sources.json";
+
+const BADGE_LABELS = {
+  peer:        "🎓 Peer-reviewed",
+  institution: "🏛️ Institution",
+  book:        "📚 Verlag/Buch",
+  preprint:    "🔬 Preprint",
+  web:         "🌐 Web",
+  austria:     "🇦🇹 Österreich",
+  openaccess:  "🔓 Open Access",
+  paywall:     "🔒 Paywall",
+  math:        "🧮 Mathematik"
+};
+
+const TYPE_LABELS = {
+  journal:    "Journal-Artikel",
+  conference: "Konferenz",
+  report:     "Bericht",
+  book:       "Buch / Kapitel",
+  preprint:   "Preprint",
+  web:        "Webseite",
+  curriculum: "Lehrplan"
+};
+
+/* ══════════════════════════════════════════
+   Hilfsfunktionen
+══════════════════════════════════════════ */
+function stars(score) {
+  const s = score >= 9 ? 5 : score >= 7 ? 4 : score >= 5 ? 3 : 2;
+  return { stars: s, filled: "★".repeat(s), empty: "★".repeat(5 - s) };
+}
+
+function makeBar(items, colorMap) {
+  const max = Math.max(...Object.values(items), 1);
+  return Object.entries(items).map(([label, count]) => `
+    <div class="bar-item">
+      <span class="label">${label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/max*100)}%;background:${colorMap?.[label]||'#1a4e8a'}"></div></div>
+      <span class="count">${count}</span>
+    </div>`).join("");
+}
+
+/* ══════════════════════════════════════════
+   Render
+══════════════════════════════════════════ */
+function renderCard(src, cited) {
+  const { stars: s, filled, empty } = stars(src.score || 3);
+  const authorsStr = (src.authors || []).join(", ");
+  const localLink  = src.local
+    ? `<a href="${src.local}" title="Lokale Kopie">📁 Lokal</a>` : "";
+  const doiLink    = src.doi
+    ? `<a href="https://doi.org/${src.doi}" target="_blank" rel="noopener">DOI: ${src.doi}</a>` : "";
+  const origLink   = src.url && src.url !== "#"
+    ? `<a href="${src.url}" target="_blank" rel="noopener">🔗 Original</a>` : "";
+  const citedBadge = cited ? `<span class="badge badge-cited">✓ Im Artikel</span>` : "";
+  const citLocs = ((window.CIT_LOCATIONS || {})[src.id]) || [];
+  const circled = ["①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩"];
+  const citLinks = citLocs.map((anchor, i) =>
+    `<a class="badge badge-cited" style="text-decoration:none;cursor:pointer" href="standalone.html#${anchor}" target="_blank" title="Im Artikel: Zitat ${i+1}">${circled[i]||"#"+(i+1)}</a>`
+  ).join("");
+  const badgesHtml = (src.badges || []).map(b =>
+    `<span class="badge badge-${b}">${BADGE_LABELS[b] || b}</span>`).join("") + citedBadge + citLinks;
+  const notesHtml  = src.notes
+    ? `<div class="card-notes">Notiz: ${src.notes}</div>` : "";
+
+  return `
+  <div class="source-card" data-stars="${s}" data-badges="${(src.badges||[]).join(" ")}"
+       data-cited="${cited ? '1' : '0'}"
+       data-year="${src.year||0}" data-score="${src.score||0}" data-id="${src.id||""}">
+    <div class="card-top">
+      <div>
+        <div>
+          <span class="card-id">[${src.id}]</span>
+          <span class="card-title">
+            ${src.url && src.url !== "#"
+              ? `<a href="${src.url}" target="_blank" rel="noopener">${src.title}</a>`
+              : src.title}
+          </span>
+        </div>
+        <div class="card-meta">${authorsStr}${authorsStr && src.year ? " · " : ""}${src.year || ""}${src.journal ? " · <em>" + src.journal + "</em>" : ""}${src.type ? " · " + (TYPE_LABELS[src.type]||src.type) : ""}${src.lang ? " · " + src.lang.toUpperCase() : ""}</div>
+      </div>
+      <div class="stars">
+        <span class="filled">${filled}</span><span class="empty">${empty}</span>
+        <span class="score-num">${src.score}/10</span>
+      </div>
+    </div>
+    <div class="badges">${badgesHtml}</div>
+    ${src.abstract ? `<div class="card-abstract">${src.abstract}</div>` : ""}
+    <div class="card-footer">${[localLink, doiLink, origLink].filter(Boolean).join(" · ")}${src.retrieved ? `<span>Abgerufen: ${src.retrieved}</span>` : ""}</div>
+    ${notesHtml}
+  </div>`;
+}
+
+/* ══════════════════════════════════════════
+   Filter + Sortierung
+══════════════════════════════════════════ */
+let allSources = [];
+let activeStars = "all";
+let activeBadge = "all";
+let searchTerm  = "";
+let sortMode    = "score-desc";
+let activeCited = "all";
+
+function applyFilters() {
+  const cards = document.querySelectorAll(".source-card");
+  let visible = 0;
+  cards.forEach(card => {
+    const cardStars  = card.dataset.stars;
+    const cardBadges = card.dataset.badges;
+    const cardCited  = card.dataset.cited;
+    const cardText   = card.textContent.toLowerCase();
+    const matchStar  = activeStars === "all" || cardStars === activeStars;
+    const matchBadge = activeBadge === "all" || cardBadges.includes(activeBadge);
+    const matchCited = activeCited === "all" || cardCited === activeCited;
+    const matchSearch= !searchTerm || cardText.includes(searchTerm);
+    const show = matchStar && matchBadge && matchCited && matchSearch;
+    card.classList.toggle("hidden", !show);
+    if (show) visible++;
+  });
+  document.getElementById("result-count").textContent =
+    `${visible} von ${cards.length} Quellen angezeigt`;
+}
+
+function sortCards() {
+  const container = document.getElementById("cards-container");
+  const cards = [...container.querySelectorAll(".source-card")];
+  cards.sort((a, b) => {
+    if (sortMode === "score-desc") return +b.dataset.score - +a.dataset.score;
+    if (sortMode === "score-asc")  return +a.dataset.score - +b.dataset.score;
+    if (sortMode === "year-desc")  return +b.dataset.year  - +a.dataset.year;
+    if (sortMode === "year-asc")   return +a.dataset.year  - +b.dataset.year;
+    return a.dataset.id.localeCompare(b.dataset.id);
+  });
+  cards.forEach(c => container.appendChild(c));
+}
+
+/* ══════════════════════════════════════════
+   Charts + Stats
+══════════════════════════════════════════ */
+function renderStats(sources, citedSet) {
+  const citedCount = citedSet ? citedSet.size : 0;
+  const real = sources.filter(s => s.id !== "PLACEHOLDER");
+  const byScore = { "★★★★★": 0, "★★★★☆": 0, "★★★☆☆": 0, "★★☆☆☆": 0 };
+  const byType  = {};
+  const byLang  = {};
+  real.forEach(s => {
+    const st = s.score >= 9 ? "★★★★★" : s.score >= 7 ? "★★★★☆" : s.score >= 5 ? "★★★☆☆" : "★★☆☆☆";
+    byScore[st]++;
+    const tl = TYPE_LABELS[s.type] || s.type || "—";
+    byType[tl]  = (byType[tl]  || 0) + 1;
+    const ll = (s.lang || "?").toUpperCase();
+    byLang[ll]  = (byLang[ll]  || 0) + 1;
+  });
+
+  const oa   = real.filter(s => (s.badges||[]).includes("openaccess")).length;
+  const peer = real.filter(s => (s.badges||[]).includes("peer")).length;
+
+  document.getElementById("stats-row").innerHTML = `
+    <div class="stat"><strong>${real.length}</strong>Quellen gesamt</div>
+    <div class="stat"><strong>${peer}</strong>Peer-reviewed</div>
+    <div class="stat"><strong>${oa}</strong>Open Access</div>
+    <div class="stat"><strong>${real.filter(s=>s.score>=9).length}</strong>★★★★★ Kernquellen</div>
+    <div class="stat"><strong>${citedCount}</strong>✓ Im Artikel</div>`;
+
+  const scoreColors = { "★★★★★": "#1a6b3c", "★★★★☆": "#2e7d32", "★★★☆☆": "#e65100", "★★☆☆☆": "#b71c1c" };
+  document.getElementById("chart-score").innerHTML = makeBar(byScore, scoreColors);
+  document.getElementById("chart-type").innerHTML  = makeBar(byType, null);
+  document.getElementById("chart-lang").innerHTML  = makeBar(byLang, null);
+}
+
+/* ══════════════════════════════════════════
+   Init
+══════════════════════════════════════════ */
+async function init() {
+  try {
+    let raw, citedIds;
+    if (window.SOURCES_DATA) {
+      raw = window.SOURCES_DATA;
+      citedIds = window.CITED_IDS || [];
+    } else {
+      [raw, citedIds] = await Promise.all([
+        fetch(SOURCES_URL).then(r => r.json()),
+        fetch("sources/cited_ids.json").then(r => r.json()).catch(() => [])
+      ]);
+    }
+    allSources = raw.filter(s => !s._comment && !s._schema);
+    const citedSet = new Set(citedIds);
+
+    const container = document.getElementById("cards-container");
+    container.innerHTML = allSources.map(s => renderCard(s, citedSet.has(s.id))).join("");
+
+    renderStats(allSources, citedSet);
+    applyFilters();
+
+    /* Filter-Buttons Sterne */
+    document.querySelectorAll("[data-filter-stars]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-filter-stars]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeStars = btn.dataset.filterStars;
+        applyFilters();
+      });
+    });
+
+    /* Filter-Buttons Badge */
+    document.querySelectorAll("[data-filter-badge]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-filter-badge]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeBadge = btn.dataset.filterBadge;
+        applyFilters();
+      });
+    });
+
+    /* Filter-Buttons Verwendung (cited) */
+    document.querySelectorAll("[data-filter-cited]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-filter-cited]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeCited = btn.dataset.filterCited;
+        applyFilters();
+      });
+    });
+
+    /* Suche */
+    document.getElementById("search-input").addEventListener("input", e => {
+      searchTerm = e.target.value.toLowerCase().trim();
+      applyFilters();
+    });
+
+    /* Sortierung */
+    document.getElementById("sort-select").addEventListener("change", e => {
+      sortMode = e.target.value;
+      sortCards();
+    });
+
+  } catch(err) {
+    document.getElementById("cards-container").textContent = "Fehler: " + err.message;
+    console.error(err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+
+<script>
+/* ── Timelapse / Reload-Panel ── */
+(function() {
+  var INTERVAL = 20;
+  var LS_KEY   = 'quellen_reload_active';
+  var countdown = INTERVAL;
+  var reloadTimer = null;
+  var clockTimer  = null;
+
+  // Uhr laufend anzeigen
+  function updateClock() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2,'0');
+    var m = String(now.getMinutes()).padStart(2,'0');
+    var s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('reload-clock').textContent = h+':'+m+':'+s;
+  }
+
+  function startClock() {
+    updateClock();
+    clockTimer = setInterval(updateClock, 1000);
+  }
+
+  function updateCountdown() {
+    var el = document.getElementById('reload-countdown');
+    if (el) el.textContent = countdown + 's';
+    countdown--;
+    if (countdown < 0) {
+      localStorage.setItem(LS_KEY, '1');
+      window.location.reload();
+    }
+  }
+
+  function startReload() {
+    countdown = INTERVAL;
+    localStorage.setItem(LS_KEY, '1');
+    document.getElementById('reload-btn').textContent  = '⏹';
+    document.getElementById('reload-btn').style.background = '#b71c1c';
+    updateCountdown();
+    reloadTimer = setInterval(updateCountdown, 1000);
+  }
+
+  function stopReload() {
+    localStorage.removeItem(LS_KEY);
+    clearInterval(reloadTimer);
+    document.getElementById('reload-countdown').textContent = '';
+    document.getElementById('reload-btn').textContent = '⏵';
+    document.getElementById('reload-btn').style.background = '#1a4e8a';
+  }
+
+  window.toggleReload = function() {
+    if (reloadTimer) { stopReload(); } else { startReload(); }
+  };
+
+  // Panel immer sichtbar machen (Uhr zeigen)
+  document.addEventListener('DOMContentLoaded', function() {
+    startClock();
+
+    // War Reload aktiv vor dem letzten Reload?
+    if (localStorage.getItem(LS_KEY) === '1') {
+      // Zur Stats-Ansicht scrollen
+      setTimeout(function() {
+        var el = document.getElementById('stats-row');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 600);
+      // Reload wieder starten
+      setTimeout(startReload, 800);
+    }
+  });
+})();
+</script>
 </body>
 </html>
