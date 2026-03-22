@@ -4,11 +4,10 @@
 #   git update-index --skip-worktree "API Key.js"
 # Damit wird die Datei lokal nicht mehr getrackt und der Key bleibt privat.
 
-# Generierte Ausgaben (projektspezifisch, nicht ins Repository)
+# Generierte Ausgaben (werden durch build.py überschrieben, Platzhalter bleiben im Repo)
 standalone.html
 standalone.tex
 standalone_sw.tex
-quellen.html
 
 # Betriebssystem
 .DS_Store
