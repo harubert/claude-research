@@ -1,107 +1,1291 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Präsentation — [TITEL]</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #1a1a2e; color: #eee; font-family: "Helvetica Neue", Arial, sans-serif; }
-    .deck { width: 100%; }
-    .slide {
-      display: none; min-height: 100vh;
-      flex-direction: column; justify-content: center; align-items: center;
-      padding: 3rem 5rem; text-align: center; position: relative;
-    }
-    .slide.active { display: flex; }
-    .slide.title-slide { background: linear-gradient(135deg, #1a4e8a 0%, #0d2e55 100%); }
-    .slide h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.25; margin-bottom: 1rem; }
-    .slide h2 { font-size: 1.6rem; font-weight: 600; color: #7eb3f5; margin-bottom: 1.2rem; border-bottom: 2px solid #1a4e8a; padding-bottom: .5rem; width: 100%; text-align: left; }
-    .slide p  { font-size: 1.05rem; line-height: 1.7; color: #ccc; max-width: 700px; }
-    .slide ul { text-align: left; max-width: 700px; width: 100%; }
-    .slide ul li { font-size: 1rem; line-height: 1.8; color: #ddd; padding: .2rem 0; }
-    .slide ul li::before { content: "▸ "; color: #7eb3f5; }
-    .slide .subtitle { font-size: 1.1rem; color: #aac4f0; font-style: italic; margin-bottom: .75rem; }
-    .slide .meta { font-size: .85rem; color: #888; margin-top: 1.5rem; }
-    .slide .number { position: absolute; bottom: 1.5rem; right: 2rem; font-size: .75rem; color: #555; }
-    .slide .highlight { background: rgba(30,100,200,.25); border-left: 4px solid #7eb3f5; padding: .75rem 1.25rem; border-radius: 4px; margin: 1rem 0; text-align: left; max-width: 700px; width: 100%; font-size: .95rem; }
-    nav.controls { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; gap: .75rem; z-index: 100; }
-    nav.controls button { background: rgba(255,255,255,.1); color: #eee; border: 1px solid rgba(255,255,255,.2); border-radius: 5px; padding: .45rem 1.1rem; cursor: pointer; font-size: .85rem; }
-    nav.controls button:hover { background: rgba(255,255,255,.2); }
-    .progress { position: fixed; top: 0; left: 0; height: 3px; background: #1a4e8a; transition: width .3s; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>KI im Geometrieunterricht — Präsentation</title>
+<script src="../API Key.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"/>
+<link rel="stylesheet" href="fonts/fonts.css"/>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  --brand: #163374;
+  --bar-h: 52px;
+}
+
+/* ── Base ── */
+.reveal {
+  font-family: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 32px;
+  color: #111;
+  background: #fff;
+}
+.reveal h1 { font-size: 1.8em; font-weight: 700; line-height: 1.1; margin-bottom: 0.35em; }
+.reveal h2 { font-size: 1.15em; font-weight: 700; line-height: 1.2; margin-bottom: 0.35em; }
+.reveal h3 { font-size: 0.68em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #888; margin: 0.8em 0 0.3em; }
+.reveal p, .reveal li { font-size: 0.78em; line-height: 1.75; color: #333; }
+.reveal p { margin-bottom: 0.35em; }
+.reveal strong { font-weight: 700; color: #111; }
+.reveal em { font-style: italic; }
+.reveal a { color: var(--brand); }
+.reveal ul { list-style: none; padding: 0; margin: 0; }
+.reveal ul li { padding-left: 1.1em; position: relative; margin-bottom: 0.3em; }
+.reveal ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
+.reveal ol li { margin-bottom: 0.3em; }
+.reveal .slides section { padding-bottom: calc(var(--bar-h) + 16px) !important; box-sizing: border-box; text-align: left; }
+.reveal .progress span { background: var(--brand); }
+.reveal .controls { color: var(--brand); bottom: calc(var(--bar-h) + 10px) !important; }
+
+/* ── Footer bar ── */
+#slide-footer-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--bar-h); background: var(--brand);
+  display: flex; align-items: center; padding: 0 2em;
+  z-index: 200;
+}
+#footer-logo { height: 26px; width: 26px; opacity: 0.85; color: rgba(255,255,255,.9); flex-shrink: 0; }
+#footer-num { position: absolute; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,.45); letter-spacing: .1em; font-family: system-ui; }
+#footer-clock { margin-left: auto; font-size: 12px; color: rgba(255,255,255,.45); font-family: system-ui; font-variant-numeric: tabular-nums; }
+#slide-footer-bar.bar-light { background: #fff; box-shadow: 0 -1px 0 rgba(0,0,0,.1); }
+#slide-footer-bar.bar-light #footer-num,
+#slide-footer-bar.bar-light #footer-clock { color: rgba(22,51,116,.4); }
+#slide-footer-bar.bar-light #footer-logo { color: var(--brand); }
+
+/* ── UI buttons ── */
+.home-btn {
+  position: fixed; top: 1em; right: 1em; width: 1.9em; height: 1.9em;
+  border-radius: 50%; border: 1px solid rgba(0,0,0,.15); background: rgba(255,255,255,.9);
+  color: #555; font-size: 1em; display: flex; align-items: center; justify-content: center;
+  text-decoration: none; z-index: 300; box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+.home-btn.light { color: var(--brand); }
+.fab {
+  width: 1.9em; height: 1.9em; border-radius: 50%; border: 1px solid rgba(0,0,0,.15);
+  background: rgba(255,255,255,.9); color: #555; font-size: 1em; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+.fab.light { color: var(--brand); }
+/* ── Collapsible FAB cluster ── */
+#fab-cluster {
+  position: fixed; top: 1em; right: 3.5em;
+  display: flex; align-items: center; gap: .4em;
+  z-index: 300;
+}
+#fab-tools {
+  display: flex; gap: .4em; align-items: center;
+  max-width: 0; overflow: hidden; opacity: 0;
+  transition: max-width .28s ease, opacity .2s ease;
+}
+#fab-cluster.open #fab-tools { max-width: 22em; opacity: 1; }
+#img-btn.generating { animation: spin 1.2s linear infinite; cursor: default; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Toast ── */
+#img-toast {
+  position: fixed; bottom: calc(var(--bar-h) + 12px); left: 50%; transform: translateX(-50%);
+  background: rgba(22,51,116,.92); color: #fff; font-size: .7rem; padding: .38rem 1.1rem;
+  border-radius: 20px; pointer-events: none; opacity: 0; transition: opacity .4s;
+  z-index: 400; white-space: nowrap; font-family: system-ui;
+}
+
+@media print { #slide-footer-bar, #img-toast { display: none; } .reveal section { page-break-after: always; } }
+
+/* ══ LAYOUT-VARIANTEN ══
+   Gradient-Modus: Der Verlauf ist direkt in das KI-generierte Bild eingebacken —
+   linke Seite weiß (Textbereich lesbar), rechte Seite volles Motiv.
+   Kein CSS-Overlay nötig, Opacity 1. */
+
+/* ══ UI PANELS ══ */
+.ui-panel {
+  display: none;
+  position: fixed;
+  bottom: calc(var(--bar-h) + 14px);
+  right: 1em;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.1em 1.2em;
+  z-index: 350;
+  box-shadow: 0 6px 28px rgba(0,0,0,.16);
+  min-width: 280px;
+  max-width: 340px;
+}
+.ui-panel.open { display: block; }
+.panel-title {
+  font-size: .65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .12em; color: #999; margin-bottom: .85em;
+  font-family: system-ui;
+}
+
+/* Layout panel */
+.layout-opts { display: flex; gap: .6em; }
+.layout-opt {
+  flex: 1; border: 2px solid #e0e0e0; border-radius: 8px;
+  padding: .6em .4em; cursor: pointer; background: #fafafa;
+  transition: border-color .15s, background .15s; text-align: center;
+}
+.layout-opt:hover { border-color: var(--brand); background: #f0f4fd; }
+.layout-opt.active { border-color: var(--brand); background: #eef2fc; }
+.lo-icon { font-size: 1.4em; margin-bottom: .25em; color: #444; }
+.lo-name { font-size: .62rem; font-weight: 700; color: #222; font-family: system-ui; }
+.lo-desc { font-size: .55rem; color: #888; margin-top: .15em; font-family: system-ui; line-height: 1.4; }
+
+/* Font panel */
+.font-opts { display: flex; flex-direction: column; gap: .5em; }
+.font-opt {
+  border: 2px solid #e8e8e8; border-radius: 7px; padding: .55em .9em;
+  cursor: pointer; background: #fafafa; transition: border-color .15s;
+  display: flex; align-items: center; gap: .8em;
+}
+.font-opt:hover { border-color: var(--brand); }
+.font-opt.active { border-color: var(--brand); background: #eef2fc; }
+.fo-sample { font-size: 1.15em; font-weight: 700; color: #111; flex-shrink: 0; width: 2.8em; }
+.fo-info { flex: 1; }
+.fo-name { font-size: .66rem; font-weight: 700; color: #222; font-family: system-ui; }
+.fo-pair { font-size: .58rem; color: #888; font-family: system-ui; }
+
+/* Color panel */
+.color-swatches { display: flex; flex-wrap: wrap; gap: .4em; margin-bottom: .75em; }
+.color-swatch {
+  width: 2em; height: 2em; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: transform .12s, border-color .12s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+.color-swatch:hover { transform: scale(1.15); border-color: #555; }
+.color-row { display: flex; align-items: center; gap: .6em; margin-top: .4em; }
+.color-row input[type=color] {
+  width: 2.2em; height: 2.2em; border: none; border-radius: 4px;
+  cursor: pointer; padding: 0; background: none;
+}
+.color-row label { font-size: .62rem; color: #666; font-family: system-ui; }
+.panel-btn {
+  width: 100%; padding: .45em; font-size: .65rem; border-radius: 6px;
+  border: 1px solid #ddd; background: #f5f5f5; cursor: pointer;
+  font-family: system-ui; margin-top: .5em; color: #444;
+  transition: background .15s;
+}
+.panel-btn:hover { background: #eee; }
+.panel-btn.danger { border-color: #f5a0a0; color: #b71c1c; background: #fff5f5; }
+.panel-btn.danger:hover { background: #fde8e8; }
+</style>
 </head>
 <body>
+<div class="reveal">
+<div class="slides">
 
-<div class="progress" id="progress"></div>
+<!-- 01 TITEL -->
+<section>
+  <h1>Künstliche Intelligenz<br>im Geometrieunterricht</h1>
+  <p>Von der Volksschule bis zum Hochschulstudium —<br>Werkzeuge, Didaktik und Perspektiven</p>
+  <p>Thomas Schroffenegger<br>
+  20. Tag der Geometrie · Technische Universität Graz · Pädagogische Hochschule Graz<br>
+  9. April 2026</p>
+</section>
 
-<!-- FOLIE 1: Titelfolie -->
-<div class="slide title-slide active" id="slide-1">
-  <h1>[TITEL DES ARTIKELS]</h1>
-  <p class="subtitle">[UNTERTITEL]</p>
-  <p class="meta">[AUTOR] &nbsp;·&nbsp; [VERANSTALTUNG] &nbsp;·&nbsp; [DATUM]</p>
-  <div class="number">1</div>
-</div>
+<!-- 02 ZÄSUR -->
+<section>
+  <h3>17. Januar 2024</h3>
+  <h1>Ein KI-System löst olympiadische Geometriebeweise</h1>
+  <p>Google DeepMind publiziert <strong>AlphaGeometry</strong> in <em>Nature</em></p>
+  <ul>
+    <li><strong>25</strong> von 30 IMO-Aufgaben gelöst (vorheriger Bestwert: 10)</li>
+    <li><strong>83 %</strong> aller IMO-Geometrieaufgaben — mit AlphaGeometry 2</li>
+    <li>Silbermedaillen-Niveau bei IMO 2024 (AlphaProof)</li>
+  </ul>
+  <p>Trinh et al., Nature, 2024</p>
+</section>
 
-<!-- FOLIE 2: Überblick / Agenda -->
-<div class="slide" id="slide-2">
+<!-- 03 DIE FRAGE -->
+<section>
+  <h2>Was bedeutet das für den Unterricht?</h2>
+  <p>Wenn KI olympiadische Geometrie beherrscht — welche Kompetenzen bleiben für Schüler:innen wirklich relevant?</p>
+  <p>Welche neuen Möglichkeiten entstehen für Lehrende — und welche Risiken?</p>
+  <p>Welche Werkzeuge stehen heute zur Verfügung, und wie setzen wir sie didaktisch sinnvoll ein?</p>
+  <ul>
+    <li>Volksschule bis Hochschule: alle Schulstufen sind betroffen</li>
+    <li>Die Veränderung ist <strong>jetzt</strong> — nicht in 10 Jahren</li>
+    <li>Lehrende müssen heute Antworten finden</li>
+  </ul>
+</section>
+
+<!-- 04 ÜBERBLICK -->
+<section>
   <h2>Überblick</h2>
+  <h3>Schulstufen</h3>
+  <ol>
+    <li>Volksschule (6–10 J.)</li>
+    <li>Sekundarstufe I (10–14 J.)</li>
+    <li>Sekundarstufe II / Matura</li>
+    <li>Hochschule &amp; Lehramt</li>
+  </ol>
+  <h3>Themen</h3>
+  <ol start="5">
+    <li>KI-Tools im Überblick</li>
+    <li>Didaktische Konzepte</li>
+    <li>Risiken &amp; Grenzen</li>
+    <li>Ausblick</li>
+  </ol>
+  <p>Basis: Peer-reviewed Journals, OECD/UNESCO-Berichte, österreichischer Lehrplan 2023</p>
+</section>
+
+<!-- KAPITEL 1 -->
+<section>
+  <h3>Kapitel 1 — Grundlagen</h3>
+  <h1>Was ist Künstliche Intelligenz?</h1>
+</section>
+
+<!-- 06 KI-GRUNDLAGEN -->
+<section>
+  <h2>KI — ein didaktischer Zugang</h2>
+  <h3>Maschinelles Lernen</h3>
+  <p>Systeme lernen aus Daten ohne explizite Programmierung. Erkennt geometrische Formen in Fotos.</p>
+  <h3>Große Sprachmodelle (LLMs)</h3>
+  <p>ChatGPT, Claude: beantworten Fragen, erklären Beweise, generieren Aufgaben.</p>
+  <h3>CAS + KI</h3>
+  <p>GeoGebra, Wolfram Alpha: klassische Systeme mit KI-Erweiterung für natürlichsprachliche Eingaben.</p>
+  <p>1.871 Publikationen zu KI im Mathematikunterricht 2024</p>
+</section>
+
+<!-- KAPITEL 2 -->
+<section>
+  <h3>Kapitel 2 — Schulstufe 1–4</h3>
+  <h1>Volksschule<br>(6–10 Jahre)</h1>
+</section>
+
+<!-- 08 VOLKSSCHULE -->
+<section>
+  <h2>KI in der Volksschule</h2>
+  <h3>Was funktioniert</h3>
   <ul>
-    <li>[Thema 1]</li>
-    <li>[Thema 2]</li>
-    <li>[Thema 3]</li>
-    <li>[Thema 4]</li>
-    <li>[Thema 5]</li>
+    <li><strong>Adaptive Lernspiele</strong> — passen Schwierigkeit automatisch an</li>
+    <li><strong>Bilderkennungs-Apps</strong> — Formen in der realen Welt erkennen</li>
+    <li><strong>GeoGebra Grundschule</strong> — spielerische Geometrie</li>
   </ul>
-  <div class="number">2</div>
+  <p>Experimentalgruppe mit KI-gestütztem Lernen zeigte signifikant bessere Leistungen. [S06]</p>
+  <h3>Grenzen</h3>
+  <ul>
+    <li>Kinder brauchen haptische Erfahrung</li>
+    <li>Bildschirmzeit vs. Entwicklung</li>
+    <li>DSGVO — Datenschutz bei Minderjährigen</li>
+    <li>KI als Ergänzung, nicht als Ersatz</li>
+  </ul>
+</section>
+
+<!-- KAPITEL 3 -->
+<section>
+  <h3>Kapitel 3 — Schulstufe 5–8</h3>
+  <h1>Sekundarstufe I<br>(10–14 Jahre)</h1>
+</section>
+
+<!-- 10 SEK I TOOLS -->
+<section>
+  <h2>SEK I — Tools &amp; Szenarien</h2>
+  <h3>GeoGebra AI</h3>
+  <p>Natürlichsprachliche Konstruktionen · Schritt-für-Schritt-Erklärungen · Österreichisches Produkt · kostenlos</p>
+  <h3>Photomath (Google)</h3>
+  <p>Foto → Lösung mit Lösungsweg · 350 Mio. Downloads · 2023 von Google akquiriert</p>
+  <p><strong>KIMADU-Projekt (NRW, 2024):</strong> 25 Schulen erproben KI in Mathematik — inkl. KI-gestütztem Beweis der Innenwinkelsumme [S07]</p>
+</section>
+
+<!-- 11 ENTDECKENDES LERNEN -->
+<section>
+  <h2>Unterrichtsszenario: Entdeckendes Lernen</h2>
+  <p><em>„Untersuche Dreiecke mit gleichem Flächeninhalt aber unterschiedlichem Umfang."</em></p>
+  <h3>Schüler:in</h3>
+  <ul>
+    <li>Stellt Fragen in natürlicher Sprache</li>
+    <li>Erkundet selbst, macht Fehler</li>
+    <li>Formuliert Vermutungen</li>
+  </ul>
+  <h3>GeoGebra AI</h3>
+  <ul>
+    <li>Führt durch Konstruktion</li>
+    <li>Gibt Hinweise, nicht Lösungen</li>
+    <li>Analysiert Fehler gezielt</li>
+  </ul>
+  <p>KI als geduldiger Einzellehrer — mit unbegrenzter Zeit.</p>
+</section>
+
+<!-- KAPITEL 4 -->
+<section>
+  <h3>Kapitel 4 — Schulstufe 9–12 / Matura</h3>
+  <h1>Sekundarstufe II<br>(14–18 Jahre)</h1>
+</section>
+
+<!-- 13 SEK II TOOLS -->
+<section>
+  <h2>SEK II — Analytische Geometrie &amp; KI</h2>
+  <h3>Wolfram Alpha</h3>
+  <p>Symbolische Berechnung, Vektoren, Schnittmengen, Kegelschnitte · natürlichsprachliche Eingabe seit 2023</p>
+  <h3>GeoGebra 3D + AI</h3>
+  <p>Räumliche Geometrie · Körper drehen · Schnittebenen erkunden · KI-Assistent erklärt Schritte</p>
+  <p>Vektorprodukt: $\vec{n} = \vec{a} \times \vec{b}$ — GeoGebra visualisiert, Wolfram berechnet, LLM erklärt</p>
+</section>
+
+<!-- 14 MATURA -->
+<section>
+  <h2>Matura &amp; KI — eine offene Frage</h2>
+  <h3>Chancen</h3>
+  <ul>
+    <li>Komplexere, offenere Aufgaben möglich</li>
+    <li>KI als Hilfsmittel wie Taschenrechner</li>
+    <li>Fokus auf Verständnis, nicht Routine</li>
+  </ul>
+  <h3>Herausforderungen</h3>
+  <ul>
+    <li>LLMs lösen Standard-Matura-Aufgaben trivial</li>
+    <li>Prüfungsintegrität kaum kontrollierbar</li>
+    <li>Österreich: Internet-Verbot bei Matura</li>
+  </ul>
+  <p><strong>Konsequenz:</strong> Aufgabenformate müssen sich grundlegend verändern — weg von reproduzierbaren Routinen, hin zu kreativen, mehrstufigen Problemlösungen.</p>
+</section>
+
+<!-- KAPITEL 5 -->
+<section>
+  <h3>Kapitel 5 — Universität &amp; Lehramt</h3>
+  <h1>Hochschule &amp;<br>Lehramtsstudium</h1>
+</section>
+
+<!-- 16 FORMALE BEWEISE -->
+<section>
+  <h2>Formale Beweise mit KI</h2>
+  <h3>Lean 4 + Mathlib</h3>
+  <p>210.000+ formalisierte Sätze · LeanEuclid: Euklids Elemente erstmals vollständig in Lean (ICML 2024) [S19]</p>
+  <h3>AlphaProof (DeepMind)</h3>
+  <p>Silbermedaillen-Niveau bei IMO 2024 · trainiert auf Mathlib</p>
+  <p><em>Lehramtsstudierende müssen nicht nur Tools beherrschen — sie müssen KI kritisch beurteilen können.</em><br>
+  — Brunner &amp; Haas, Frontiers in AI, 2024 [S01]</p>
+</section>
+
+<!-- 17 LEHRAMTSSTUDIUM -->
+<section>
+  <h2>Herausforderung Lehramtsstudium</h2>
+  <p>Studierende hatten begrenzte Vorerfahrungen mit LLMs, nutzten sie oberflächlich, Misskonzeptionen waren verbreitet. [S01]</p>
+  <h3>Was Lehramtsstudium künftig vermitteln muss</h3>
+  <ul>
+    <li>Wie erkenne ich KI-generierte Lösungen?</li>
+    <li>Wie gestalte ich KI-resistente Prüfungsaufgaben?</li>
+    <li>Wie nutze ich KI als Unterrichtsassistenz — ethisch und pädagogisch?</li>
+    <li>Wann vertraue ich der KI — und wann nicht?</li>
+  </ul>
+</section>
+
+<!-- KAPITEL 6 -->
+<section>
+  <h3>Kapitel 6 — Werkzeuge</h3>
+  <h1>KI-Tools<br>im Überblick</h1>
+</section>
+
+<!-- 19 TOOLS -->
+<section>
+  <h2>Die wichtigsten Tools</h2>
+  <h3>GeoGebra AI (AT) · kostenlos</h3>
+  <p>Konstruktion · 3D · natürlichsprachlich · Schule bis Hochschule · österreichisches Produkt</p>
+  <h3>Wolfram Alpha · Freemium</h3>
+  <p>CAS · symbolisch · präzise · SEK II–Hochschule · keine Halluzinationen bei Berechnungen</p>
+  <h3>Photomath (Google) · Freemium</h3>
+  <p>Foto → Lösung mit Lösungsweg · SEK I–II · 350 Mio. Downloads</p>
+  <h3>ChatGPT / Claude · Freemium</h3>
+  <p>Erklärungen · Aufgabengenerierung · alle Stufen · halluziniert bei Geometrie</p>
+</section>
+
+<!-- 20 GEOGEBRA + CHATGPT -->
+<section>
+  <h2>GeoGebra + ChatGPT: Zusammenspiel</h2>
+  <h3>GeoGebra Discovery</h3>
+  <p>Beweist alle getesteten euklidischen Sätze formal korrekt.</p>
+  <h3>ChatGPT allein</h3>
+  <p>Natürlichsprachliche Eingaben, scheitert bei formalen Geometriebeweisen.</p>
+  <h3>Kombination</h3>
+  <p>ChatGPT für Sprache + GeoGebra für zertifizierte Beweise = optimales Ergebnis. [S18]</p>
+  <p>MDPI Computers · 2024 · Open Access</p>
+</section>
+
+<!-- KAPITEL 7 -->
+<section>
+  <h3>Kapitel 7 — Pädagogik</h3>
+  <h1>Didaktische<br>Konzepte</h1>
+</section>
+
+<!-- 22 DREI MODELLE -->
+<section>
+  <h2>Drei Modelle des KI-Einsatzes</h2>
+  <h3>01 — KI als Tutor</h3>
+  <p>Sokratischer Dialog · Hinweise statt Lösungen · unbegrenzte Verfügbarkeit</p>
+  <h3>02 — KI als Werkzeug</h3>
+  <p>Berechnung · Visualisierung · Überprüfung · Schüler:in behält Verantwortung</p>
+  <h3>03 — KI als Lerngegenstand</h3>
+  <p>Wie löst KI Geometrie? Wo scheitert sie? Kritisches Denken über KI</p>
+  <p><em>Der entscheidende Unterschied: KI soll den Lernprozess unterstützen — nicht ersetzen.</em></p>
+</section>
+
+<!-- KAPITEL 8 -->
+<section>
+  <h3>Kapitel 8 — Kritische Perspektive</h3>
+  <h1>Risiken &amp;<br>Herausforderungen</h1>
+</section>
+
+<!-- 24 RISIKEN -->
+<section>
+  <h2>Was wir nicht vergessen dürfen</h2>
+  <h3>Halluzinationen</h3>
+  <ul>
+    <li>LLMs produzieren falsche Beweise — überzeugend formuliert</li>
+    <li>Fehlerrate Algebra: bis zu <strong>47 %</strong> bei Standard-ChatGPT</li>
+    <li>Mit „Self-Consistency": auf <strong>2 %</strong> reduzierbar [S13]</li>
+  </ul>
+  <h3>Abhängigkeit</h3>
+  <ul>
+    <li>Routinemäßige KI-Delegation verhindert Kompetenzaufbau</li>
+    <li>Photomath: gemischte Ergebnisse [S14]</li>
+    <li>Khanmigo: kein Ersatz für Lehrende [S12]</li>
+  </ul>
+  <p><strong>Digital Divide:</strong> Premium-KI-Tools kostenpflichtig — reproduziert Bildungsungleichheit. OECD 2024: Kein Land hat bisher spezifische KI-Regulierung im Bildungsbereich. [S08, S09]</p>
+</section>
+
+<!-- KAPITEL 9 -->
+<section>
+  <h3>Kapitel 9 — Perspektive</h3>
+  <h1>Ausblick</h1>
+</section>
+
+<!-- 26 AUSBLICK -->
+<section>
+  <h2>Was kommt als nächstes?</h2>
+  <h3>Multimodale KI</h3>
+  <p>KI versteht Skizzen direkt · Foto der Konstruktion → sofortiges Feedback</p>
+  <h3>Formale Beweissysteme</h3>
+  <p>Lean 4 + KI-Copilot für Oberstufe · LeanEuclid: Euklids Elemente formalisiert</p>
+  <h3>Personalisierung</h3>
+  <p>Individuelle Lernpfade · KI erkennt Fehlermuster · adaptiert in Echtzeit</p>
+  <h3>Neue Lehrendenrolle</h3>
+  <p>Weniger Routinevermittlung · mehr Beziehung, Motivation, kreative Aufgabenstellung</p>
+</section>
+
+<!-- 27 EMPFEHLUNGEN -->
+<section>
+  <h2>5 Empfehlungen für die Praxis</h2>
+  <ol>
+    <li><strong>KI-Kompetenz</strong> als Lernziel — auf allen Schulstufen, explizit</li>
+    <li><strong>GeoGebra AI</strong> als Einstieg — kostenlos, österreichisch, erprobt</li>
+    <li><strong>Offene Aufgabenformate</strong> stärken — KI kann Routine, nicht Kreativität</li>
+    <li><strong>Datenschutz-konforme Tools</strong> bevorzugen — besonders Volksschule</li>
+    <li><strong>Lehrkräftefortbildung</strong> ausbauen — KI-Kompetenz beginnt bei uns</li>
+  </ol>
+</section>
+
+<!-- 28 FAZIT -->
+<section>
+  <h2>Die entscheidende Frage</h2>
+  <p>ist nicht <strong>ob</strong> wir KI einsetzen —</p>
+  <p>sondern <strong>wie.</strong></p>
+  <p>Und wer diese Entscheidung trifft: die Bildungsgemeinschaft — nicht die Technologiekonzerne.</p>
+</section>
+
+<!-- 29 QUELLEN -->
+<section>
+  <h2>Kernquellen</h2>
+  <p>Vollständig unter quellen.html</p>
+  <p>[S01] Brunner &amp; Haas (2024). ChatGPT für geometrische Beweise. <em>Frontiers in AI.</em></p>
+  <p>[S07] KIMADU (2024). KI im Mathematikunterricht NRW. <em>Uni Siegen / MSB NRW.</em></p>
+  <p>[S13] UC Berkeley (2024). Halluzinationen in Mathe reduzieren. <em>PLOS One.</em></p>
+  <p>[S17] Trinh et al. (2024). AlphaGeometry. <em>Nature.</em></p>
+  <p>[S18] (2024). GeoGebra &amp; ChatGPT für geometrische Entdeckungen. <em>MDPI Computers.</em></p>
+  <p>[S19] Murphy et al. (2024). LeanEuclid. <em>ICML 2024.</em></p>
+  <p>[S20] BMBWF (2023). Neuer Lehrplan Mathematik. <em>BGBl. Österreich.</em></p>
+</section>
+
+<!-- 30 DANKE -->
+<section>
+  <h1>Danke.</h1>
+  <p>Fragen &amp; Diskussion</p>
+  <p>Artikel &amp; Quellenverzeichnis: standalone.html · quellen.html</p>
+  <p>Thomas Schroffenegger · 20. Tag der Geometrie · TU Graz / PH Graz · 9. April 2026</p>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<!-- Home Button -->
+<a class="home-btn" id="home-btn" href="../index.html" title="Zurück zum Artikel">⌂</a>
+
+<!-- Panels -->
+<div id="panel-layout" class="ui-panel">
+  <div class="panel-title">Design-Variante — Text immer fix oben links</div>
+  <div class="layout-opts">
+    <button class="layout-opt" id="lopt-rein" onclick="setLayout('rein')">
+      <div class="lo-icon">▭</div>
+      <div class="lo-name">Rein</div>
+      <div class="lo-desc">Kein Bild, klarer Hintergrund</div>
+    </button>
+    <button class="layout-opt" id="lopt-gradient" onclick="setLayout('gradient')">
+      <div class="lo-icon">◁▨</div>
+      <div class="lo-name">Verlauf</div>
+      <div class="lo-desc">Bild blendet rechts ein</div>
+    </button>
+    <button class="layout-opt" id="lopt-bg" onclick="setLayout('bg')">
+      <div class="lo-icon">▨</div>
+      <div class="lo-name">Hintergrund</div>
+      <div class="lo-desc">Bild blass dahinter</div>
+    </button>
+  </div>
 </div>
 
-<!-- FOLIEN 3–12: Inhalt (von Claude befüllen) -->
-<!-- Jede Folie folgt diesem Schema:
-<div class="slide" id="slide-N">
-  <h2>Folientitel</h2>
-  <ul>
-    <li>Stichpunkt</li>
-  </ul>
-  <div class="highlight">Wichtige Erkenntnis oder Zitat</div>
-  <div class="number">N</div>
-</div>
--->
-
-<!-- LETZTE FOLIE: Fazit / Danke -->
-<div class="slide" id="slide-last">
-  <h2>Fazit</h2>
-  <ul>
-    <li>[Kernaussage 1]</li>
-    <li>[Kernaussage 2]</li>
-    <li>[Kernaussage 3]</li>
-  </ul>
-  <div class="highlight">[Abschlusszitat oder -gedanke]</div>
-  <p class="meta">Vollständiger Artikel und Quellenverzeichnis: <a href="../index.html" style="color:#7eb3f5">→ index.html</a></p>
-  <div class="number" id="slide-last-num"></div>
+<div id="panel-font" class="ui-panel">
+  <div class="panel-title">Schriftstil</div>
+  <div class="font-opts" id="font-opts-list"></div>
 </div>
 
-<nav class="controls">
-  <button onclick="changeSlide(-1)">← Zurück</button>
-  <button onclick="changeSlide(1)">Weiter →</button>
-</nav>
+<div id="panel-color" class="ui-panel">
+  <div class="panel-title">Hintergrundfarbe — aktuelle Folie</div>
+  <div class="color-swatches" id="color-swatches"></div>
+  <div class="color-row">
+    <input type="color" id="custom-color-input" value="#163374" oninput="applySlideColor(this.value)"/>
+    <label>Eigene Farbe</label>
+  </div>
+  <button class="panel-btn danger" onclick="clearSlideColor()">Farbe entfernen</button>
+</div>
 
+<!-- FAB Cluster — standardmäßig eingeklappt -->
+<div id="fab-cluster">
+  <button class="fab" id="fab-toggle" title="Werkzeuge" onclick="toggleFabCluster()">⚙</button>
+  <div id="fab-tools">
+    <a class="fab" id="stil-btn" href="stile.html" title="Bildstil">◈</a>
+    <button class="fab" id="img-btn" title="Alle Folien generieren" onclick="generateAllImages()">✦</button>
+    <button class="fab" id="regen-btn" title="Nur diese Folie" onclick="regenCurrentSlide()">◎</button>
+    <button class="fab" id="layout-btn" title="Design-Variante" onclick="togglePanel('layout')">⊞</button>
+    <button class="fab" id="font-btn" title="Schriftstil" onclick="togglePanel('font')">Aa</button>
+    <button class="fab" id="color-btn" title="Farbe" onclick="togglePanel('color')">◉</button>
+    <button class="fab" id="save-btn" title="Speichern" onclick="saveAllSettings()">⊡</button>
+    <button class="fab" id="deploy-btn" title="Deployment-ZIP erstellen" onclick="buildDeployment()">⬇</button>
+  </div>
+</div>
+
+<!-- Fixed Footer Bar -->
+<div id="slide-footer-bar">
+  <svg id="footer-logo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15m0-9.007c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/></svg>
+  <span id="footer-num"></span>
+  <span id="footer-clock"></span>
+</div>
+
+<!-- Toast notification -->
+<div id="img-toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
 <script>
-var slides = document.querySelectorAll('.slide');
-var cur = 0;
-document.getElementById('slide-last-num').textContent = slides.length;
-function show(n) {
-  slides[cur].classList.remove('active');
-  cur = Math.max(0, Math.min(n, slides.length - 1));
-  slides[cur].classList.add('active');
-  document.getElementById('progress').style.width = ((cur+1)/slides.length*100)+'%';
-}
-function changeSlide(d) { show(cur + d); }
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
-  if (e.key === 'ArrowLeft') changeSlide(-1);
+Reveal.initialize({
+  hash: true,
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  center: false,
+  slideNumber: false,
+  overview: true,
+  keyboard: true,
+  touch: true,
+  width: 1280,
+  height: 720,
+  margin: 0.10,
+  minScale: 0.2,
+  maxScale: 2.0,
+  plugins: []
 });
-show(0);
+
+// ── Footer bar ──
+const homeBtn    = document.getElementById('home-btn');
+const imgBtn     = document.getElementById('img-btn');
+const stilBtn    = document.getElementById('stil-btn');
+const footerBar  = document.getElementById('slide-footer-bar');
+const footerNum  = document.getElementById('footer-num');
+const footerClk  = document.getElementById('footer-clock');
+var totalSlides  = 0;
+
+(function() {
+  var sn = localStorage.getItem('fal_presentation_style_name');
+  if (sn) imgBtn.title = 'KI-Bilder generieren · Stil: ' + sn;
+})();
+
+function isDarkSlide(slide) {
+  if (!slide) return false;
+  return slide.classList.contains('chapter-slide') || slide.classList.contains('title-slide');
+}
+
+function updateFooter() {
+  const slide = Reveal.getCurrentSlide();
+  const idx   = Reveal.getState().indexh + 1;
+  const dark  = isDarkSlide(slide);
+  if (dark) {
+    footerBar.classList.add('bar-light');
+    homeBtn.classList.remove('light');
+    imgBtn.classList.remove('light');
+    stilBtn.classList.remove('light');
+  } else {
+    footerBar.classList.remove('bar-light');
+    homeBtn.classList.add('light');
+    imgBtn.classList.add('light');
+    stilBtn.classList.add('light');
+  }
+  if (totalSlides > 0) footerNum.textContent = idx + ' / ' + totalSlides;
+}
+
+function updateClock() {
+  var now = new Date();
+  footerClk.textContent =
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+Reveal.on('slidechanged', updateFooter);
+Reveal.on('ready', function() {
+  totalSlides = Reveal.getTotalSlides();
+  updateFooter();
+  setTimeout(_restoreCachedBackgrounds, 300);
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError: false
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// KI-BILDGENERIERUNG (fal.ai Flux)
+// ══════════════════════════════════════════════════════════════════
+var _LS_KEY = 'fal_presentation_style';
+
+// Visueller Rahmenstil: technische Blaupause / Blueprint-Ästhetik
+// Wird durch stile.html überschrieben falls der User einen Stil wählt.
+var _DEFAULT_STYLE = "precise engineering schematic illustration, fine clean lines on dark navy blue " +
+  "background, schematic diagram, technical drawing aesthetic, no text labels, no numbers, no letters, " +
+  "ultra wide 16:9 format, elegant minimal composition";
+var IMG_STYLE = localStorage.getItem(_LS_KEY + '_prompt') || _DEFAULT_STYLE;
+
+var _imgGenerating = false;
+var _SLIDE_CACHE_KEY = 'fal_slide_bg_v4';
+var _SLIDE_CACHE_TTL = 55 * 60 * 1000;
+
+function _slideCacheSet(idx, url) {
+  try {
+    var c = JSON.parse(localStorage.getItem(_SLIDE_CACHE_KEY) || '{}');
+    c['s' + idx] = { url: url, ts: Date.now() };
+    localStorage.setItem(_SLIDE_CACHE_KEY, JSON.stringify(c));
+  } catch(e) {}
+}
+function _slideCacheGet(idx) {
+  try {
+    var c = JSON.parse(localStorage.getItem(_SLIDE_CACHE_KEY) || '{}');
+    var e = c['s' + idx];
+    if (!e || Date.now() - e.ts > _SLIDE_CACHE_TTL) return null;
+    return e.url;
+  } catch(e) { return null; }
+}
+
+function _applyBackground(section, imageUrl) {
+  section.setAttribute('data-background-image', imageUrl);
+  section.setAttribute('data-background-opacity', '0.18');
+  section.setAttribute('data-background-size', 'cover');
+  section.setAttribute('data-background-position', 'center');
+  Reveal.sync();
+}
+
+function _restoreCachedBackgrounds() {
+  if (_currentLayout === 'rein') return;
+  var sects = [...document.querySelectorAll('.reveal .slides > section')];
+  var anyRestored = false;
+  sects.forEach(function(s, idx) {
+    var url = _slideCacheGet(idx);
+    if (url) { _applyBackground(s, url); anyRestored = true; }
+  });
+  if (anyRestored) setTimeout(function() { Reveal.sync(); }, 1200);
+}
+
+function _toast(msg, ms) {
+  var t = document.getElementById('img-toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(function() { t.style.opacity = '0'; }, ms || 2500);
+}
+
+async function _fetchImage(prompt) {
+  var key = window.FAL_KEY;
+  if (!key) return null;
+  try {
+    var res = await fetch('https://fal.run/fal-ai/flux/schnell', {
+      method: 'POST',
+      headers: { 'Authorization': 'Key ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: prompt + ', ' + IMG_STYLE + ', no text, no letters, no numbers',
+        image_size: 'landscape_16_9',
+        num_inference_steps: 4,
+        num_images: 1,
+        enable_safety_checker: true
+      })
+    });
+    var data = await res.json();
+    if (data.detail) { console.warn('fal.ai:', data.detail); return null; }
+    return (data.images && data.images[0]) ? data.images[0].url : null;
+  } catch(e) { console.warn('fal.ai Fehler:', e); return null; }
+}
+
+// ── Thematische Bildbeschreibung pro Folie (Blueprint-Stil) ──
+// Motiv passend zum Slide-Inhalt, dargestellt als technische Blaupause / Schemazeichnung.
+// Kein Foto, kein Text, keine Buchstaben im Bild.
+function _slideVisual(section) {
+  var h1 = (section.querySelector('h1') || {}).textContent || '';
+  var h2 = (section.querySelector('h2') || {}).textContent || '';
+  var h3 = (section.querySelector('h3') || {}).textContent || '';
+  var txt = (h1 + ' ' + h2 + ' ' + h3).toLowerCase();
+
+  if (/volksschu/.test(txt))
+    return "technical blueprint schematic of a child's school desk with geometric wooden building blocks arranged on top, cross-section view, fine white lines on dark navy blue";
+
+  if (/alphageomet|alphaproof|imo|olympiad/.test(txt))
+    return "blueprint schematic of an Olympic medal, technical cross-section diagram with geometric proof lines and triangle constructions radiating from center, gold accent lines on dark navy";
+
+  if (/grundlag|was ist ki|künstlich.*intel/.test(txt))
+    return "technical circuit diagram schematic of a neural network, nodes connected by precise fine lines, layered architecture diagram, white lines on dark navy blue";
+
+  if (/sek.*i|entdeckend/.test(txt))
+    return "architectural blueprint of a compass and geometric ruler tool, exploded-view technical diagram showing parts, construction lines forming triangles, white on dark navy";
+
+  if (/sek.*ii|analytisch|vektor/.test(txt))
+    return "technical schematic of a 3D coordinate system, blueprint-style with precise axes, vector arrows and geometric planes, fine white lines with gold accents on dark navy";
+
+  if (/matura/.test(txt))
+    return "blueprint technical diagram of a balance scale with precise measurement markings, schematic cross-section, fine lines on dark navy blue, symmetrical engineering drawing";
+
+  if (/hochschul|lehramt|universit/.test(txt))
+    return "precise technical cross-section schematic of a lecture hall, tiered seating diagram, structural lines, top-down plan view, white lines on dark navy";
+
+  if (/formal.*beweis|lean.*4|euklid/.test(txt))
+    return "technical schematic diagram of Euclid's geometric proof, compass and straightedge construction blueprint, intersecting circles and triangles, fine white lines on dark navy";
+
+  if (/herausforderung.*lehramts|studierende/.test(txt))
+    return "blueprint of a graduation mortarboard hat with technical measurement lines, schematic exploded view, precise architectural lines on dark navy blue";
+
+  if (/wichtigsten.*tool|tool.*überblick/.test(txt))
+    return "technical blueprint of a computer tablet and stylus, schematic diagram with annotation lines, cross-section engineering drawing, white on dark navy blue";
+
+  if (/geogebra.*chatgpt|zusammenspiel/.test(txt))
+    return "blueprint schematic of two interlocking gears, technical engineering diagram with fine annotation lines showing mechanical collaboration, white and gold on dark navy";
+
+  if (/didaktik|pädagog/.test(txt))
+    return "technical blueprint of a blackboard and chalk, schematic with geometric construction lines drawn on it, architectural diagram style, white lines on dark navy blue";
+
+  if (/drei.*modell/.test(txt))
+    return "blueprint technical diagram showing three diverging pathways or three parallel columns with connecting structures, architectural plan view, precise fine lines on dark navy";
+
+  if (/risik|halluzin/.test(txt))
+    return "technical blueprint schematic of a structure with a visible fracture or crack running through it, structural failure diagram, red accent lines on dark navy";
+
+  if (/ausblick|zukunft/.test(txt))
+    return "precise technical schematic of a telescope, cross-section diagram showing lenses and optics, pointing forward, fine white lines on dark navy blue";
+
+  if (/empfehlung|praxis/.test(txt))
+    return "blueprint schematic of a checklist clipboard with geometric checkmarks, technical line drawing, precise architectural style, white on dark navy";
+
+  if (/entscheidend.*frage|fazit|ob.*wie/.test(txt))
+    return "technical blueprint of a balance scale with two equal pans, symmetrical engineering schematic, fine measurement lines, white and gold on dark navy";
+
+  if (/danke|diskussion/.test(txt))
+    return "blueprint schematic of a circle divided into equal segments radiating from center, architectural diagram like a rose window, elegant symmetry, white lines on dark navy";
+
+  if (/quellen|literatur/.test(txt))
+    return "architectural blueprint of a bookshelf cross-section, technical schematic showing stacked volumes and spines, fine white lines on dark navy blue";
+
+  if (/überblick|inhalt/.test(txt))
+    return "top-down technical grid schematic with organized rectangular sections, structured plan view, fine white lines on dark navy";
+
+  if (/was bedeutet|frage/.test(txt))
+    return "technical blueprint of a question mark as a 3D extruded architectural form, schematic cross-section with measurement lines, white lines on dark navy";
+
+  // KI + Geometrie (Titelfolie und Fallback)
+  return "technical blueprint schematic combining a geometric compass construction and a neural network circuit diagram, fine white and gold lines on dark navy blue background";
+}
+
+window.generateAllImages = async function() {
+  if (_imgGenerating) return;
+  if (!window.FAL_KEY) { alert('Kein API-Key.\nBitte in „API Key.js" eintragen.'); return; }
+  IMG_STYLE = localStorage.getItem(_LS_KEY + '_prompt') || _DEFAULT_STYLE;
+  _imgGenerating = true;
+  imgBtn.classList.add('generating');
+
+  var allSects = [...document.querySelectorAll('.reveal .slides > section')];
+  var total = allSects.length;
+  var done  = 0;
+
+  _toast('Generiere ' + total + ' Bilder — Navigation weiter möglich ✓', 3500);
+
+  for (var i = 0; i < allSects.length; i++) {
+    var section = allSects[i];
+    done++;
+    imgBtn.textContent = done + '/' + total;
+
+    var visual = _slideVisual(section);
+    var url = await _fetchImage(visual);
+    if (url) {
+      _slideCacheSet(i, url);
+      _applyBackground(section, url);
+    }
+  }
+
+  _imgGenerating = false;
+  imgBtn.classList.remove('generating');
+  imgBtn.textContent = '↺';
+  imgBtn.title = 'Bilder neu generieren';
+  _toast('Fertig — alle Bilder generiert ✓', 3000);
+};
+
+// ── Per-Folie neu generieren ──
+window.regenCurrentSlide = async function() {
+  if (_imgGenerating) return;
+  if (!window.FAL_KEY) { alert('Kein API-Key.\nBitte in „API Key.js" eintragen.'); return; }
+  IMG_STYLE = localStorage.getItem(_LS_KEY + '_prompt') || _DEFAULT_STYLE;
+  var allSects = [...document.querySelectorAll('.reveal .slides > section')];
+  var section  = Reveal.getCurrentSlide();
+  var idx      = allSects.indexOf(section);
+  document.getElementById('regen-btn').textContent = '…';
+  var url = await _fetchImage(_slideVisual(section));
+  if (url) {
+    _slideCacheSet(idx, url);
+    _applyBackground(section, url);
+    _toast('Bild aktualisiert ✓', 2000);
+  }
+  document.getElementById('regen-btn').textContent = '◎';
+};
+
+// ══ LAYOUT-VARIANTEN ══
+// Drei Modi — Text sitzt immer fix, Bilder sind reine Dekoration.
+// rein:     Kein Bild, klarer Hintergrund
+// gradient: Bild von rechts einblendend (Gradient-Overlay schützt Text)
+// bg:       Bild blass im gesamten Hintergrund
+var _currentLayout = localStorage.getItem('pres_layout_v1') || 'rein';
+
+function _bgOpacityForLayout() {
+  return _currentLayout === 'gradient' ? '1' : '0.18';
+}
+
+window.setLayout = function(name) {
+  _currentLayout = name;
+  localStorage.setItem('pres_layout_v1', name);
+
+  var allSects = [...document.querySelectorAll('.reveal .slides > section')];
+  var slidesEl = document.querySelector('.reveal .slides');
+
+  // CSS-Klasse für mask-image auf .slide-background-image + .slides inline background
+  if (slidesEl) slidesEl.style.background = '';
+
+  if (name === 'rein') {
+    allSects.forEach(function(s) { s.removeAttribute('data-background-image'); });
+    Reveal.sync();
+  } else {
+    // gradient + bg: _applyBackground-Überschreibung kümmert sich um Canvas-Verarbeitung
+    allSects.forEach(function(s, idx) {
+      var url = _slideCacheGet(idx);
+      if (url) _applyBackground(s, url);
+    });
+    // Finales Sync nach async Canvas-Verarbeitung
+    setTimeout(function() { Reveal.sync(); }, 1200);
+  }
+
+  // Panel-Buttons markieren
+  ['rein','gradient','bg'].forEach(function(id) {
+    var el = document.getElementById('lopt-' + id);
+    if (el) el.classList.toggle('active', id === name);
+  });
+  closePanel('layout');
+};
+
+function _applyStoredLayout() {
+  setLayout(_currentLayout);
+}
+
+// ── Canvas-Gradient: weiß links → voll rechts (Pixelebene, kein CSS-Layer-Problem) ──
+function _processImageWithGradient(imageUrl) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      try {
+        var W = 1280, H = 720;
+        var canvas = document.createElement('canvas');
+        canvas.width = W; canvas.height = H;
+        var ctx = canvas.getContext('2d');
+        // Bild skaliert auf Canvas zeichnen
+        ctx.drawImage(img, 0, 0, W, H);
+        // Weißen Verlauf drüberlegen: links deckend → rechts transparent
+        var grad = ctx.createLinearGradient(0, 0, W, 0);
+        grad.addColorStop(0,    'rgba(255,255,255,1)');
+        grad.addColorStop(0.50, 'rgba(255,255,255,1)');
+        grad.addColorStop(0.65, 'rgba(255,255,255,0.80)');
+        grad.addColorStop(0.78, 'rgba(255,255,255,0.45)');
+        grad.addColorStop(0.90, 'rgba(255,255,255,0.12)');
+        grad.addColorStop(1,    'rgba(255,255,255,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+        resolve(canvas.toDataURL('image/jpeg', 0.93));
+      } catch(e) {
+        // CORS-Taint — Original-URL als Fallback
+        console.warn('Canvas CORS-Fehler, Fallback auf Original:', e);
+        resolve(imageUrl);
+      }
+    };
+    img.onerror = function() { resolve(imageUrl); };
+    img.src = imageUrl;
+  });
+}
+
+// _applyBackground berücksichtigt den aktuellen Layout-Modus
+var _origApplyBackground = _applyBackground;
+_applyBackground = async function(section, imageUrl) {
+  if (_currentLayout === 'rein') return;
+  var url = imageUrl;
+  if (_currentLayout === 'gradient') {
+    url = await _processImageWithGradient(imageUrl);
+  }
+  var opacity = _currentLayout === 'gradient' ? '1' : '0.18';
+  section.setAttribute('data-background-image', url);
+  section.setAttribute('data-background-opacity', opacity);
+  section.setAttribute('data-background-size', 'cover');
+  section.setAttribute('data-background-position', 'center');
+  Reveal.sync();
+};
+
+// ══ SCHRIFTSTILE ══
+var FONT_THEMES = [
+  {
+    id: 'system',
+    name: 'System',
+    pair: 'system-ui — neutral',
+    h: 'system-ui, -apple-system, sans-serif',
+    b: 'system-ui, -apple-system, sans-serif'
+  },
+  {
+    id: 'fraunces',
+    name: 'Fraunces',
+    pair: 'Fraunces + Inter — elegant Serif',
+    h: "'Fraunces', Georgia, serif",
+    b: "'Inter', system-ui, sans-serif"
+  },
+  {
+    id: 'space',
+    name: 'Space Grotesk',
+    pair: 'Space Grotesk — geometrisch',
+    h: "'Space Grotesk', system-ui, sans-serif",
+    b: "'Space Grotesk', system-ui, sans-serif"
+  },
+  {
+    id: 'syne',
+    name: 'Syne',
+    pair: 'Syne — Graphic Display',
+    h: "'Syne', system-ui, sans-serif",
+    b: "'Syne', system-ui, sans-serif"
+  },
+  {
+    id: 'bricolage',
+    name: 'Bricolage',
+    pair: 'Bricolage Grotesque — zeitgenössisch',
+    h: "'Bricolage Grotesque', system-ui, sans-serif",
+    b: "'Bricolage Grotesque', system-ui, sans-serif"
+  },
+  {
+    id: 'barlow',
+    name: 'Barlow Condensed',
+    pair: 'Barlow Condensed — Lettering-Style',
+    h: "'Barlow Condensed', system-ui, sans-serif",
+    b: "'Inter', system-ui, sans-serif"
+  },
+  {
+    id: 'caveat',
+    name: 'Caveat Brush',
+    pair: 'Caveat Brush — Hand Lettering',
+    h: "'Caveat Brush', cursive",
+    b: "'Inter', system-ui, sans-serif"
+  },
+  {
+    id: 'satisfy',
+    name: 'Satisfy',
+    pair: 'Satisfy — Brush Script',
+    h: "'Satisfy', cursive",
+    b: "'Inter', system-ui, sans-serif"
+  }
+];
+
+var _currentFontId = (function() {
+  var stored = localStorage.getItem('pres_font_v1') || 'system';
+  return FONT_THEMES.some(function(f){ return f.id === stored; }) ? stored : 'system';
+})();
+
+function _renderFontPanel() {
+  var list = document.getElementById('font-opts-list');
+  if (!list) return;
+  list.innerHTML = '';
+  FONT_THEMES.forEach(function(t) {
+    var div = document.createElement('button');
+    div.className = 'font-opt' + (t.id === _currentFontId ? ' active' : '');
+    div.id = 'fopt-' + t.id;
+    div.onclick = function() { applyFontTheme(t.id); };
+    div.innerHTML =
+      '<span class="fo-sample" style="font-family:' + t.h + ';font-weight:700">Ag</span>' +
+      '<span class="fo-info"><span class="fo-name">' + t.name + '</span>' +
+      '<span class="fo-pair" style="display:block">' + t.pair + '</span></span>';
+    list.appendChild(div);
+  });
+}
+
+window.applyFontTheme = function(id) {
+  var t = FONT_THEMES.find(function(f){ return f.id === id; });
+  if (!t) return;
+  _currentFontId = id;
+  localStorage.setItem('pres_font_v1', id);
+  var style = document.getElementById('font-theme-style') || document.createElement('style');
+  style.id = 'font-theme-style';
+  style.textContent =
+    '.reveal h1, .reveal h2 { font-family: ' + t.h + ' !important; }' +
+    '.reveal, .reveal p, .reveal li, .reveal h3 { font-family: ' + t.b + ' !important; }';
+  document.head.appendChild(style);
+  // Update active state
+  document.querySelectorAll('.font-opt').forEach(function(el) {
+    el.classList.toggle('active', el.id === 'fopt-' + id);
+  });
+  closePanel('font');
+  _toast(t.name + ' aktiviert', 1800);
+};
+
+// ══ HINTERGRUNDFARBE ══
+var _COLORS_KEY = 'pres_colors_v1';
+var _COLOR_PRESETS = [
+  '#ffffff','#f8f7f4','#f0f4fd','#e8f5ee','#fdf6e3',
+  '#0c0f18','#163374','#1a3a1a','#2d2d2d','#f5e6d3'
+];
+
+function _renderColorPanel() {
+  var box = document.getElementById('color-swatches');
+  if (!box) return;
+  box.innerHTML = '';
+  _COLOR_PRESETS.forEach(function(c) {
+    var s = document.createElement('div');
+    s.className = 'color-swatch';
+    s.style.background = c;
+    s.style.border = c === '#ffffff' ? '2px solid #ddd' : '2px solid transparent';
+    s.title = c;
+    s.onclick = function() { applySlideColor(c); };
+    box.appendChild(s);
+  });
+}
+
+window.applySlideColor = function(color) {
+  var section = Reveal.getCurrentSlide();
+  var allSects = [...document.querySelectorAll('.reveal .slides > section')];
+  var idx = allSects.indexOf(section);
+  section.setAttribute('data-background-color', color);
+  try {
+    var c = JSON.parse(localStorage.getItem(_COLORS_KEY) || '{}');
+    c['s' + idx] = color;
+    localStorage.setItem(_COLORS_KEY, JSON.stringify(c));
+  } catch(e) {}
+  Reveal.sync();
+};
+
+window.clearSlideColor = function() {
+  var section = Reveal.getCurrentSlide();
+  var allSects = [...document.querySelectorAll('.reveal .slides > section')];
+  var idx = allSects.indexOf(section);
+  section.removeAttribute('data-background-color');
+  try {
+    var c = JSON.parse(localStorage.getItem(_COLORS_KEY) || '{}');
+    delete c['s' + idx];
+    localStorage.setItem(_COLORS_KEY, JSON.stringify(c));
+  } catch(e) {}
+  Reveal.sync();
+};
+
+function _restoreSlideColors() {
+  try {
+    var c = JSON.parse(localStorage.getItem(_COLORS_KEY) || '{}');
+    var sects = [...document.querySelectorAll('.reveal .slides > section')];
+    Object.keys(c).forEach(function(k) {
+      var idx = parseInt(k.slice(1));
+      var color = c[k];
+      if (sects[idx]) {
+        sects[idx].setAttribute('data-background-color', color);
+      }
+    });
+    if (Object.keys(c).length) Reveal.sync();
+  } catch(e) {}
+}
+
+// ══ FAB TOGGLE ══
+var _fabOpen = false;
+window.toggleFabCluster = function() {
+  _fabOpen = !_fabOpen;
+  document.getElementById('fab-cluster').classList.toggle('open', _fabOpen);
+  document.getElementById('fab-toggle').textContent = _fabOpen ? '✕' : '⚙';
+  if (!_fabOpen && _openPanel) closePanel(_openPanel);
+};
+
+// ══ PANELS ══
+var _openPanel = null;
+window.togglePanel = function(name) {
+  var el = document.getElementById('panel-' + name);
+  if (!el) return;
+  if (_openPanel && _openPanel !== name) {
+    var prev = document.getElementById('panel-' + _openPanel);
+    if (prev) prev.classList.remove('open');
+  }
+  el.classList.toggle('open');
+  _openPanel = el.classList.contains('open') ? name : null;
+};
+window.closePanel = function(name) {
+  var el = document.getElementById('panel-' + name);
+  if (el) el.classList.remove('open');
+  if (_openPanel === name) _openPanel = null;
+};
+// Close panels + fab on outside click
+document.addEventListener('click', function(e) {
+  var inFab   = e.target.closest('#fab-cluster');
+  var inPanel = e.target.closest('.ui-panel');
+  var inHome  = e.target.closest('.home-btn');
+  if (_openPanel && !inPanel && !inFab && !inHome) closePanel(_openPanel);
+  if (_fabOpen && !inFab && !inPanel) {
+    _fabOpen = false;
+    document.getElementById('fab-cluster').classList.remove('open');
+    document.getElementById('fab-toggle').textContent = '⚙';
+  }
+});
+
+// ══ SPEICHERN ══
+window.saveAllSettings = function() {
+  var settings = {
+    layout: _currentLayout,
+    font: _currentFontId,
+    styleId: localStorage.getItem('fal_presentation_style_id') || '',
+    stylePrompt: localStorage.getItem('fal_presentation_style_prompt') || '',
+    slideColors: JSON.parse(localStorage.getItem(_COLORS_KEY) || '{}'),
+    slideImages: JSON.parse(localStorage.getItem(_SLIDE_CACHE_KEY) || '{}'),
+    savedAt: new Date().toISOString()
+  };
+  // Download als JSON
+  var blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'praesentation-einstellungen.json';
+  a.click();
+  _toast('Einstellungen gespeichert ✓', 2500);
+};
+
+// ══ INIT ══
+Reveal.on('ready', function() {
+  _renderFontPanel();
+  _renderColorPanel();
+  setTimeout(function() {
+    _applyStoredLayout();
+    _restoreSlideColors();
+    applyFontTheme(_currentFontId);
+  }, 400);
+});
+
+// ══ DEPLOYMENT-EXPORT ══
+// Erstellt ein ZIP mit statischer Präsentation (Bilder eingebettet, kein FAB),
+// standalone.html, quellen.html und lokalen Schriften.
+window.buildDeployment = async function() {
+  var deployBtn = document.getElementById('deploy-btn');
+  deployBtn.textContent = '…';
+
+  // JSZip dynamisch laden
+  if (!window.JSZip) {
+    await new Promise(function(resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  var zip = new JSZip();
+  _toast('Deployment wird erstellt …', 10000);
+
+  // ── 1. Statische Präsentation ──
+  // Aktuellen DOM klonen, Werkzeuge entfernen
+  var clone = document.documentElement.cloneNode(true);
+  ['#fab-cluster', '#panel-layout', '#panel-font', '#panel-color', '#img-toast'].forEach(function(sel) {
+    var el = clone.querySelector(sel); if (el) el.remove();
+  });
+  // API Key Script entfernen
+  clone.querySelectorAll('script').forEach(function(s) {
+    if (s.src && s.src.includes('API Key')) s.remove();
+  });
+  // Aktuelle Font-Theme-Styles als statisch einbetten (bereits im DOM)
+  zip.file('presentation/index.html', '<!DOCTYPE html>\n' + clone.outerHTML);
+
+  // ── 2. Schriften ──
+  var fontFiles = [
+    'fonts.css',
+    'barlow-condensed-600.woff2','barlow-condensed-700.woff2','barlow-condensed-800.woff2',
+    'bricolage-grotesque.woff2','caveat-brush.woff2','fraunces-normal.woff2','fraunces-italic.woff2',
+    'inter.woff2','satisfy.woff2','space-grotesk.woff2','syne.woff2',
+    'SpaceGrotesk-400.woff2','SpaceGrotesk-600.woff2','SpaceGrotesk-700.woff2',
+    'PlayfairDisplay-400.woff2','PlayfairDisplay-700.woff2','PlayfairDisplay-900.woff2'
+  ];
+  for (var ff of fontFiles) {
+    try {
+      var r = await fetch('fonts/' + ff);
+      if (r.ok) zip.file('presentation/fonts/' + ff, await r.arrayBuffer());
+    } catch(e) {}
+  }
+
+  // ── 3. Artikel und Quellen ──
+  for (var pf of ['standalone.html', 'quellen.html']) {
+    try {
+      var r2 = await fetch('../' + pf);
+      if (r2.ok) zip.file(pf, await r2.text());
+    } catch(e) { console.warn('Nicht ladbar:', pf, e); }
+  }
+
+  // ── 4. Landingpage ──
+  var meta = document.title || 'Forschungsartikel';
+  zip.file('index.html', '<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="UTF-8"/>\n' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1"/>\n' +
+    '<title>' + meta + '</title>\n' +
+    '<style>body{font-family:system-ui,sans-serif;max-width:680px;margin:4rem auto;padding:0 2rem;color:#222}' +
+    'h1{font-size:1.4rem;margin-bottom:.5rem}p{color:#666;margin-bottom:2rem}' +
+    'nav{display:flex;flex-direction:column;gap:.8rem}' +
+    'a{display:inline-block;padding:.7rem 1.2rem;background:#163374;color:#fff;text-decoration:none;border-radius:6px;width:fit-content}' +
+    'a:hover{background:#0f2456}</style>\n</head>\n<body>\n' +
+    '<h1>' + meta + '</h1>\n<p>Wähle einen Bereich:</p>\n<nav>\n' +
+    '<a href="standalone.html">📄 Artikel lesen</a>\n' +
+    '<a href="quellen.html">📚 Quelldatenbank</a>\n' +
+    '<a href="presentation/index.html">▶ Präsentation</a>\n' +
+    '</nav>\n</body>\n</html>');
+
+  // ── 5. ZIP herunterladen ──
+  var blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'deployment.zip';
+  a.click();
+  deployBtn.textContent = '⬇';
+  _toast('deployment.zip heruntergeladen ✓', 3000);
+};
+
+// ── Stil-Wechsel aus stile.html automatisch erkennen und Bilder neu generieren ──
+window.addEventListener('storage', function(e) {
+  if (e.key === _LS_KEY + '_prompt' && e.newValue && e.newValue !== e.oldValue) {
+    IMG_STYLE = e.newValue;
+    var name = localStorage.getItem(_LS_KEY + '_name') || 'Neuer Stil';
+    _toast('Stil gewechselt: ' + name + ' — generiere Bilder …', 3500);
+    setTimeout(generateAllImages, 600);
+  }
+});
 </script>
 </body>
 </html>

@@ -1,0 +1,16 @@
+@font-face { font-family:'Space Grotesk'; font-weight:400; font-display:swap; src:url('SpaceGrotesk-400.woff2') format('woff2'); }
+@font-face { font-family:'Space Grotesk'; font-weight:600; font-display:swap; src:url('SpaceGrotesk-600.woff2') format('woff2'); }
+@font-face { font-family:'Space Grotesk'; font-weight:700; font-display:swap; src:url('SpaceGrotesk-700.woff2') format('woff2'); }
+@font-face { font-family:'Playfair Display'; font-weight:400; font-display:swap; src:url('PlayfairDisplay-400.woff2') format('woff2'); }
+@font-face { font-family:'Playfair Display'; font-weight:700; font-display:swap; src:url('PlayfairDisplay-700.woff2') format('woff2'); }
+@font-face { font-family:'Playfair Display'; font-weight:900; font-display:swap; src:url('PlayfairDisplay-900.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:normal; font-weight:400 900; font-display:swap; src:url('fraunces-normal.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:italic; font-weight:400 900; font-display:swap; src:url('fraunces-italic.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; font-weight:400 700; font-display:swap; src:url('inter.woff2') format('woff2'); }
+@font-face { font-family:'Barlow Condensed'; font-weight:600; font-display:swap; src:url('barlow-condensed-600.woff2') format('woff2'); }
+@font-face { font-family:'Barlow Condensed'; font-weight:700; font-display:swap; src:url('barlow-condensed-700.woff2') format('woff2'); }
+@font-face { font-family:'Barlow Condensed'; font-weight:800; font-display:swap; src:url('barlow-condensed-800.woff2') format('woff2'); }
+@font-face { font-family:'Bricolage Grotesque'; font-weight:400 800; font-display:swap; src:url('bricolage-grotesque.woff2') format('woff2'); }
+@font-face { font-family:'Syne'; font-weight:400 800; font-display:swap; src:url('syne.woff2') format('woff2'); }
+@font-face { font-family:'Caveat Brush'; font-weight:400; font-display:swap; src:url('caveat-brush.woff2') format('woff2'); }
+@font-face { font-family:'Satisfy'; font-weight:400; font-display:swap; src:url('satisfy.woff2') format('woff2'); }
