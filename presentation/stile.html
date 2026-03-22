@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bildstil wählen — Präsentation</title>
+<script src="../API Key.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:    #0b0c0f;
+  --card:  #13151a;
+  --border:#222530;
+  --gold:  #c9a84c;
+  --blue:  #163374;
+  --text:  #e8e8e6;
+  --muted: #666;
+  --sans:  'Helvetica Neue',Arial,sans-serif;
+  --serif: Georgia,serif;
+}
+html{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px}
+body{max-width:1320px;margin:0 auto;padding:2.5rem 2rem 8rem}
+
+/* ── Header ── */
+header{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+header h1{font-family:var(--serif);font-size:1.8rem;font-weight:400;letter-spacing:-.01em;color:#fff}
+header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
+.hdr-right{text-align:right}
+.hdr-right a{color:var(--gold);font-size:.8rem;text-decoration:none;border-bottom:1px solid rgba(201,168,76,.35);padding-bottom:.1rem}
+.hdr-right a:hover{border-bottom-color:var(--gold)}
+
+/* ── Grid ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.4rem}
+
+/* ── Style Card ── */
+.style-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:border-color .2s;
+  position:relative;
+}
+.style-card:hover{border-color:#3a3d50}
+.style-card.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+
+/* Preview area */
+.preview{
+  position:relative;
+  width:100%;
+  padding-top:56.25%; /* 16:9 */
+  background:#0a0b0d;
+  overflow:hidden;
+}
+.preview img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+.preview img.loaded{opacity:1}
+.preview-placeholder{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:.5rem;
+  color:var(--muted);font-size:.72rem;
+  border-bottom:1px solid var(--border);
+}
+.preview-placeholder .num{
+  font-family:var(--serif);font-size:3rem;font-weight:400;
+  color:#1e2030;line-height:1;
+}
+.preview.generating .preview-placeholder{
+  color:var(--gold);
+}
+.preview.generating .preview-placeholder::after{
+  content:'Generiert …';font-size:.7rem;color:var(--gold);letter-spacing:.06em;
+}
+
+/* Card body */
+.card-body{padding:1rem 1.1rem 1.1rem;flex:1;display:flex;flex-direction:column;gap:.7rem}
+.card-num{font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--muted)}
+.card-title{font-family:var(--serif);font-size:1.15rem;font-weight:400;color:#fff;line-height:1.25}
+.card-desc{font-size:.75rem;color:#999;line-height:1.65}
+.card-prompt{
+  font-size:.64rem;color:var(--muted);line-height:1.5;
+  background:#0d0e12;border-radius:4px;padding:.5rem .7rem;
+  border:1px solid #1c1e26;font-family:'Courier New',monospace;
+  display:none;
+}
+.card-prompt.visible{display:block}
+.card-actions{display:flex;gap:.5rem;margin-top:auto}
+.btn{
+  border:none;border-radius:5px;padding:.4rem .9rem;
+  font-size:.72rem;font-family:var(--sans);font-weight:600;
+  cursor:pointer;transition:opacity .15s,background .15s;
+  white-space:nowrap;
+}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-preview{background:#1e2130;color:#aaa}
+.btn-preview:hover:not(:disabled){background:#252840;color:#ddd}
+.btn-use{background:var(--blue);color:#fff}
+.btn-use:hover:not(:disabled){background:#1e4099}
+.btn-use.active{background:var(--gold);color:#0b0c0f}
+.btn-prompt{background:none;color:var(--muted);border:1px solid #222;font-weight:400;font-size:.66rem}
+.btn-prompt:hover{color:#aaa;border-color:#444}
+
+/* ── Fixed bottom bar ── */
+#bottom-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(11,12,15,.96);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  padding:.85rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;z-index:100;
+}
+#bottom-bar .sel-info{font-size:.78rem;color:var(--muted)}
+#bottom-bar .sel-name{color:var(--gold);font-weight:600;margin-left:.4rem}
+#bottom-bar .sel-none{color:#444;font-style:italic}
+.btn-go{
+  background:var(--gold);color:#0b0c0f;border:none;
+  border-radius:6px;padding:.5rem 1.4rem;
+  font-size:.82rem;font-weight:700;font-family:var(--sans);
+  cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:.5rem;
+  transition:opacity .15s;
+}
+.btn-go:hover{opacity:.88}
+.btn-go:disabled{opacity:.35;cursor:default}
+
+/* ── No-key warning ── */
+#no-key-warn{
+  background:#1a0a0a;border:1px solid #4a1a1a;border-radius:6px;
+  padding:.6rem 1rem;font-size:.75rem;color:#cc7777;
+  margin-bottom:1.5rem;display:none;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Bildstil wählen</h1>
+    <p>10 kuratorierte Stilwelten · fal.ai Flux · Vorschaubilder auf Klick</p>
+  </div>
+  <div class="hdr-right">
+    <a href="index.html">← Zur Präsentation</a>
+  </div>
+</header>
+
+<div id="no-key-warn">Kein API-Key gefunden — bitte <code>API Key.js</code> im Projektstamm befüllen.</div>
+
+<div class="grid" id="style-grid"></div>
+
+<div id="bottom-bar">
+  <div class="sel-info">
+    Ausgewählter Stil:
+    <span id="sel-name" class="sel-none">— noch keiner gewählt —</span>
+  </div>
+  <a class="btn-go" id="btn-go" href="index.html">Zur Präsentation →</a>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CACHE-SYSTEM
+// URLs werden in localStorage gespeichert (überleben Reload).
+// fal.ai-URLs laufen nach ~60 Min ab → Cache-Eintrag mit Timestamp.
+// ══════════════════════════════════════════════════════════════
+var CACHE_KEY = 'fal_preview_cache_v2';   // v2: breaks old bad cache
+var CACHE_TTL = 55 * 60 * 1000;           // 55 Minuten
+
+function cacheSet(id, url) {
+  try {
+    var c = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+    c[id] = { url: url, ts: Date.now() };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(c));
+  } catch(e) {}
+}
+
+function cacheGet(id) {
+  try {
+    var c = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+    var e = c[id];
+    if (!e) return null;
+    if (Date.now() - e.ts > CACHE_TTL) return null;  // abgelaufen
+    return e.url;
+  } catch(e) { return null; }
+}
+
+// Prüft ob eine URL noch lädt (img-Tag, kein fetch-CORS-Problem)
+function probeImage(url, onOk, onFail) {
+  var t = new Image();
+  t.onload  = onOk;
+  t.onerror = onFail;
+  t.src = url;
+}
+
+// Zeigt Bild sicher an: onload IMMER vor src setzen
+function setImg(imgEl, url, onDone) {
+  imgEl.classList.remove('loaded');
+  imgEl.onerror = function() { if (onDone) onDone(false); };
+  imgEl.onload  = function() { imgEl.classList.add('loaded'); if (onDone) onDone(true); };
+  imgEl.src = url;
+}
+
+// ══════════════════════════════════════════════════════════════
+// DIE 10 STILWELTEN
+// ══════════════════════════════════════════════════════════════
+var STYLES = [
+  {
+    id: 'bauhaus-aquarell',
+    num: '01',
+    name: 'Bauhaus Aquarell',
+    desc: 'Elementare Geometrie in zartem Aquarellwash. Primärformen, Rasterstruktur, Weißraum. Sachlich-modern mit handgemachter Wärme.',
+    prompt: 'bauhaus style soft watercolor wash, primary geometric circles triangles rectangles in powder blue ochre crimson, translucent overlapping layers, white paper texture, professional graphic design, ultra wide 16:9 presentation background, elegant minimal'
+  },
+  {
+    id: 'typo-manifest',
+    num: '02',
+    name: 'Typografisches Manifest',
+    desc: 'Riesige Buchstabenformen als architektonisches Element. Aquarellwash hinter mächtiger Typografie. Editorial-Poster 2026.',
+    prompt: 'giant oversized serif letterforms as architectural composition, soft watercolor wash in muted blue-grey behind large typography, editorial poster design, white and deep navy, typographic monumentalism, ultra wide 16:9, minimal refined'
+  },
+  {
+    id: 'architektur-skizze',
+    num: '03',
+    name: 'Architektonische Skizze',
+    desc: 'Handgezeichnete Gebäudefassaden in Tinte, übergossen mit zartem Aquarell. Perspektivlinien, Architekturzeichnung als Kunst.',
+    prompt: 'architectural hand sketch ink drawing with delicate watercolor wash, building facades perspective lines cross-sections, blue ink and terracotta watercolor, technical artistic hybrid, ultra wide 16:9 presentation background, artistic professional'
+  },
+  {
+    id: 'nebel-form',
+    num: '04',
+    name: 'Nebel & Form',
+    desc: 'Geometrische Formen tauchen aus atmosphärischem Aquarellnebel auf. Tief, meditativ, poetisch. Blau-Silber-Palette.',
+    prompt: 'misty atmospheric deep watercolor, abstract geometric forms emerging from fog and mist, deep cobalt blue silver white, layered translucent washes, poetic abstract art, ultra wide 16:9, meditative elegant'
+  },
+  {
+    id: 'wiener-plakatkunst',
+    num: '05',
+    name: 'Wiener Plakatkunst',
+    desc: 'Jugendstil-Elemente neu interpretiert. Organische Linien, Gold auf Nachtblau, ornamentale Ränder. Wien 1900 trifft 2026.',
+    prompt: 'Vienna Secession art nouveau style reinterpretation, botanical organic curving lines in gold on deep navy watercolor background, ornamental geometric borders, Gustav Klimt inspired, poster art, ultra wide 16:9, luxurious refined'
+  },
+  {
+    id: 'schweizer-raster',
+    num: '06',
+    name: 'Schweizer Raster',
+    desc: 'Internationaler typografischer Stil. Präzises Grid, Aquarellakzente in Blau und Siena. Sachlich, klar, zeitlos modern.',
+    prompt: 'Swiss International Style graphic design, precise grid layout watercolor accent blocks in powder blue and burnt sienna, clean typographic hierarchy, Helvetica-era poster aesthetic with modern watercolor texture, ultra wide 16:9, professional minimal'
+  },
+  {
+    id: 'urban-blueprint',
+    num: '07',
+    name: 'Urban Blueprint',
+    desc: 'Technische Blaupause trifft Aquarellkunst. Grundrisse und Schnittzeichnungen mit zartem Farbwash. Architektur als Poesie.',
+    prompt: 'architectural blueprint technical drawing watercolor hybrid, floor plans cross-sections structural drawings with translucent watercolor washes in teal and warm cream, technical artistic fusion, ultra wide 16:9, sophisticated professional'
+  },
+  {
+    id: 'konstruktiv',
+    num: '08',
+    name: 'Konstruktivistisch',
+    desc: 'Russischer Konstruktivismus als Aquarell. Diagonale Kompositionen, kraftvolle Farben in Wasserfarbe gebrochen. Energie und Präzision.',
+    prompt: 'Russian constructivism poster style watercolor version, bold diagonal composition geometric shapes in deep crimson midnight blue warm white, powerful graphic energy softened through watercolor technique, ultra wide 16:9 presentation background'
+  },
+  {
+    id: 'alpinlicht',
+    num: '09',
+    name: 'Alpines Morgenlicht',
+    desc: 'Bergsilhouetten im frühen Morgenlicht. Zarter Aquarellhimmel, Nebel in den Tälern. Österreichisch, stimmungsvoll, still.',
+    prompt: 'alpine mountain landscape early morning watercolor painting, soft mountain silhouettes in morning mist, pale blue white stone palette, Austrian landscape, atmospheric watercolor wash sky, serene minimalist poster design, ultra wide 16:9'
+  },
+  {
+    id: 'meridian',
+    num: '10',
+    name: 'Meridian Abstrakt',
+    desc: 'Kartografische Linien als abstraktes Kunstwerk. Meridiane und Parallelen in Aquarellwash. Gold auf Mitternachtsblau. Weltgewandt.',
+    prompt: 'abstract cartographic lines watercolor art, geographic meridians parallels coordinate grid in deep midnight navy with translucent watercolor washes, subtle gold accents, map-inspired artistic background, ultra wide 16:9, sophisticated elegant'
+  },
+  {
+    id: 'papier-collage',
+    num: '11',
+    name: 'Papier & Stoff',
+    desc: 'Handgemachte Collage aus Papier, Filz, Wolle und Stoff. Texturen, Schichten, natürliche Materialien — warm, haptisch, kreativ.',
+    prompt: 'handmade collage art, torn paper layers, felt pieces, wool threads, fabric swatches and textile textures, overlapping material compositions, warm earthy tones cream beige ochre rust, tactile handcrafted aesthetic, flat lay photography, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'klemmbausteine',
+    num: '12',
+    name: 'Klemmbausteine',
+    desc: 'Spielerische Welt aus bunten Klemmbausteinen. Figuren, Konstruktionen, Bausteine — kreativ, farbenfroh, verspielt und präzise zugleich.',
+    prompt: 'colorful interlocking plastic building bricks construction, lego-style brick arrangement close-up, vibrant primary colors red yellow blue green, playful geometric modular composition, macro photography with shallow depth of field, bright cheerful creative, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'naturmaterialien',
+    num: '13',
+    name: 'Naturmaterialien',
+    desc: 'Arrangements aus Blättern, Zweigen, Nüssen und Blumen. Organisch, geerdet, lebendig. Die Natur als Gestaltungsmaterial.',
+    prompt: 'flat lay arrangement of natural materials, autumn leaves twigs acorns pine cones dried flowers petals, organic composition on neutral linen background, earthy greens browns warm amber and ivory, botanical still life, soft natural light, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'technische-elemente',
+    num: '14',
+    name: 'Technische Elemente',
+    desc: 'Zahnräder, Profile, Träger, Werkzeuge und Stähle. Industrielle Präzision trifft ästhetische Komposition. Mechanisch, klar, kraftvoll.',
+    prompt: 'close-up arrangement of industrial technical elements, metal gears cogs steel beams I-profiles machine parts tools wrenches, dark industrial metal surface, dramatic side lighting, high contrast metallic textures, precise mechanical engineering aesthetic, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'holzschnitt',
+    num: '15',
+    name: 'Moderner Holzschnitt',
+    desc: 'Schematische Holzschnitt-Grafik mit Schulmotiven. Tafel, Lehrer, Gruppenarbeit, Lernende — kraftvolle Linien, reduzierte Formen, expressiv.',
+    prompt: 'modern woodcut print graphic art, schematic bold black ink carved lines on cream paper texture, school scenes: classroom blackboard teacher students group work learning desks, high contrast reduction to essential shapes, expressionist woodblock print aesthetic, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'pop-art',
+    num: '16',
+    name: 'Pop Art Siebdruck',
+    desc: 'Knallige Siebdruckfarben, Rasterpunkte, starke Konturen. Andy Warhol trifft Bildung — plakativ, laut, unübersehbar.',
+    prompt: 'pop art silkscreen print style, bold halftone dot patterns, vivid flat colors cyan magenta yellow black, strong graphic outlines, comic book inspired, Ben-Day dots, Roy Lichtenstein Andy Warhol aesthetic, school and education motifs, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'bleistiftzeichnung',
+    num: '17',
+    name: 'Bleistiftzeichnung',
+    desc: 'Ultrarealistisch gezeichnete Pflanzen und Tiere in Schwarz-Weiß. Feine Bleistiftlinien, Schraffuren, botanische Präzision wie in einem Naturkundebuch.',
+    prompt: 'ultra realistic pencil sketch drawing, fine graphite lines and cross-hatching, detailed botanical illustration of plants leaves flowers and animals insects birds, white paper background, scientific naturalist drawing style, black and white, no shading in color, extreme detail and precision, ultra wide 16:9, no text no letters'
+  },
+  {
+    id: 'sticker',
+    num: '18',
+    name: 'Realistische Sticker',
+    desc: 'Fotorealistische Die-Cut-Sticker mit Schatteneffekt und Glanzlaminat — Popkultur-Objekte, Emojis, Alltagsdinge.',
+    prompt: 'collection of photorealistic die-cut stickers scattered on white surface, each sticker has clean white border and soft drop shadow giving 3D peel-off effect, glossy laminate finish with slight specular highlight, vibrant pop culture style objects: golden geometric compass tool, colorful triangle set square ruler, glowing neon brain with circuit lines, rainbow, gold star, lightning bolt, pink robot head, retro cassette tape, shooting star, 3D wireframe cube, astronaut helmet, smiley emoji, avocado, pink flamingo, vivid saturated pop art colors, bold outlines, ultra wide 16:9, no text no letters'
+  }
+];
+
+var LS_KEY = 'fal_presentation_style';
+var selectedId = localStorage.getItem(LS_KEY + '_id') || null;
+
+// ── Render cards ──
+function renderGrid() {
+  var grid = document.getElementById('style-grid');
+  grid.innerHTML = '';
+  STYLES.forEach(function(s) {
+    var card = document.createElement('div');
+    card.className = 'style-card' + (s.id === selectedId ? ' selected' : '');
+    card.id = 'card-' + s.id;
+    card.innerHTML =
+      '<div class="preview" id="prev-' + s.id + '">' +
+        '<div class="preview-placeholder"><div class="num">' + s.num + '</div><span>Vorschau auf Klick</span></div>' +
+        '<img id="img-' + s.id + '" alt="' + s.name + '"/>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-num">' + s.num + ' / ' + STYLES.length + '</div>' +
+        '<div class="card-title">' + s.name + '</div>' +
+        '<div class="card-desc">' + s.desc + '</div>' +
+        '<pre class="card-prompt" id="prompt-' + s.id + '">' + s.prompt + '</pre>' +
+        '<div class="card-actions">' +
+          '<button class="btn btn-preview" id="btn-prev-' + s.id + '" onclick="generatePreview(\'' + s.id + '\')">▶ Vorschau</button>' +
+          '<button class="btn btn-use' + (s.id === selectedId ? ' active' : '') + '" id="btn-use-' + s.id + '" onclick="selectStyle(\'' + s.id + '\')">Verwenden</button>' +
+          '<button class="btn btn-prompt" onclick="togglePrompt(\'' + s.id + '\')">Prompt</button>' +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+  updateBottomBar();
+}
+
+// ── Generate one preview image ──
+async function generatePreview(id) {
+  var s = STYLES.find(function(x){return x.id===id});
+  if (!s) return;
+  var prevEl  = document.getElementById('prev-' + id);
+  var imgEl   = document.getElementById('img-' + id);
+  var btnEl   = document.getElementById('btn-prev-' + id);
+
+  prevEl.classList.add('generating');
+  btnEl.disabled = true;
+  btnEl.textContent = '…';
+
+  var url = await falFetch(s.prompt);
+
+  prevEl.classList.remove('generating');
+  btnEl.disabled = false;
+  btnEl.textContent = '↺ Neu';
+
+  if (url) {
+    cacheSet(id, url);
+    setImg(imgEl, url);
+  }
+}
+
+// ── Select style ──
+function selectStyle(id) {
+  var s = STYLES.find(function(x){return x.id===id});
+  if (!s) return;
+  selectedId = id;
+  localStorage.setItem(LS_KEY + '_id', id);
+  localStorage.setItem(LS_KEY + '_prompt', s.prompt);
+  localStorage.setItem(LS_KEY + '_name', s.name);
+  // Update UI
+  document.querySelectorAll('.style-card').forEach(function(c){ c.classList.remove('selected'); });
+  document.querySelectorAll('.btn-use').forEach(function(b){ b.classList.remove('active'); b.textContent = 'Verwenden'; });
+  document.getElementById('card-' + id).classList.add('selected');
+  document.getElementById('btn-use-' + id).classList.add('active');
+  document.getElementById('btn-use-' + id).textContent = '✓ Ausgewählt';
+  updateBottomBar();
+}
+
+// ── Toggle prompt display ──
+function togglePrompt(id) {
+  var el = document.getElementById('prompt-' + id);
+  el.classList.toggle('visible');
+}
+
+// ── Bottom bar ──
+function updateBottomBar() {
+  var nameEl = document.getElementById('sel-name');
+  if (selectedId) {
+    var s = STYLES.find(function(x){return x.id===selectedId});
+    nameEl.textContent = s ? s.name : selectedId;
+    nameEl.className = '';
+  } else {
+    nameEl.textContent = '— noch keiner gewählt —';
+    nameEl.className = 'sel-none';
+  }
+}
+
+// ── fal.ai API call ──
+async function falFetch(prompt) {
+  var key = window.FAL_KEY;
+  if (!key) { alert('Kein API-Key — bitte API Key.js befüllen.'); return null; }
+  try {
+    var res = await fetch('https://fal.run/fal-ai/flux/schnell', {
+      method: 'POST',
+      headers: { 'Authorization': 'Key ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: prompt,
+        image_size: 'landscape_16_9',
+        num_inference_steps: 4,
+        num_images: 1,
+        enable_safety_checker: true
+      })
+    });
+    var data = await res.json();
+    return (data.images && data.images[0]) ? data.images[0].url : null;
+  } catch(e) {
+    console.warn('fal.ai error:', e);
+    return null;
+  }
+}
+
+// ── Restore cached previews from localStorage (mit URL-Probe) ──
+function restorePreviews() {
+  STYLES.forEach(function(s) {
+    var url = cacheGet(s.id);
+    if (!url) return;
+    var imgEl = document.getElementById('img-' + s.id);
+    var btnEl = document.getElementById('btn-prev-' + s.id);
+    var phEl  = document.querySelector('#prev-' + s.id + ' .preview-placeholder span');
+    if (!imgEl) return;
+    // URL noch gültig?
+    probeImage(url,
+      function() {                          // ok → anzeigen
+        setImg(imgEl, url);
+        if (btnEl) btnEl.textContent = '↺ Neu';
+      },
+      function() {                          // abgelaufen → Hinweis
+        if (phEl) phEl.textContent = 'URL abgelaufen — bitte neu generieren';
+        if (btnEl) btnEl.textContent = '↺ Neu';
+      }
+    );
+  });
+}
+
+// ── Init ──
+if (!window.FAL_KEY) {
+  document.getElementById('no-key-warn').style.display = 'block';
+}
+renderGrid();
+restorePreviews();
+</script>
+</body>
+</html>
