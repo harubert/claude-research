@@ -35,8 +35,8 @@ Trage alle Informationen in `content/meta.json` ein. Abstract zunächst leer las
 ### Schritt 2 — Kapitelstruktur festlegen
 Lege basierend auf dem Thema sinnvolle Titel für Kapitel 3–8 fest. Kapitel 1, 2, 9 und 10 haben immer dieselbe Rolle (siehe Kapitelstruktur unten). Trage die Dateinamen in `meta.json` ein.
 
-### Schritt 3 — Quellen recherchieren
-Recherchiere **mindestens 80, idealerweise 100–150** internationale Quellen zum Thema.
+### Schritt 3a — Erste Quellenrunde (5–10 Quellen) → sofort Build
+Recherchiere zunächst **5–10 Kernquellen** zum Thema, trage sie in `sources/sources.json` ein und führe sofort `python3 build.py` aus. So sieht der User bereits nach wenigen Minuten die interaktive Quelldatenbank mit Kategorien, Badges und Scores — auch wenn sie noch leer ist.
 
 Qualitätskriterien:
 - Mindestens 60 % peer-reviewed (Badge: `peer`)
@@ -45,11 +45,16 @@ Qualitätskriterien:
 - Österreich-Bezug suchen und kennzeichnen wenn vorhanden (Badge: `austria`)
 - Englisch- und deutschsprachige Quellen, bei internationalen Themen auch andere Sprachen
 
-Trage jede Quelle vollständig in `sources/sources.json` ein (Schema: siehe unten).
 IDs beginnen bei **S001** und laufen fortlaufend.
 
-### Schritt 4 — Kapitel schreiben
-Schreibe alle 10 Kapitel als Markdown-Dateien in `content/`.
+### Schritt 3b — Kapitelgerüst anlegen und ersten Build ausführen
+Lege sofort alle 10 Kapitel als Markdown-Dateien in `content/` an — zunächst als **Gerüst** mit Überschriften, 2–3 Einstiegssätzen und 2–3 Zitaten aus den bereits vorhandenen Quellen. Dann `python3 build.py` ausführen, damit der User frühzeitig eine funktionierende Seite sieht.
+
+### Schritt 3c — Weitere Quellen recherchieren (bis 100–150 gesamt)
+Recherchiere weitere Quellen bis das Ziel von mindestens 80, idealerweise 100–150 Quellen erreicht ist. Quellen laufend in `sources.json` nachtragen.
+
+### Schritt 4 — Kapitel vollständig ausschreiben
+Schreibe alle 10 Kapitel vollständig aus.
 
 Pro Kapitel:
 - Länge: 800–1.500 Wörter Fließtext (Einleitung und Ausblick kürzer, Hauptkapitel länger)
@@ -67,7 +72,7 @@ Abschnittsstruktur innerhalb der Kapitel:
 Schreibe einen Abstract (3–5 Sätze, auf Deutsch) und trage ihn in `meta.json` ein.
 Aktualisiere `source_count` auf die tatsächliche Anzahl der Quellen in `sources.json`.
 
-### Schritt 6 — Build ausführen
+### Schritt 6 — Finaler Build
 ```bash
 cd /pfad/zum/projektordner
 python3 build.py
