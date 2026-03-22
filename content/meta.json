@@ -1,0 +1,28 @@
+{
+  "title": "[TITEL DES ARTIKELS]",
+  "subtitle": "[UNTERTITEL — Beschreibt Scope und Perspektive]",
+  "abstract": "",
+  "authors": [
+    {
+      "name": "[AUTORENNAME]",
+      "affiliation": "[EINGELADEN ZU ...]"
+    }
+  ],
+  "date": "[DATUM: YYYY-MM-DD]",
+  "event": "[VERANSTALTUNGSNAME UND ORT]",
+  "lang": "de",
+  "note": "Erstellt mit Unterstützung von Claude (Anthropic). Alle Quellen sind ausgewiesen.",
+  "chapters": [
+    "01_einleitung.md",
+    "02_grundlagen.md",
+    "03_thema_a.md",
+    "04_thema_b.md",
+    "05_thema_c.md",
+    "06_thema_d.md",
+    "07_thema_e.md",
+    "08_thema_f.md",
+    "09_herausforderungen.md",
+    "10_ausblick.md"
+  ],
+  "source_count": 0
+}

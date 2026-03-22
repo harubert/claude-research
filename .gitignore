@@ -1,0 +1,18 @@
+# API Key.js ist NICHT ignoriert — die leere Vorlage bleibt im Repository,
+# damit Nutzer wissen dass die Datei existieren muss.
+# Nach dem Eintragen des eigenen Keys einmalig ausführen:
+#   git update-index --skip-worktree "API Key.js"
+# Damit wird die Datei lokal nicht mehr getrackt und der Key bleibt privat.
+
+# Generierte Ausgaben (projektspezifisch, nicht ins Repository)
+standalone.html
+standalone.tex
+standalone_sw.tex
+quellen.html
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
