@@ -18,6 +18,31 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 
 ---
 
+## Screenshots
+
+**Quellenverzeichnis — Stats & Filter**
+![Stats overview](docs/screenshots/quellen-stats.png)
+
+**Quellkarten mit Badges, Zitierlinks und APA-Copy-Button**
+![Source cards](docs/screenshots/quellen-karten.png)
+
+**Bewertungsmethodik**
+![Rating methodology](docs/screenshots/quellen-bewertung.png)
+
+**Artikeltext mit klickbaren Inline-Zitaten**
+![Article text](docs/screenshots/artikel-text.png)
+
+**Literaturverzeichnis mit Badges**
+![Literature list](docs/screenshots/literatur-liste.png)
+
+**Präsentationsfolie (Sticker-Stil, Reveal.js)**
+![Presentation slide](docs/screenshots/praesentation-folie.png)
+
+**Bildstil-Galerie (`stile.html`)**
+![Style gallery](docs/screenshots/bildstil-galerie.png)
+
+---
+
 ## Requirements
 
 | What | Why |
