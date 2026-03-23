@@ -663,7 +663,7 @@ body {{ max-width:820px; margin:0 auto; padding:2.5rem 2rem 6rem; }}
 
 <nav class="toc">
   <h2>Inhaltsverzeichnis</h2>
-  <ol>{toc_items}</ol>
+  <ol style="list-style:none;padding-left:1.2rem">{toc_items}</ol>
 </nav>
 
 <main>
