@@ -288,6 +288,14 @@
           </div>
         </div>
 
+        <label for="f-chapters" style="margin-top:.7rem">Kapitelstruktur (Kapitel 3–8)</label>
+        <select id="f-chapters">
+          <option value="auto" selected>Claude wählt automatisch passende Kapitel</option>
+          <option value="custom">Eigene Kapitelthemen vorgeben (unten eintragen)</option>
+        </select>
+
+        <textarea id="f-chapters-custom" rows="3" style="display:none;margin-top:.3rem" placeholder="Kapitel 3: Volksschule&#10;Kapitel 4: Sekundarstufe I&#10;Kapitel 5: ..."></textarea>
+
         <label for="f-relevance-topic" style="margin-top:.7rem">Kernthema (für Quellen-Relevanz)</label>
         <input type="text" id="f-relevance-topic" placeholder="z.B. KI im Geometrieunterricht"/>
         <div class="hint-text">Beschreibt, woran die Relevanz einer Quelle gemessen wird</div>
@@ -370,6 +378,12 @@
     tab.addEventListener("click", function() { activateOS(tab.dataset.os); });
   });
 
+  /* ── Kapitelstruktur Toggle ── */
+  document.getElementById("f-chapters").addEventListener("change", function() {
+    document.getElementById("f-chapters-custom").style.display =
+      this.value === "custom" ? "block" : "none";
+  });
+
   /* ── Panel-Tabs (Installation / Projekt) ── */
   document.querySelectorAll(".panel-tab").forEach(function(tab) {
     tab.addEventListener("click", function() {
@@ -410,6 +424,8 @@
     var style = document.getElementById("f-style").value;
     var relevanceTopic = document.getElementById("f-relevance-topic").value.trim() || title;
     var notes = document.getElementById("f-notes").value.trim();
+    var chaptersMode = document.getElementById("f-chapters").value;
+    var chaptersCustom = document.getElementById("f-chapters-custom").value.trim();
 
     if (!title) { alert("Bitte gib einen Titel ein."); return; }
     if (!author) { alert("Bitte gib einen Autorennamen ein."); return; }
@@ -436,6 +452,8 @@
       target_sources: sources,
       image_style: style,
       notes: notes,
+      chapter_mode: chaptersMode,
+      chapter_wishes: chaptersCustom,
       relevance_topic: relevanceTopic,
       relevance_3: "",
       relevance_2: "",

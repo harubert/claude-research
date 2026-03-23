@@ -5,9 +5,11 @@
 Wenn der User **„Leg los"** (oder sinngemäß) schreibt:
 
 **Zuerst `content/meta.json` lesen.** Wenn die Felder bereits befüllt sind (d.h. `title` enthält keinen `[`-Platzhalter), wurden die Projektdaten über das HTML-Onboarding-Formular in `index.html` eingegeben. In diesem Fall:
-- Bestätige kurz die gelesenen Daten (Titel, Autor, Veranstaltung, Datum)
+- **KEINE Fragen stellen** — alle Informationen stehen in meta.json
+- Lies folgende Felder: `title`, `subtitle`, `authors`, `date`, `event`, `lang`, `target_sources` (Ziel-Quellenanzahl), `image_style` (Bildstil für Präsentation), `notes` (besondere Schwerpunkte), `chapter_mode` ("auto" oder "custom"), `chapter_wishes` (Kapitelwünsche wenn custom), `relevance_topic`
+- Bestätige kurz die gelesenen Daten (1–2 Sätze, kein Aufzählen aller Felder)
 - Ergänze fehlende Felder (`relevance_3`, `relevance_2`, `relevance_1`) falls leer — passend zum `relevance_topic`
-- Beginne **sofort autonom** mit Schritt 2 (Kapitelstruktur)
+- Beginne **sofort autonom** mit Schritt 1 (meta.json vervollständigen) → Schritt 2 (Kapitelstruktur)
 
 **Wenn `meta.json` noch Platzhalter enthält**, stelle diese Fragen — alle auf einmal, kompakt als nummerierte Liste:
 

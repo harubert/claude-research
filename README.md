@@ -57,9 +57,13 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 ## Getting started
 
 1. Clone or download this repository
-2. Open the folder in VS Code
-3. Start Claude Code (`claude` in the terminal or via the extension)
-4. Type **„Leg los"** — Claude will ask 9 questions and then build everything autonomously
+2. Open `index.html` in your browser — fill in the setup form (title, author, event, sources, etc.) and save
+3. Move the downloaded `meta.json` into `content/meta.json`
+4. Open the folder in VS Code
+5. Start Claude Code (via the extension panel)
+6. Type **„Leg los"** — Claude reads your `meta.json` and builds everything autonomously
+
+> **Tip:** The setup form in `index.html` appears automatically when the project is fresh (no `standalone.html` yet). It covers all configuration — no chat questions needed.
 
 ---
 
