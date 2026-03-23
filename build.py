@@ -1198,28 +1198,26 @@ _LATEX_OVERLAY_JS = (
     's.src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";'
     's.onload=res;s.onerror=rej;document.head.appendChild(s);});}'
     'var zip=new JSZip();'
-    '/* Artikel (aktuelle Seite) */\n'
+    '/* Artikel (aktuelle Seite, bereinigt) */\n'
     'var clone=document.documentElement.cloneNode(true);'
     '["#nav-cluster","#stats-panel","#latex-overlay"].forEach(function(s){'
     'var el=clone.querySelector(s);if(el)el.remove();});'
+    '/* Eingebettete Paket-Daten entfernen */\n'
+    'clone.querySelectorAll("script").forEach(function(s){'
+    'if(s.textContent.indexOf("_WEB_PAKET")>-1||s.textContent.indexOf("_LTX_")>-1)s.remove();});'
     'zip.file("standalone.html","<!DOCTYPE html>\\n"+clone.outerHTML);'
-    '/* Weitere Seiten */\n'
-    'var pages=["quellen.html","handbuch.html","presentation/index.html",'
-    '"presentation/stile.html","assets/css/paper.css"];'
-    'for(var pg of pages){try{'
-    'var r=await fetch(pg);if(r.ok){zip.file(pg,await r.text());}'
-    '}catch(e){console.warn("Skip:",pg);}}'
-    '/* Presentation Fonts */\n'
-    'var ff=["fonts.css","barlow-condensed-600.woff2","barlow-condensed-700.woff2",'
-    '"barlow-condensed-800.woff2","bricolage-grotesque.woff2","caveat-brush.woff2",'
-    '"fraunces-normal.woff2","fraunces-italic.woff2","inter.woff2","satisfy.woff2",'
-    '"space-grotesk.woff2","syne.woff2","SpaceGrotesk-400.woff2","SpaceGrotesk-600.woff2",'
-    '"SpaceGrotesk-700.woff2","PlayfairDisplay-400.woff2","PlayfairDisplay-700.woff2",'
-    '"PlayfairDisplay-900.woff2"];'
-    'for(var f of ff){try{'
-    'var r2=await fetch("presentation/fonts/"+f);'
-    'if(r2.ok)zip.file("presentation/fonts/"+f,await r2.arrayBuffer());'
-    '}catch(e){}}'
+    '/* Text-Dateien aus eingebetteten Daten */\n'
+    'var wpText=window._WEB_PAKET_TEXT||{};'
+    'Object.keys(wpText).forEach(function(k){zip.file(k,wpText[k]);});'
+    '/* Font-Dateien aus eingebetteten Daten (Base64 → binary) */\n'
+    'var wpFonts=window._WEB_PAKET_FONTS||{};'
+    'Object.keys(wpFonts).forEach(function(k){'
+    'var f=wpFonts[k];'
+    'if(f.t==="b64"){'
+    'var raw=atob(f.d);var arr=new Uint8Array(raw.length);'
+    'for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);'
+    'zip.file(k,arr);'
+    '}else{zip.file(k,f.d);}});'
     '/* Landingpage */\n'
     'var ti=document.title||"Forschungsartikel";'
     'zip.file("index.html","<!DOCTYPE html>\\n<html lang=\\"de\\">\\n<head>\\n"+'
@@ -1246,11 +1244,43 @@ _LATEX_OVERLAY_JS = (
     '})();</script>\n'
 )
 
+# ── Web-Paket: Dateien einbetten ──
+import base64 as _b64
+_wp_files = {}
+for _wp_name, _wp_path in [
+    ("quellen.html", base / "quellen.html"),
+    ("handbuch.html", base / "handbuch.html"),
+    ("assets/css/paper.css", base / "assets" / "css" / "paper.css"),
+    ("presentation/index.html", base / "presentation" / "index.html"),
+    ("presentation/stile.html", base / "presentation" / "stile.html"),
+]:
+    if _wp_path.exists():
+        _wp_files[_wp_name] = _wp_path.read_text(encoding="utf-8")
+
+# Fonts komplett einbetten (Base64 für woff2, Text für CSS)
+_wp_fonts = {}
+_fonts_dir = base / "presentation" / "fonts"
+if _fonts_dir.exists():
+    for _ff in _fonts_dir.iterdir():
+        if _ff.suffix in ('.woff2', '.css'):
+            if _ff.suffix == '.css':
+                _wp_fonts[f"presentation/fonts/{_ff.name}"] = {"t": "text", "d": _ff.read_text(encoding="utf-8")}
+            else:
+                _wp_fonts[f"presentation/fonts/{_ff.name}"] = {"t": "b64", "d": _b64.b64encode(_ff.read_bytes()).decode()}
+
+_WEB_PAKET_DATA = (
+    '<script>\n'
+    f'window._WEB_PAKET_TEXT={json.dumps(_wp_files, ensure_ascii=False).replace("</", "<\\/") if _wp_files else "{}"};\n'
+    f'window._WEB_PAKET_FONTS={json.dumps(_wp_fonts, ensure_ascii=False).replace("</", "<\\/") if _wp_fonts else "{}"};\n'
+    '</script>\n'
+)
+
 # Alles vor </body> einbauen
 final_with_js = final.replace('</body>',
     _LATEX_OVERLAY_HTML + '\n' +
     _TOOLTIP_JS + '\n' +
     _LATEX_OVERLAY_DATA +
+    _WEB_PAKET_DATA +
     _LATEX_OVERLAY_JS +
     '</body>', 1)
 out_path.write_text(final_with_js, encoding="utf-8")
