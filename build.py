@@ -646,7 +646,7 @@ body {{ max-width:820px; margin:0 auto; padding:2.5rem 2rem 6rem; }}
   <button onclick="(function(){{var p=document.getElementById('stats-panel');p.style.display=p.style.display==='none'?'block':'none'}})()" style="background:#4a6fa5;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">ℹ Info</button>
   <a href="presentation/index.html" style="background:#1a4e8a;color:#fff;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;text-decoration:none;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);text-align:center;white-space:nowrap">📊 Folien</a>
   <a href="quellen.html" style="background:#1a4e8a;color:#fff;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;text-decoration:none;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);text-align:center;white-space:nowrap">📚 Quellen</a>
-  <button onclick="ltxOpenOverlay()" style="background:#1a4e8a;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">↓ LaTeX</button>
+  <button onclick="ltxOpenOverlay()" style="background:#1a4e8a;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">↓ Export</button>
   <button onclick="window.print()" style="background:#1a4e8a;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">🖨 Drucken</button>
 </div>
 {stats_panel}
@@ -1012,11 +1012,16 @@ _tex_meta = {
 
 _LATEX_OVERLAY_HTML = """\
 <div id="latex-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;padding:1rem">
-<div style="background:#fff;border-radius:8px;padding:1.5rem 1.75rem 1.1rem;max-width:410px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.28);font-family:sans-serif;font-size:.86rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem">
-    <strong style="font-size:.95rem;color:#1a1a1a">LaTeX Export</strong>
+<div style="background:#fff;border-radius:8px;padding:1.5rem 1.75rem 1.1rem;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.28);font-family:sans-serif;font-size:.86rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
+    <strong style="font-size:.95rem;color:#1a1a1a">Export</strong>
     <button onclick="document.getElementById('latex-overlay').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#aaa;line-height:1">×</button>
   </div>
+  <div style="display:flex;gap:.3rem;margin-bottom:1rem" id="export-tabs">
+    <button class="exp-tab exp-tab-active" onclick="expSwitchTab('latex')" id="exp-tab-latex" style="flex:1;padding:.4rem .6rem;border:1px solid #ddd;border-radius:5px;background:#1a4e8a;color:#fff;cursor:pointer;font-size:.78rem;font-family:inherit;font-weight:600">LaTeX</button>
+    <button class="exp-tab" onclick="expSwitchTab('web')" id="exp-tab-web" style="flex:1;padding:.4rem .6rem;border:1px solid #ddd;border-radius:5px;background:#fff;color:#333;cursor:pointer;font-size:.78rem;font-family:inherit;font-weight:500">Web-Paket (ZIP)</button>
+  </div>
+  <div id="exp-panel-latex">
   <table style="width:100%;border-collapse:collapse;line-height:2">
     <tr>
       <td style="color:#555;width:36%;vertical-align:middle">Farbmodus</td>
@@ -1060,6 +1065,21 @@ _LATEX_OVERLAY_HTML = """\
   </div>
   <div style="text-align:center;margin-top:.4rem;font-size:.69rem;color:#bbb">
     Für PDF: .tex-Datei in Overleaf, pdflatex oder <a href="https://latexonline.cc" target="_blank" rel="noopener" style="color:#bbb">latexonline.cc</a> öffnen
+  </div>
+  </div>
+  <div id="exp-panel-web" style="display:none">
+    <p style="color:#555;line-height:1.5;margin-bottom:.8rem">Erstellt ein ZIP-Paket mit allem, was für eine Website nötig ist. Den Inhalt einfach in ein Verzeichnis auf einem Webserver (SFTP/FTP) hochladen — fertig.</p>
+    <div style="background:#f5f5f2;border-radius:5px;padding:.6rem .85rem;margin-bottom:.8rem;font-size:.8rem;color:#555;line-height:1.5">
+      <strong>Enthält:</strong><br>
+      📄 Fachartikel (standalone.html)<br>
+      📚 Quellenverzeichnis (quellen.html)<br>
+      📖 Handbuch (handbuch.html)<br>
+      📊 Präsentation (presentation/)<br>
+      🎨 Stylesheets (assets/css/)<br>
+      🏠 Landingpage (index.html)
+    </div>
+    <p style="font-size:.75rem;color:#999;margin-bottom:.8rem;line-height:1.4">Hinweis: Folienbilder der Präsentation werden nicht eingebettet. Für Folien mit eingebetteten KI-Bildern verwende den ⬇-Button in der Präsentation selbst.</p>
+    <button onclick="webPaketDownload()" id="web-paket-btn" style="width:100%;background:#1a4e8a;color:#fff;border:none;border-radius:5px;padding:.55rem .4rem;cursor:pointer;font-size:.83rem;font-family:sans-serif">↓ Web-Paket herunterladen (.zip)</button>
   </div>
 </div>
 </div>"""
@@ -1157,6 +1177,72 @@ _LATEX_OVERLAY_JS = (
     'document.querySelectorAll(\'input[name="ltx-color"]\').forEach(function(el){'
     'el.addEventListener("change",ltxUpdateEstimate);});'
     'ltxUpdateEstimate();});'
+    '\n'
+    '/* ── Tab-Switch ── */\n'
+    'window.expSwitchTab=function(tab){'
+    'document.getElementById("exp-panel-latex").style.display=tab==="latex"?"block":"none";'
+    'document.getElementById("exp-panel-web").style.display=tab==="web"?"block":"none";'
+    'document.getElementById("exp-tab-latex").style.background=tab==="latex"?"#1a4e8a":"#fff";'
+    'document.getElementById("exp-tab-latex").style.color=tab==="latex"?"#fff":"#333";'
+    'document.getElementById("exp-tab-web").style.background=tab==="web"?"#1a4e8a":"#fff";'
+    'document.getElementById("exp-tab-web").style.color=tab==="web"?"#fff":"#333";'
+    '};\n'
+    '/* ── Web-Paket (ZIP) ── */\n'
+    'window.webPaketDownload=async function(){'
+    'var btn=document.getElementById("web-paket-btn");'
+    'btn.textContent="Wird erstellt …";btn.disabled=true;'
+    'try{'
+    'if(!window.JSZip){'
+    'await new Promise(function(res,rej){'
+    'var s=document.createElement("script");'
+    's.src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";'
+    's.onload=res;s.onerror=rej;document.head.appendChild(s);});}'
+    'var zip=new JSZip();'
+    '/* Artikel (aktuelle Seite) */\n'
+    'var clone=document.documentElement.cloneNode(true);'
+    '["#nav-cluster","#stats-panel","#latex-overlay"].forEach(function(s){'
+    'var el=clone.querySelector(s);if(el)el.remove();});'
+    'zip.file("standalone.html","<!DOCTYPE html>\\n"+clone.outerHTML);'
+    '/* Weitere Seiten */\n'
+    'var pages=["quellen.html","handbuch.html","presentation/index.html",'
+    '"presentation/stile.html","assets/css/paper.css"];'
+    'for(var pg of pages){try{'
+    'var r=await fetch(pg);if(r.ok){zip.file(pg,await r.text());}'
+    '}catch(e){console.warn("Skip:",pg);}}'
+    '/* Presentation Fonts */\n'
+    'var ff=["fonts.css","barlow-condensed-600.woff2","barlow-condensed-700.woff2",'
+    '"barlow-condensed-800.woff2","bricolage-grotesque.woff2","caveat-brush.woff2",'
+    '"fraunces-normal.woff2","fraunces-italic.woff2","inter.woff2","satisfy.woff2",'
+    '"space-grotesk.woff2","syne.woff2","SpaceGrotesk-400.woff2","SpaceGrotesk-600.woff2",'
+    '"SpaceGrotesk-700.woff2","PlayfairDisplay-400.woff2","PlayfairDisplay-700.woff2",'
+    '"PlayfairDisplay-900.woff2"];'
+    'for(var f of ff){try{'
+    'var r2=await fetch("presentation/fonts/"+f);'
+    'if(r2.ok)zip.file("presentation/fonts/"+f,await r2.arrayBuffer());'
+    '}catch(e){}}'
+    '/* Landingpage */\n'
+    'var ti=document.title||"Forschungsartikel";'
+    'zip.file("index.html","<!DOCTYPE html>\\n<html lang=\\"de\\">\\n<head>\\n"+'
+    '"<meta charset=\\"UTF-8\\"/>\\n<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"/>\\n"+'
+    '"<title>"+ti+"</title>\\n"+'
+    '"<style>body{font-family:system-ui,sans-serif;max-width:680px;margin:4rem auto;padding:0 2rem;color:#222}"+'
+    '"h1{font-size:1.4rem;margin-bottom:.5rem}p{color:#666;margin-bottom:2rem}"+'
+    '"nav{display:flex;flex-direction:column;gap:.8rem}"+'
+    '"a{display:inline-block;padding:.7rem 1.2rem;background:#163374;color:#fff;text-decoration:none;border-radius:6px;width:fit-content}"+'
+    '"a:hover{background:#0f2456}</style>\\n</head>\\n<body>\\n"+'
+    '"<h1>"+ti+"</h1>\\n<p>Wähle einen Bereich:</p>\\n<nav>\\n"+'
+    '"<a href=\\"standalone.html\\">📄 Artikel lesen</a>\\n"+'
+    '"<a href=\\"quellen.html\\">📚 Quelldatenbank</a>\\n"+'
+    '"<a href=\\"presentation/index.html\\">📊 Präsentation</a>\\n"+'
+    '"<a href=\\"handbuch.html\\">📖 Handbuch</a>\\n"+'
+    '"</nav>\\n</body>\\n</html>");'
+    '/* Download */\n'
+    'var blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});'
+    'var a=document.createElement("a");a.href=URL.createObjectURL(blob);'
+    'a.download="web-paket.zip";a.click();URL.revokeObjectURL(a.href);'
+    'btn.textContent="↓ Web-Paket herunterladen (.zip)";btn.disabled=false;'
+    '}catch(e){alert("Fehler: "+e.message);btn.textContent="↓ Web-Paket herunterladen (.zip)";btn.disabled=false;}'
+    '};\n'
     '})();</script>\n'
 )
 
