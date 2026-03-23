@@ -1190,5 +1190,15 @@ if quellen_path.exists():
         quellen_html,
         flags=re.DOTALL
     )
+    # Titel, Veranstaltung und Datum aus meta.json ersetzen
+    import datetime
+    datum_raw = meta.get("date", "")
+    try:
+        datum_fmt = datetime.datetime.strptime(datum_raw, "%Y-%m-%d").strftime("%-d. %B %Y")
+    except Exception:
+        datum_fmt = datum_raw
+    quellen_new = quellen_new.replace("{{TITEL}}", meta.get("title", ""))
+    quellen_new = quellen_new.replace("{{VERANSTALTUNG}}", meta.get("event", ""))
+    quellen_new = quellen_new.replace("{{DATUM}}", datum_fmt)
     quellen_path.write_text(quellen_new, encoding="utf-8")
     print(f"OK: quellen.html     — {len(sources)} Quellen eingebettet (file://-kompatibel)")
