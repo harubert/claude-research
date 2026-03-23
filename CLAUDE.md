@@ -282,6 +282,16 @@ Inline-Zitate werden automatisch erkannt wenn sie einem dieser Muster entspreche
 
 Damit die automatische Verlinkung funktioniert, muss der **Nachname der ersten Autorin/des ersten Autors** exakt mit dem ersten Eintrag in `authors` in sources.json übereinstimmen (Groß/Kleinschreibung egal).
 
+**KRITISCH — Falsche Zitierweise:**
+
+```
+❌ VERBOTEN: [S02], [S001], [S012] — diese IDs sind nicht klickbar und werden von build.py nicht erkannt
+✅ KORREKT:  (Nachname, Jahr), (Nachname & Nachname, Jahr), (Nachname et al., Jahr)
+```
+
+**Nach dem Schreiben jedes Kapitels obligatorisch:**
+Prüfe mit grep ob `[S` im Text vorkommt und ersetze jeden Fund durch die korrekte APA-Notation `(Nachname, Jahr)`. Suche in sources.json nach der ID, lies `authors[0]` und `year` und forme daraus das Inline-Zitat.
+
 ---
 
 ## Stil-Hinweise
@@ -353,6 +363,7 @@ var IMG_STYLE = "architectural photography, blue tones, minimal, elegant, ultra 
 ## Qualitätskontrolle vor Abschluss
 
 - [ ] Alle 10 Kapitel vorhanden und inhaltlich vollständig?
+- [ ] Kein `[S...]`-Muster im Fließtext? (grep -r "\[S" content/ darf nichts liefern)
 - [ ] Jede im Text zitierte Quelle in sources.json vorhanden?
 - [ ] `meta.json` vollständig (Titel, Abstract, Autoren, Datum, source_count)?
 - [ ] `python3 build.py` läuft ohne Fehler durch?
