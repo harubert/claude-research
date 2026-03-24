@@ -4,14 +4,33 @@
 
 Wenn der User **„Leg los"** (oder sinngemäß) schreibt:
 
-**Zuerst `content/meta.json` lesen.** Wenn die Felder bereits befüllt sind (d.h. `title` enthält keinen `[`-Platzhalter), wurden die Projektdaten über das HTML-Onboarding-Formular in `index.html` eingegeben. In diesem Fall:
-- **KEINE Fragen stellen** — alle Informationen stehen in meta.json
-- Lies folgende Felder: `title`, `subtitle`, `authors`, `date`, `event`, `lang`, `target_sources` (Ziel-Quellenanzahl), `image_style` (Bildstil für Präsentation), `notes` (besondere Schwerpunkte), `chapter_mode` ("auto" oder "custom"), `chapter_wishes` (Kapitelwünsche wenn custom), `relevance_topic`
-- Bestätige kurz die gelesenen Daten (1–2 Sätze, kein Aufzählen aller Felder)
-- Ergänze fehlende Felder (`relevance_3`, `relevance_2`, `relevance_1`) falls leer — passend zum `relevance_topic`
-- Beginne **sofort autonom** mit Schritt 1 (meta.json vervollständigen) → Schritt 2 (Kapitelstruktur)
+**ALLERERSTER SCHRITT: `content/meta.json` lesen.** Prüfe ob `title` einen echten Titel enthält (NICHT mit `[` beginnend).
 
-**Wenn `meta.json` noch Platzhalter enthält**, stelle diese Fragen — alle auf einmal, kompakt als nummerierte Liste:
+### Fall A: meta.json ist bereits befüllt (title beginnt NICHT mit `[`)
+
+**STELL KEINE EINZIGE FRAGE.** Alle Informationen stehen bereits in meta.json:
+
+| Feld | Bedeutung | Beispiel |
+|------|-----------|---------|
+| `title` | Artikeltitel | "KI im Geometrieunterricht" |
+| `subtitle` | Untertitel | "Von der Volksschule bis..." |
+| `authors` | Autor + Institution | `[{"name":"...","affiliation":"..."}]` |
+| `date` | Veranstaltungsdatum | "2026-04-09" |
+| `event` | Veranstaltung | "20. Tag der Geometrie" |
+| `lang` | Sprache | "de" |
+| `target_sources` | Ziel-Quellenanzahl | 100 |
+| `image_style` | Bildstil Präsentation | "watercolor, soft tones" |
+| `notes` | Besondere Schwerpunkte | "Fokus auf Österreich..." |
+| `chapter_mode` | "auto" oder "custom" | "auto" |
+| `chapter_wishes` | Kapitelwünsche (wenn custom) | "" |
+| `relevance_topic` | Kernthema für Relevanz | "KI im Geometrieunterricht" |
+| `relevance_3` / `relevance_2` / `relevance_1` | Relevanz-Stufen | "" (dann selbst befüllen) |
+
+Sage nur: „Projekt gelesen: [Titel]. Starte mit der Arbeit." — und beginne **sofort** mit Schritt 1.
+
+### Fall B: meta.json enthält noch Platzhalter (title beginnt mit `[`)
+
+Stelle diese Fragen — alle auf einmal, kompakt als nummerierte Liste:
 
 1. **Thema** — Was ist das genaue Thema des Artikels? (1–2 Sätze)
 2. **Autor** — Name und ggf. Institution / Rolle?
@@ -21,9 +40,9 @@ Wenn der User **„Leg los"** (oder sinngemäß) schreibt:
 6. **Kapitelstruktur** — Soll Claude die Kapitel 3–8 automatisch festlegen, oder hast du Wunschthemen für einzelne Kapitel?
 7. **Sprache** — Deutsch? Oder eine andere Sprache für den Artikel?
 8. **Besondere Schwerpunkte** — Gibt es bestimmte Aspekte, die unbedingt vorkommen sollen? Bestimmte Länder, Zielgruppen, Institutionen?
-9. **Bildstil für Präsentation** — Sollen KI-generierte Hintergrundbilder für die Folien erstellt werden? Falls ja: welcher visuelle Stil? Beispiele: *Architektur-Fotografie, Aquarell, Abstrakt-Geometrisch, Minimalismus, Naturlandschaft, Technologie*. Oder: „Nein, keine Bilder."
+9. **Bildstil für Präsentation** — Sollen KI-generierte Hintergrundbilder für die Folien erstellt werden? Falls ja: welcher visuelle Stil? Oder: „Nein, keine Bilder."
 
-Sobald der User diese Fragen beantwortet hat, beginne **sofort autonom** mit der Arbeit — ohne weitere Rückfragen.
+Sobald der User diese Fragen beantwortet hat, beginne **sofort autonom** mit der Arbeit.
 
 Wenn der User direkt ein Thema oder alle Infos nennt (ohne „Leg los"), beginne ebenfalls sofort — die Fragen sind dann nicht nötig.
 
