@@ -25,33 +25,24 @@ Wenn der User **„Leg los"** (oder sinngemäß) schreibt:
 | `chapter_wishes` | Kapitelwünsche (wenn custom) | "" |
 | `relevance_topic` | Kernthema für Relevanz | "KI im Geometrieunterricht" |
 | `relevance_3` / `relevance_2` / `relevance_1` | Relevanz-Stufen | "" (dann selbst befüllen) |
-| `mode` | "article" oder "course" | "article" |
+| `mode` | "article" oder "course" (Standard: "article") | "article" |
 | `course` | LV-Daten (nur bei mode: "course") | `{"type":"seminar","units":12,...}` |
 
-Sage nur: „Projekt gelesen: [Titel]. Starte mit der Arbeit." — und beginne **sofort** mit Schritt 1. Falls `mode: "course"`: nach Schritt 9 automatisch weiter zu Schritt 10 (Syllabus).
+Sage nur: „Projekt gelesen: [Titel]. Starte mit der Arbeit." — und beginne **sofort** mit Schritt 1. Falls `mode: "course"` bereits gesetzt: nach Schritt 9 automatisch weiter zu Schritt 10 (Syllabus). Sonst: LV-Option in Schritt 9 anbieten.
 
 ### Fall B: meta.json enthält noch Platzhalter (title beginnt mit `[`)
 
 Stelle diese Fragen — alle auf einmal, kompakt als nummerierte Liste:
 
-1. **Modus** — Nur Fachartikel, oder auch eine Lehrveranstaltung dazu? (Artikel / Lehrveranstaltung)
-2. **Thema** — Was ist das genaue Thema? (1–2 Sätze)
-3. **Autor** — Name und ggf. Institution / Rolle?
-4. **Veranstaltung** — Für welche Konferenz, Tagung oder welchen Anlass?
-5. **Datum** — Wann findet die Veranstaltung statt?
-6. **Quellenanzahl** — Wie viele Quellen sollen recherchiert werden? (Vorschlag: 80–120)
-7. **Kapitelstruktur** — Soll Claude die Kapitel 3–8 automatisch festlegen, oder hast du Wunschthemen für einzelne Kapitel?
-8. **Sprache** — Deutsch? Oder eine andere Sprache für den Artikel?
-9. **Besondere Schwerpunkte** — Gibt es bestimmte Aspekte, die unbedingt vorkommen sollen? Bestimmte Länder, Zielgruppen, Institutionen?
-10. **Bildstil für Präsentation** — Sollen KI-generierte Hintergrundbilder für die Folien erstellt werden? Falls ja: welcher visuelle Stil? Oder: „Nein, keine Bilder."
-
-**Falls Lehrveranstaltung (Frage 1 = "Lehrveranstaltung")**, zusätzlich fragen:
-11. **LV-Typ** — Vorlesung, Seminar, Übung oder Kombination?
-12. **Einheiten** — Wie viele Einheiten? Wie viele Stunden pro Einheit?
-13. **ECTS** — Wie viele Credits?
-14. **Semester** — In welchem Semester? (z.B. WS 2026/27)
-15. **Beurteilung** — Wie wird beurteilt? (z.B. Portfolio, Klausur, Präsentation)
-16. **Zielgruppe** — Wer sind die Studierenden? (z.B. Master Lehramt Mathematik)
+1. **Thema** — Was ist das genaue Thema des Artikels? (1–2 Sätze)
+2. **Autor** — Name und ggf. Institution / Rolle?
+3. **Veranstaltung** — Für welche Konferenz, Tagung oder welchen Anlass?
+4. **Datum** — Wann findet die Veranstaltung statt?
+5. **Quellenanzahl** — Wie viele Quellen sollen recherchiert werden? (Vorschlag: 80–120)
+6. **Kapitelstruktur** — Soll Claude die Kapitel 3–8 automatisch festlegen, oder hast du Wunschthemen für einzelne Kapitel?
+7. **Sprache** — Deutsch? Oder eine andere Sprache für den Artikel?
+8. **Besondere Schwerpunkte** — Gibt es bestimmte Aspekte, die unbedingt vorkommen sollen? Bestimmte Länder, Zielgruppen, Institutionen?
+9. **Bildstil für Präsentation** — Sollen KI-generierte Hintergrundbilder für die Folien erstellt werden? Falls ja: welcher visuelle Stil? Oder: „Nein, keine Bilder."
 
 Sobald der User diese Fragen beantwortet hat, beginne **sofort autonom** mit der Arbeit.
 
@@ -267,7 +258,9 @@ Wenn alle Schritte abgeschlossen sind (Artikel, Quellen, Präsentation, Build fe
 > - **quellen.html** — Quellenverzeichnis
 > - **presentation/index.html** — Folien (⚙ → ✦ für Bildgenerierung)
 >
-> Sag mir, was du ändern möchtest — einzelne Kapitel überarbeiten, mehr Quellen ergänzen, die Präsentation anpassen, oder etwas ganz anderes. Wie soll es weitergehen?
+> Sag mir, was du ändern möchtest — einzelne Kapitel überarbeiten, mehr Quellen ergänzen, die Präsentation anpassen, oder etwas ganz anderes.
+>
+> **Zusätzliche Option:** Möchtest du auf Basis dieses Artikels auch einen **Syllabus für eine Lehrveranstaltung** erstellen? (Stoffverteilung, Lernziele, Pflichtlektüre, eine Beispiel-PowerPoint für Einheit 1) Falls ja, sage einfach „Lehrveranstaltung" — ich frage dann nach LV-Typ, Einheiten, ECTS und Zielgruppe.
 
 ---
 
