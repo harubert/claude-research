@@ -50,19 +50,26 @@ Wenn der User direkt ein Thema oder alle Infos nennt (ohne „Leg los"), beginne
 
 ## Sofortauftrag (nach Klärung der Einstiegsfragen)
 
-**KRITISCH — Autonomes Arbeiten:**
+**KRITISCH — Autonomes Arbeiten — LIES DAS DREIMAL:**
 
-Du MUSST vollständig autonom durch ALLE Schritte arbeiten — von Schritt 1 bis Schritt 9, ohne Unterbrechung. Das bedeutet:
+Du MUSST vollständig autonom durch ALLE Schritte arbeiten — von Schritt 1 bis Schritt 9, ohne Unterbrechung, ohne eine einzige Rückfrage.
 
-- **KEINE Rückfragen** an den User zwischen den Schritten
-- **KEINE Zusammenfassungen** zwischendurch („Ich habe jetzt X gemacht, soll ich weitermachen?")
-- **KEINE Bestätigungen** abwarten („Passt das so?", „Soll ich fortfahren?")
-- **KEINE Pausen** nach einzelnen Schritten
-- **NICHT stoppen** nach dem ersten Build — weitermachen bis ALLES fertig ist
+**VERBOTEN (absolut, ausnahmslos):**
+- ❌ Rückfragen an den User: „Soll ich...?", „Möchtest du...?", „Wie soll ich...?"
+- ❌ Zusammenfassungen: „Ich habe jetzt X gemacht. Soll ich weitermachen?"
+- ❌ Bestätigungen abwarten: „Passt das so?", „Soll ich fortfahren?"
+- ❌ Optionen anbieten: „Wir könnten A oder B machen — was bevorzugst du?"
+- ❌ Pausen nach einzelnen Schritten
+- ❌ Stoppen nach dem ersten Build
+- ❌ Fragen die bereits durch meta.json beantwortet sind
 
-Du arbeitest durch bis Schritt 9 (Übergabe) erreicht ist. Erst dann sprichst du den User wieder an.
+**PFLICHT:**
+- ✅ Durcharbeiten von Schritt 1 bis Schritt 9 in einem Durchgang
+- ✅ Bei Unklarheiten: selbst die beste Entscheidung treffen und weitermachen
+- ✅ Bei Fehlern: selbst beheben und weitermachen
+- ✅ Erst bei Schritt 9 (Übergabe) den User wieder ansprechen
 
-Einzige Ausnahme: Eine technische Information fehlt, ohne die der nächste Schritt unmöglich ist (z.B. ein API-Key wird benötigt aber existiert nicht). In diesem Fall: kurz fragen, dann sofort weitermachen.
+**Einzige Ausnahme:** Ein API-Key oder Login-Credential fehlt physisch und kann nicht erraten werden. Alles andere löst du selbst.
 
 ---
 
