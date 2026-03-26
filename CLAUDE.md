@@ -25,22 +25,33 @@ Wenn der User **„Leg los"** (oder sinngemäß) schreibt:
 | `chapter_wishes` | Kapitelwünsche (wenn custom) | "" |
 | `relevance_topic` | Kernthema für Relevanz | "KI im Geometrieunterricht" |
 | `relevance_3` / `relevance_2` / `relevance_1` | Relevanz-Stufen | "" (dann selbst befüllen) |
+| `mode` | "article" oder "course" | "article" |
+| `course` | LV-Daten (nur bei mode: "course") | `{"type":"seminar","units":12,...}` |
 
-Sage nur: „Projekt gelesen: [Titel]. Starte mit der Arbeit." — und beginne **sofort** mit Schritt 1.
+Sage nur: „Projekt gelesen: [Titel]. Starte mit der Arbeit." — und beginne **sofort** mit Schritt 1. Falls `mode: "course"`: nach Schritt 9 automatisch weiter zu Schritt 10 (Syllabus).
 
 ### Fall B: meta.json enthält noch Platzhalter (title beginnt mit `[`)
 
 Stelle diese Fragen — alle auf einmal, kompakt als nummerierte Liste:
 
-1. **Thema** — Was ist das genaue Thema des Artikels? (1–2 Sätze)
-2. **Autor** — Name und ggf. Institution / Rolle?
-3. **Veranstaltung** — Für welche Konferenz, Tagung oder welchen Anlass?
-4. **Datum** — Wann findet die Veranstaltung statt?
-5. **Quellenanzahl** — Wie viele Quellen sollen recherchiert werden? (Vorschlag: 80–120)
-6. **Kapitelstruktur** — Soll Claude die Kapitel 3–8 automatisch festlegen, oder hast du Wunschthemen für einzelne Kapitel?
-7. **Sprache** — Deutsch? Oder eine andere Sprache für den Artikel?
-8. **Besondere Schwerpunkte** — Gibt es bestimmte Aspekte, die unbedingt vorkommen sollen? Bestimmte Länder, Zielgruppen, Institutionen?
-9. **Bildstil für Präsentation** — Sollen KI-generierte Hintergrundbilder für die Folien erstellt werden? Falls ja: welcher visuelle Stil? Oder: „Nein, keine Bilder."
+1. **Modus** — Nur Fachartikel, oder auch eine Lehrveranstaltung dazu? (Artikel / Lehrveranstaltung)
+2. **Thema** — Was ist das genaue Thema? (1–2 Sätze)
+3. **Autor** — Name und ggf. Institution / Rolle?
+4. **Veranstaltung** — Für welche Konferenz, Tagung oder welchen Anlass?
+5. **Datum** — Wann findet die Veranstaltung statt?
+6. **Quellenanzahl** — Wie viele Quellen sollen recherchiert werden? (Vorschlag: 80–120)
+7. **Kapitelstruktur** — Soll Claude die Kapitel 3–8 automatisch festlegen, oder hast du Wunschthemen für einzelne Kapitel?
+8. **Sprache** — Deutsch? Oder eine andere Sprache für den Artikel?
+9. **Besondere Schwerpunkte** — Gibt es bestimmte Aspekte, die unbedingt vorkommen sollen? Bestimmte Länder, Zielgruppen, Institutionen?
+10. **Bildstil für Präsentation** — Sollen KI-generierte Hintergrundbilder für die Folien erstellt werden? Falls ja: welcher visuelle Stil? Oder: „Nein, keine Bilder."
+
+**Falls Lehrveranstaltung (Frage 1 = "Lehrveranstaltung")**, zusätzlich fragen:
+11. **LV-Typ** — Vorlesung, Seminar, Übung oder Kombination?
+12. **Einheiten** — Wie viele Einheiten? Wie viele Stunden pro Einheit?
+13. **ECTS** — Wie viele Credits?
+14. **Semester** — In welchem Semester? (z.B. WS 2026/27)
+15. **Beurteilung** — Wie wird beurteilt? (z.B. Portfolio, Klausur, Präsentation)
+16. **Zielgruppe** — Wer sind die Studierenden? (z.B. Master Lehramt Mathematik)
 
 Sobald der User diese Fragen beantwortet hat, beginne **sofort autonom** mit der Arbeit.
 
@@ -123,7 +134,34 @@ Für jede Quelle in `sources.json` die einen `url`- oder `doi`-Eintrag hat: **We
 
 Ziel: Kein toter Link und kein irreführender Link im Quellenverzeichnis. Dieser Schritt dauert, ist aber entscheidend für wissenschaftliche Glaubwürdigkeit.
 
-### Schritt 3e — Quellenanzahl prüfen
+### Schritt 3e — Quellen-PDFs herunterladen
+Versuche für jede Quelle in `sources.json` das PDF oder den Volltext lokal zu speichern. Ablage in `sources/pdf/`.
+
+Vorgehen pro Quelle:
+1. Prüfe ob `url` auf ein frei zugängliches PDF zeigt (Open Access, `badges` enthält `openaccess`)
+2. Falls ja: WebFetch → PDF in `sources/pdf/S001_Nachname_Jahr.pdf` speichern
+3. Falls Paywall: Abstract + verfügbare Textausschnitte als `sources/pdf/S001_Nachname_Jahr_excerpt.txt` speichern
+4. Falls DOI vorhanden: `https://doi.org/<doi>` als Fallback prüfen (manche DOIs führen zu freien Versionen)
+5. Falls nichts verfügbar: `download_status: "unavailable"` setzen
+
+Aktualisiere in `sources.json` pro Quelle:
+```json
+"download_status": "full",       // "full" | "partial" | "unavailable" | null
+"local_file": "sources/pdf/S001_Dilling_2024.pdf",
+"tags": ["core", "read"]         // Optionales Tagging
+```
+
+**Dateinamen-Konvention:** `S{ID}_{Erstautor}_{Jahr}.pdf` (bzw. `_excerpt.txt`)
+
+Arbeite in Blöcken von 10 Quellen, dann `python3 build.py`. Dieser Schritt ist optional — wenn der User `target_downloads: 0` in meta.json setzt, überspringe ihn.
+
+**Tags** (optional, vom User oder Claude vergeben):
+- `core` / `supplementary` — Relevanz für den Artikel
+- `read` / `unread` / `skimmed` — Lesestatus
+- `chapter_01` ... `chapter_10` — Kapitelzuordnung
+- `methodology` / `empirical` / `review` / `theory` — Quellentyp
+
+### Schritt 3f — Quellenanzahl prüfen
 Zähle die Einträge in `sources.json` und vergleiche mit `target_sources` aus `meta.json`. Wenn die Zielanzahl noch nicht erreicht ist: zurück zu Schritt 3c und weitere Quellen recherchieren. Erst wenn das Ziel erreicht ist: weiter zu Schritt 4.
 
 ### Schritt 4 — Kapitel vollständig ausschreiben (mit Build nach jedem Kapitel)
@@ -305,7 +343,10 @@ Jede Quelle als JSON-Objekt:
   "url": "https://...",
   "local": null,
   "retrieved": "2026-03-22",
-  "notes": ""
+  "notes": "",
+  "download_status": null,
+  "local_file": null,
+  "tags": []
 }
 ```
 
@@ -453,3 +494,72 @@ var IMG_STYLE = "architectural photography, blue tones, minimal, elegant, ultra 
 - [ ] `stile.html` verlinkt und mit passenden Stilen befüllt?
 - [ ] `index.html` mit korrektem Titel und Datum?
 - [ ] `API Key.js` vorhanden (oder bewusst leer gelassen)?
+- [ ] Falls LV-Modus: `syllabus.html` erstellt und korrekt?
+
+---
+
+## Lehrveranstaltungs-Modus (optional)
+
+Wenn in `meta.json` das Feld `"mode": "course"` gesetzt ist, wird zusätzlich zum Fachartikel ein Lehrveranstaltungs-Paket erstellt.
+
+### Zusätzliche Felder in meta.json
+
+```json
+{
+  "mode": "course",
+  "course": {
+    "type": "seminar",
+    "units": 12,
+    "hours_per_unit": 2,
+    "ects": 3,
+    "semester": "WS 2026/27",
+    "dates": ["2026-10-07", "2026-10-14"],
+    "learning_outcomes": [
+      "Die Studierenden können ...",
+      "Die Studierenden sind in der Lage ..."
+    ],
+    "assessment": "Portfolio + Abschlusspräsentation",
+    "target_audience": "Master Lehramt Mathematik",
+    "prerequisites": "Grundlagen der Mathematikdidaktik"
+  }
+}
+```
+
+**`course.type`** steuert den Inhalt:
+- `"vorlesung"` — Nur Input-Folien, Zusammenfassungen. Keine Arbeitsaufträge.
+- `"seminar"` — Input + Diskussionsfragen + Leseaufträge + Studierenden-Präsentationen.
+- `"uebung"` — Aufgabenblätter + Lösungshinweise + Bewertungskriterien.
+- `"kombination"` — Mix je nach Einheit.
+
+### Schritt 10 — Syllabus und Stoffverteilung (nur bei mode: "course")
+
+Nach Schritt 9 (Übergabe des Artikels) weiter:
+
+1. **Syllabus erstellen** (`syllabus.html`):
+   - Titel, LV-Typ, ECTS, Semester
+   - Lernziele (aus meta.json oder vom Artikel abgeleitet)
+   - Terminplan (Datum + Thema + Pflichtlektüre pro Einheit)
+   - Beurteilungskriterien
+   - Pflichtliteratur (Top-Quellen aus sources.json, score ≥ 8)
+
+2. **Stoffverteilungsplan** (in syllabus.html integriert):
+   - Pro Einheit: Kapitelzuordnung, Kernthemen, empfohlene Quellen
+   - Bei Seminar/Übung: Arbeitsaufträge oder Diskussionsfragen pro Einheit
+   - Quellen mit Tag `core` als Pflichtlektüre markieren
+
+3. **Beispiel-PowerPoint** für Einheit 1:
+   - Generiert mit pptxgenjs (wie Präsentation)
+   - Enthält: Organisatorisches, Semesterüberblick, inhaltlicher Einstieg
+   - Dient als Vorlage — der Lehrende erstellt die weiteren Einheiten selbst
+
+**Bewusste Einschränkung:** Es werden NICHT 12 fertige PowerPoints generiert. Lehre erfordert didaktische Planung die stark von Zielgruppe, Vorwissen und Institution abhängt. Das Template liefert das Gerüst (Syllabus + Stoffverteilung + eine Beispiel-Einheit), nicht das fertige Produkt.
+
+### Verzeichnisstruktur (LV-Modus)
+
+```
+projektordner/
+├── ... (alles wie bisher)
+├── syllabus.html            ← Überblick + Stoffverteilung
+└── course/
+    └── unit_01.pptx         ← Beispiel-PowerPoint für Einheit 1
+```

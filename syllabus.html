@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Syllabus — {{TITEL}}</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; background: #f5f5f2; }
+  body { font-family: Georgia, "Times New Roman", serif; max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; color: #1a1a1a; line-height: 1.7; }
+
+  /* ── Header ── */
+  .syllabus-header {
+    text-align: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem;
+    border-bottom: 3px solid #1a4e8a;
+  }
+  .syllabus-header h1 { font-size: 1.5rem; font-weight: 700; font-family: "Helvetica Neue", Arial, sans-serif; color: #1a1a1a; margin-bottom: .3rem; }
+  .syllabus-header .subtitle { font-size: .92rem; color: #555; font-style: italic; }
+  .syllabus-header .meta { font-size: .82rem; color: #888; margin-top: .5rem; }
+  .syllabus-header .meta span { margin: 0 .5rem; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block; font-size: .7rem; padding: .15rem .5rem; border-radius: 10px;
+    border: 1px solid currentColor; margin-right: .3rem; white-space: nowrap;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+  .badge-vorlesung { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
+  .badge-seminar   { background: #f3e5f5; color: #7b1fa2; border-color: #ce93d8; }
+  .badge-uebung    { background: #e8f5e9; color: #2e7d32; border-color: #81c784; }
+  .badge-ects      { background: #fff3e0; color: #e65100; border-color: #ffcc80; font-weight: 600; }
+
+  /* ── Sections ── */
+  h2 {
+    font-size: 1.1rem; font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #1a4e8a; margin: 2rem 0 .8rem; padding-bottom: .3rem;
+    border-bottom: 1px solid #ddd;
+  }
+  h3 { font-size: .95rem; font-family: "Helvetica Neue", Arial, sans-serif; color: #333; margin: 1.2rem 0 .4rem; }
+  p { margin-bottom: .7rem; }
+  ul, ol { margin: .5rem 0 .8rem 1.5rem; }
+  li { margin-bottom: .3rem; }
+  a { color: #1a4e8a; }
+
+  /* ── Info-Grid ── */
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .8rem;
+    margin-bottom: 2rem;
+  }
+  .info-card {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 6px;
+    padding: .8rem 1rem;
+  }
+  .info-card .label { font-size: .72rem; color: #888; text-transform: uppercase; letter-spacing: .06em; font-family: "Helvetica Neue", Arial, sans-serif; }
+  .info-card .value { font-size: 1rem; font-weight: 600; margin-top: .15rem; }
+
+  /* ── Stoffverteilung ── */
+  .unit-table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: 1rem 0; }
+  .unit-table th {
+    text-align: left; font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: .75rem; color: #888; text-transform: uppercase; letter-spacing: .05em;
+    padding: .5rem .6rem; border-bottom: 2px solid #1a4e8a;
+  }
+  .unit-table td {
+    padding: .6rem; border-bottom: 1px solid #eee; vertical-align: top;
+  }
+  .unit-table tr:hover td { background: #fafbff; }
+  .unit-num { font-family: "Helvetica Neue", Arial, sans-serif; font-weight: 700; color: #1a4e8a; font-size: .82rem; }
+  .unit-date { font-size: .78rem; color: #888; }
+  .unit-reading { font-size: .78rem; color: #666; font-style: italic; }
+  .unit-task { font-size: .78rem; color: #7b1fa2; }
+
+  /* ── Literatur ── */
+  .reading-list { font-size: .85rem; }
+  .reading-list li { margin-bottom: .5rem; line-height: 1.5; }
+  .reading-badge { font-size: .65rem; padding: .08rem .35rem; border-radius: 8px; margin-left: .3rem; }
+  .reading-pflicht { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+  .reading-optional { background: #f5f5f5; color: #888; border: 1px solid #ddd; }
+
+  /* ── Print ── */
+  @media print {
+    body { max-width: none; padding: 1cm; font-size: 11pt; }
+    .info-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .unit-table { font-size: 9pt; }
+    a { color: #000; text-decoration: none; }
+  }
+
+  /* ── Navigation ── */
+  .nav-bar {
+    position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+    display: flex; gap: .4rem; background: rgba(255,255,255,.95);
+    border: 1px solid #ddd; border-radius: 20px; padding: .3rem .6rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.1); z-index: 100;
+    font-family: "Helvetica Neue", Arial, sans-serif; font-size: .75rem;
+  }
+  .nav-bar a {
+    padding: .3rem .7rem; border-radius: 15px; text-decoration: none; color: #555;
+    transition: all .15s;
+  }
+  .nav-bar a:hover { background: #1a4e8a; color: #fff; }
+</style>
+</head>
+<body>
+
+<header class="syllabus-header">
+  <h1 id="syllabus-title">{{TITEL}}</h1>
+  <p class="subtitle" id="syllabus-subtitle">{{UNTERTITEL}}</p>
+  <div class="meta">
+    <span id="syllabus-dozent">{{DOZENT}}</span> ·
+    <span id="syllabus-semester">{{SEMESTER}}</span> ·
+    <span class="badge badge-ects" id="syllabus-ects">{{ECTS}} ECTS</span>
+    <span class="badge" id="syllabus-type-badge">{{LV-TYP}}</span>
+  </div>
+</header>
+
+<div class="info-grid">
+  <div class="info-card">
+    <div class="label">LV-Typ</div>
+    <div class="value" id="info-type">—</div>
+  </div>
+  <div class="info-card">
+    <div class="label">Einheiten</div>
+    <div class="value" id="info-units">—</div>
+  </div>
+  <div class="info-card">
+    <div class="label">Stunden / Einheit</div>
+    <div class="value" id="info-hours">—</div>
+  </div>
+  <div class="info-card">
+    <div class="label">Beurteilung</div>
+    <div class="value" id="info-assessment">—</div>
+  </div>
+</div>
+
+<h2>Lernziele</h2>
+<ul id="learning-outcomes">
+  <!-- Wird durch build.py oder Claude befüllt -->
+</ul>
+
+<h2>Zielgruppe &amp; Voraussetzungen</h2>
+<p id="target-audience">—</p>
+<p id="prerequisites">—</p>
+
+<h2>Stoffverteilung</h2>
+<table class="unit-table">
+  <thead>
+    <tr>
+      <th style="width:3rem">#</th>
+      <th style="width:6rem">Datum</th>
+      <th>Thema</th>
+      <th>Kapitel</th>
+      <th>Pflichtlektüre</th>
+      <th>Aufgabe</th>
+    </tr>
+  </thead>
+  <tbody id="unit-body">
+    <!-- Wird durch build.py oder Claude befüllt -->
+  </tbody>
+</table>
+
+<h2>Pflichtliteratur</h2>
+<ol class="reading-list" id="reading-pflicht">
+  <!-- Top-Quellen mit score ≥ 8 und tag "core" -->
+</ol>
+
+<h2>Weiterführende Literatur</h2>
+<ol class="reading-list" id="reading-optional">
+  <!-- Weitere relevante Quellen -->
+</ol>
+
+<nav class="nav-bar">
+  <a href="index.html">Start</a>
+  <a href="standalone.html">Artikel</a>
+  <a href="quellen.html">Quellen</a>
+  <a href="presentation/index.html">Folien</a>
+  <a href="handbuch.html">Handbuch</a>
+</nav>
+
+</body>
+</html>
