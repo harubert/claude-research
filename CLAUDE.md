@@ -409,9 +409,9 @@ Prüfe mit grep ob `[S` im Text vorkommt und ersetze jeden Fund durch die korrek
 
 ## Stil-Hinweise
 
-- Deutsch, österreichische Variante (z. B. „heuer", „Schüler:innen" oder „Schülerinnen und Schüler")
+- Deutsch, österreichische Variante (z. B. „heuer")
 - Wissenschaftlich aber zugänglich — keine unnötige Fachterminologie
-- Geschlechtergerechte Sprache (Doppelpunkt-Form oder ausschreiben)
+- **Gendergerechte Sprache mit Gender-Sternchen (*)** — IMMER und überall: Schüler\*innen, Lehrer\*innen, Forscher\*innen, Autor\*innen, Teilnehmer\*innen. Gilt für Artikel, Präsentation, alle Texte. NIEMALS generisches Maskulinum, NIEMALS Doppelpunkt-Form (Schüler:innen).
 - Keine Emojis im Fließtext
 - Keine übertriebenen Versprechen über KI-Fähigkeiten
 - Lokal-Bezug stärken wo möglich (nationale Institutionen, Hochschulen, Bildungsministerium)
