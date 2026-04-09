@@ -136,7 +136,9 @@ def md2html(md):
 BADGE_LABELS = {
     "peer":"🎓 Peer-reviewed","institution":"🏛️ Institution","book":"📚 Verlag",
     "preprint":"🔬 Preprint","web":"🌐 Web","austria":"🇦🇹 Österreich",
-    "openaccess":"🔓 Open Access","paywall":"🔒 Paywall","math":"🧮 Mathematik"
+    "openaccess":"🔓 Open Access","paywall":"🔒 Paywall","math":"🧮 Mathematik",
+    "empirical":"🔬 Empirisch","review":"📊 Review","theory":"💡 Theorie",
+    "practice":"🎯 Praxis","technology":"💻 Technologie"
 }
 
 def score_color(s):
@@ -831,7 +833,9 @@ def md2latex(md):
 BADGE_LABELS_SHORT = {
     "peer": "Peer-reviewed", "institution": "Institution", "book": "Verlag",
     "preprint": "Preprint", "web": "Web", "austria": "Österreich",
-    "openaccess": "Open Access", "paywall": "Paywall", "math": "Mathematik"
+    "openaccess": "Open Access", "paywall": "Paywall", "math": "Mathematik",
+    "empirical": "Empirisch", "review": "Review", "theory": "Theorie",
+    "practice": "Praxis", "technology": "Technologie"
 }
 
 # Farben für LaTeX-Pills je Badge-Typ

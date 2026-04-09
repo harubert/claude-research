@@ -386,7 +386,13 @@ Wenn die `relevance_*`-Felder in meta.json noch leer sind, befülle sie in Schri
 - `austria` — Österreich-Bezug
 - `openaccess` — Frei zugänglich
 - `paywall` — Nur mit Zugang
-- `math` — Stark mathematisch
+- `empirical` — Empirische Studie (Experiment, Quasi-Experiment, Survey, Fallstudie)
+- `review` — Systematisches Review, Meta-Analyse, Scoping Review
+- `theory` — Theoretische/konzeptionelle Arbeit, Framework, Modell
+- `practice` — Praxisbericht, Unterrichtsentwurf, Best Practice, Handreichung
+- `technology` — Technologiefokus (KI, Software, Tools, Plattformen)
+
+**Themenspezifische Badges statt `math`:** Der alte Badge `math` war zu unspezifisch. Verwende stattdessen die obigen 5 neuen Badges (`empirical`, `review`, `theory`, `practice`, `technology`) — sie beschreiben den **Charakter** der Quelle und sind für jedes Thema relevant, nicht nur Mathematik.
 
 ---
 

@@ -113,6 +113,11 @@
     .badge-openaccess  { color: #1a6b3c; }
     .badge-paywall     { color: #b71c1c; }
     .badge-math        { color: #1a4e8a; }
+    .badge-empirical   { color: #00695c; }
+    .badge-review      { color: #4a148c; }
+    .badge-theory      { color: #e65100; }
+    .badge-practice    { color: #2e7d32; }
+    .badge-technology  { color: #0d47a1; }
     .badge-cited       { background:#e8f5e9;color:#2e7d32;border-color:#81c784;font-weight:600; }
 
     /* Titel & Autoren */
@@ -306,7 +311,11 @@
         <div class="badge-row"><span class="badge badge-book">📚 Buch</span> <span class="badge-desc">Monografie oder Buchkapitel</span></div>
         <div class="badge-row"><span class="badge badge-web">🌐 Web</span> <span class="badge-desc">Webpublikation, Blog</span></div>
         <div class="badge-row"><span class="badge badge-paywall">🔒 Paywall</span> <span class="badge-desc">Nur mit Abonnement</span></div>
-        <div class="badge-row"><span class="badge badge-math">🧮 Mathematik</span> <span class="badge-desc">Mathematik- oder Informatikfokus</span></div>
+        <div class="badge-row"><span class="badge badge-empirical">🔬 Empirisch</span> <span class="badge-desc">Experiment, Survey, Fallstudie</span></div>
+        <div class="badge-row"><span class="badge badge-review">📊 Review</span> <span class="badge-desc">Syst. Review, Meta-Analyse</span></div>
+        <div class="badge-row"><span class="badge badge-theory">💡 Theorie</span> <span class="badge-desc">Framework, Modell, Konzept</span></div>
+        <div class="badge-row"><span class="badge badge-practice">🎯 Praxis</span> <span class="badge-desc">Unterrichtsentwurf, Best Practice</span></div>
+        <div class="badge-row"><span class="badge badge-technology">💻 Technologie</span> <span class="badge-desc">KI, Software, Tools</span></div>
       </div>
     </div>
   </div>
@@ -344,6 +353,11 @@
   <button class="filter-btn" data-filter-badge="institution">🏛️ Institution</button>
   <button class="filter-btn" data-filter-badge="openaccess">🔓 Open Access</button>
   <button class="filter-btn" data-filter-badge="austria">🇦🇹 Österreich</button>
+  <button class="filter-btn" data-filter-badge="empirical">🔬 Empirisch</button>
+  <button class="filter-btn" data-filter-badge="review">📊 Review</button>
+  <button class="filter-btn" data-filter-badge="theory">💡 Theorie</button>
+  <button class="filter-btn" data-filter-badge="practice">🎯 Praxis</button>
+  <button class="filter-btn" data-filter-badge="technology">💻 Technologie</button>
   <div class="filter-sep"></div>
   <label>Verwendung:</label>
   <button class="filter-btn active" data-filter-cited="all">Alle</button>
@@ -380,7 +394,12 @@ const BADGE_LABELS = {
   austria:     "🇦🇹 Österreich",
   openaccess:  "🔓 Open Access",
   paywall:     "🔒 Paywall",
-  math:        "🧮 Mathematik"
+  math:        "🧮 Mathematik",
+  empirical:   "🔬 Empirisch",
+  review:      "📊 Review",
+  theory:      "💡 Theorie",
+  practice:    "🎯 Praxis",
+  technology:  "💻 Technologie"
 };
 
 const TYPE_LABELS = {
