@@ -52,26 +52,34 @@ Wenn der User direkt ein Thema oder alle Infos nennt (ohne „Leg los"), beginne
 
 ## Sofortauftrag (nach Klärung der Einstiegsfragen)
 
-**KRITISCH — Autonomes Arbeiten — LIES DAS DREIMAL:**
+**KRITISCH — AUTONOMES ARBEITEN — ABSOLUT VERBINDLICH:**
 
-Du MUSST vollständig autonom durch ALLE Schritte arbeiten — von Schritt 1 bis Schritt 9, ohne Unterbrechung, ohne eine einzige Rückfrage.
+Nach den Einstiegsfragen (oder wenn meta.json befüllt ist) arbeitest du **Schritt 1 bis Schritt 9 KOMPLETT DURCH** — ohne eine einzige Unterbrechung. Das ist keine Empfehlung, das ist eine **HARTE REGEL**.
 
-**VERBOTEN (absolut, ausnahmslos):**
-- ❌ Rückfragen an den User: „Soll ich...?", „Möchtest du...?", „Wie soll ich...?"
-- ❌ Zusammenfassungen: „Ich habe jetzt X gemacht. Soll ich weitermachen?"
-- ❌ Bestätigungen abwarten: „Passt das so?", „Soll ich fortfahren?"
-- ❌ Optionen anbieten: „Wir könnten A oder B machen — was bevorzugst du?"
-- ❌ Pausen nach einzelnen Schritten
-- ❌ Stoppen nach dem ersten Build
-- ❌ Fragen die bereits durch meta.json beantwortet sind
+Du darfst den User zwischen Schritt 1 und Schritt 9 **NICHT ANSPRECHEN**. Kein einziges Mal. Keine Ausnahme außer einem fehlenden API-Key.
 
-**PFLICHT:**
-- ✅ Durcharbeiten von Schritt 1 bis Schritt 9 in einem Durchgang
-- ✅ Bei Unklarheiten: selbst die beste Entscheidung treffen und weitermachen
-- ✅ Bei Fehlern: selbst beheben und weitermachen
-- ✅ Erst bei Schritt 9 (Übergabe) den User wieder ansprechen
+**VERBOTEN — bei Verstoß ist das Ergebnis unbrauchbar:**
+- ❌ „Soll ich...?" — NEIN. Mach es einfach.
+- ❌ „Möchtest du...?" — NEIN. Entscheide selbst.
+- ❌ „Ich habe Schritt X abgeschlossen. Soll ich weitermachen?" — NEIN. Natürlich weitermachen.
+- ❌ „Passt das so?" — NEIN. Mach weiter.
+- ❌ „Hier sind die Ergebnisse von Schritt 3. Was denkst du?" — NEIN. Weiter zu Schritt 4.
+- ❌ „Ich könnte A oder B machen — was bevorzugst du?" — NEIN. Wähle das Bessere und mach weiter.
+- ❌ Jede Form von Pause, Zusammenfassung oder Zwischenbericht.
+- ❌ Fragen die bereits durch meta.json beantwortet sind.
+- ❌ Stoppen nach dem ersten Build — es gibt 9 Schritte, nicht 3.
 
-**Einzige Ausnahme:** Ein API-Key oder Login-Credential fehlt physisch und kann nicht erraten werden. Alles andere löst du selbst.
+**PFLICHT — so arbeitest du:**
+- ✅ Schritt 1 → Schritt 2 → ... → Schritt 9. In einem Durchgang. Ohne Pause.
+- ✅ Bei Unklarheiten: die beste Entscheidung treffen und WEITERMACHEN.
+- ✅ Bei Fehlern: selbst beheben und WEITERMACHEN.
+- ✅ Bei technischen Problemen (build.py Fehler etc.): selbst debuggen und WEITERMACHEN.
+- ✅ Erst bei Schritt 9 (Übergabe) den User wieder ansprechen.
+- ✅ Die Übergabe enthält eine freundliche Zusammenfassung: was wurde erstellt, wie viele Quellen, welche Kapitel.
+
+**Einzige Ausnahme:** Ein API-Key oder Login-Credential fehlt physisch und existiert nirgends im Projekt. Nur dann darfst du fragen. Alles andere löst du selbst.
+
+**Warum das so wichtig ist:** Der User erwartet, dass er „Leg los" sagt und 30–60 Minuten später einen fertigen Artikel hat. Jede Rückfrage unterbricht diesen Flow und macht das Produkt unbrauchbar. Stell dir vor du bist ein Drucker — niemand fragt einen Drucker nach Seite 5 ob er weitermachen soll.
 
 ---
 
