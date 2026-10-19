@@ -131,6 +131,81 @@
 }
 [data-theme="minimal"] .paper-header h1, [data-theme="minimal"] .page-head h1, [data-theme="minimal"] .hero h1 { letter-spacing: -.04em; font-weight: 700; }
 
+/* Print — nüchtern wie eine Drucksache: Schwarz-Weiß, Serif, keine Effekte */
+[data-theme="print"] {
+  --ink: #000000; --ink-2: #1a1a1a;
+  --primary: #000000; --primary-dark: #000000; --primary-soft: #f2f2f2;
+  --accent: #000000;
+  --paper: #ffffff; --surface: #ffffff; --line: #d9d9d9; --line-strong: #000000;
+  --text: #000000; --muted: #444444; --faint: #767676;
+  --s5: #000000; --s4: #404040; --s3: #7a7a7a; --s2: #a8a8a8;
+  --star: #000000; --star-off: #d0d0d0;
+  --font-display: Charter, 'Iowan Old Style', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+  --font-ui: Charter, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-read: Charter, 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --radius: 0; --radius-sm: 0;
+  --shadow-sm: none; --shadow: none; --shadow-lg: 0 0 0 1px #000;
+  --topbar-bg: #ffffff; --hero-bg: #ffffff; --code-bg: #f2f2f2;
+}
+[data-theme="print"] .topbar { border-bottom: 1px solid #000; -webkit-backdrop-filter: none; backdrop-filter: none; }
+[data-theme="print"] .topbar .brand, [data-theme="print"] .topbar .brand-title { color: #000; }
+[data-theme="print"] .topbar .brand-sub { color: #555; }
+[data-theme="print"] .topbar .brand-mark { background: #000; box-shadow: none; }
+[data-theme="print"] .topbar nav a, [data-theme="print"] .topbar .tb-btn { color: #333; }
+[data-theme="print"] .topbar nav a:hover, [data-theme="print"] .topbar .tb-btn:hover { color: #000; background: #f2f2f2; }
+[data-theme="print"] .topbar nav a.active { color: #000; font-weight: 700; }
+[data-theme="print"] .topbar nav a.active::after { background: #000; height: 1px; }
+[data-theme="print"] .topbar .tb-tools { border-left-color: #ccc; }
+[data-theme="print"] .theme-btn { color: #000; background: #fff; border-color: #000; border-radius: 0; }
+[data-theme="print"] .theme-btn:hover { background: #f2f2f2; color: #000; }
+[data-theme="print"] .kicker .dot { display: none; }
+[data-theme="print"] .progress { background: #000 !important; }
+[data-theme="print"] a { text-decoration-color: currentColor; }
+
+/* ── Badges & Filter-Pills in den strengen Stilen ── */
+/* Print: Kästchen wie im Satzspiegel — Kapitälchen, Haarlinie, keine Farbe */
+[data-theme="print"] .badge, [data-theme="print"] .filter-btn {
+  border-radius: 0; background: none; color: #000 !important; border: 1px solid #000;
+  font: 600 .64rem/1 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; padding: .3rem .45rem;
+}
+[data-theme="print"] .badge .ic, [data-theme="print"] .filter-btn > .ic { display: none; }
+[data-theme="print"] .badge-cited, [data-theme="print"] .filter-btn.active { background: #000 !important; color: #fff !important; }
+[data-theme="print"] .badge-austria .ic { display: inline-block; filter: grayscale(1) contrast(2); }
+
+/* Minimal: Text-Tags ohne Rahmen, getrennt durch Abstand */
+[data-theme="minimal"] .badge {
+  background: none; border: 0; padding: .15rem 0; margin-right: .55rem; border-radius: 0;
+  font: 600 .66rem/1 var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: #6b6b6b;
+}
+[data-theme="minimal"] .badge .ic { width: 11px; height: 11px; }
+[data-theme="minimal"] .badge-cited { color: var(--accent); background: none; }
+[data-theme="minimal"] .filter-btn { border-radius: 0; border: 0; border-bottom: 1.5px solid transparent; background: none; padding: .35rem .2rem; margin-right: .4rem; }
+[data-theme="minimal"] .filter-btn:hover { border-bottom-color: #bbb; }
+[data-theme="minimal"] .filter-btn.active { background: none; color: #000; border-bottom-color: var(--accent); }
+
+/* Labor: technische Labels — Monospace, eckig, Farbbalken links */
+[data-theme="labor"] .badge {
+  border-radius: 2px; border: 0; border-left: 3px solid currentColor;
+  background: color-mix(in srgb, currentColor 7%, #fff); padding: .3rem .5rem .3rem .4rem;
+  font: 500 .62rem/1 var(--font-mono); letter-spacing: .04em; text-transform: uppercase;
+}
+[data-theme="labor"] .badge-cited { background: var(--primary); color: #fff; border-left-color: var(--accent); }
+[data-theme="labor"] .filter-btn { border-radius: 2px; font: 500 .68rem/1 var(--font-mono); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Klassik: gedruckte Etiketten — Serif-Kapitälchen, feine Doppellinie */
+[data-theme="klassik"] .badge {
+  border-radius: 2px; background: none; border: 0; box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 45%, transparent);
+  font: 600 .68rem/1 var(--font-display); font-variant: small-caps; letter-spacing: .05em; text-transform: lowercase; padding: .3rem .5rem;
+}
+[data-theme="klassik"] .badge .ic { display: none; }
+[data-theme="klassik"] .badge-cited { background: var(--primary); color: #fff; box-shadow: none; }
+[data-theme="klassik"] .filter-btn { border-radius: 2px; font-family: var(--font-display); }
+
+/* ── Schrift im Artikeltext (unabhängig vom Stil, über theme.js) ── */
+[data-font="sans"] { --font-read: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+[data-font="serif"] { --font-read: Charter, 'Iowan Old Style', 'Source Serif Pro', Georgia, serif; }
+[data-font="fraunces"] { --font-read: 'Fraunces', Georgia, serif; }
+
 /* ── Stil-Umschalter ── */
 .theme-switch { position: relative; }
 .theme-btn {
@@ -159,6 +234,16 @@
 .theme-opt .tick { color: #1f3fbf; opacity: 0; }
 .theme-opt.active .tick { opacity: 1; }
 .theme-opt.active { background: #f4f3ef; }
+.theme-menu .tm-sep { height: 1px; background: #ecebe6; margin: .35rem .3rem; }
+.theme-menu .tm-row { display: flex; gap: 3px; padding: 0 .6rem .55rem; }
+.theme-menu .tm-seg {
+  flex: 1; padding: .45rem .3rem; border: 1px solid #e4e2db; background: #fff; border-radius: 6px; cursor: pointer;
+  font: 500 .74rem/1.1 'Inter', system-ui, sans-serif; color: #374151;
+}
+.theme-menu .tm-seg:hover { border-color: #9aa0aa; }
+.theme-menu .tm-seg.active { background: #141a24; border-color: #141a24; color: #fff; }
+.theme-menu .tm-seg.f-serif { font-family: Charter, Georgia, serif; }
+.theme-menu .tm-seg.f-fraunces { font-family: 'Fraunces', Georgia, serif; }
 @media (max-width: 860px) { .theme-btn .tb-label { display: none; } }
 
 /* ── Icons ── */

@@ -70,7 +70,12 @@ window.ICONS = /* ICONS_START */{
   "theory":      "<path d='M9 18h6M10 21h4'/><path d='M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z'/>",
   "practice":    "<rect x='5' y='4' width='14' height='17' rx='1.5'/><path d='M9 4V3h6v1'/><path d='M8.5 12l2 2 4-4M8.5 17.5h7'/>",
   "technology":  "<rect x='6' y='6' width='12' height='12' rx='1.5'/><rect x='9.5' y='9.5' width='5' height='5' rx='.5'/><path d='M9.5 2.5V6M14.5 2.5V6M9.5 18v3.5M14.5 18v3.5M2.5 9.5H6M2.5 14.5H6M18 9.5h3.5M18 14.5h3.5'/>",
-  "cited":       "<path d='M5 12.5l4.5 4.5L19 7.5'/>"
+  "cited":       "<path d='M5 12.5l4.5 4.5L19 7.5'/>",
+  "tag":         "<path d='M3 12V4.5A1.5 1.5 0 0 1 4.5 3H12l9 9-9 9z'/><circle cx='7.5' cy='7.5' r='1.3'/>",
+  "users":       "<circle cx='9' cy='8' r='3.5'/><path d='M2.5 20a6.5 6.5 0 0 1 13 0'/><path d='M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20a6.5 6.5 0 0 0-4-6'/>",
+  "school":      "<path d='M12 4L2 9l10 5 10-5z'/><path d='M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5'/>",
+  "globe-pin":   "<circle cx='12' cy='10' r='3'/><path d='M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z'/>",
+  "ruler":       "<path d='M3 17L17 3l4 4L7 21z'/><path d='M7 13l2 2M10 10l2 2M13 7l2 2'/>"
 }/* ICONS_END */;
 
 /* Badge-Beschriftungen — gemeinsam für quellen.html und Präsentation */
