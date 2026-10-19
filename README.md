@@ -13,6 +13,9 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 - **Automated literature research** — Claude searches, evaluates and structures sources with authority, recency and relevance scores
 - **Interactive citation system** — every inline citation `(Author, Year)` is a live hyperlink; sources are a queryable, filterable database with DOI links, open-access badges and topic clusters
 - **Article writing** — 10-chapter structure in Markdown, APA 7 citations, Austrian/German academic style
+- **Research desiderata** — after the literature review, Claude derives five concrete, still-unexplored research projects (gap, research question, design, contribution) from the sources
+- **Built-in quality control** — two review passes (sources & citations, content & language) plus a final complete review, logged in `content/review.md`
+- **Clean academic design** — one design system across article, source database, landing page and slides; custom SVG icon set, no emojis
 - **Publication-ready export** — `build.py` generates `standalone.html` (interactive, printable) and `standalone.tex` (LaTeX/Overleaf-ready)
 - **Presentation** — Reveal.js slides with AI-generated background images (fal.ai Flux), 3 layout modes, 8 font themes, 18 visual styles
 - **PowerPoint export** — one-click `.pptx` generation with editable text and embedded background images
@@ -103,11 +106,16 @@ claude-research/
 ├── syllabus.html           ← Course syllabus template (optional)
 ├── content/
 │   ├── meta.json           ← Project metadata (title, author, sources target)
-│   └── 01–10_*.md          ← Article chapters (Markdown)
+│   ├── 01–10_*.md          ← Article chapters (Markdown)
+│   ├── forschungsdesiderata.md ← Five open research projects
+│   └── review.md           ← Review log (written in the final check)
 ├── sources/
 │   ├── sources.json        ← All sources with metadata and scores
 │   └── pdf/                ← Downloaded source PDFs (auto-populated)
-├── assets/css/paper.css    ← Stylesheet
+├── assets/
+│   ├── css/site.css        ← Design system (colors, fonts, nav, badges)
+│   ├── css/paper.css       ← Article typography
+│   └── icons.js            ← SVG icon set (single source for all icons)
 ├── presentation/
 │   ├── index.html          ← Reveal.js presentation with FAB toolbar
 │   ├── stile.html          ← Visual style gallery (18 styles)
@@ -125,6 +133,8 @@ claude-research/
 | Interactive citations | Click any `(Author, Year)` → popup with abstract, DOI, badges |
 | Source quality dashboard | Filter by score, type, badge, language; visual statistics |
 | APA 7 compliance | Inline citations auto-linked, chapter bibliographies generated |
+| Research desiderata | Five evidence-based, unexplored research projects as a dedicated article section |
+| Review passes | Two check passes + complete review before handover |
 | URL verification | Every source URL checked for accessibility |
 | PDF download | Open-access PDFs saved locally; paywall → excerpt extraction |
 | HTML article | Responsive, printable, with TOC and citation modals |

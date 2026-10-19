@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>KI im Geometrieunterricht — Präsentation</title>
 <script src="../API Key.js"></script>
+<script src="../assets/icons.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"/>
@@ -13,7 +14,9 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 <style>
 :root {
-  --brand: #163374;
+  --brand: #0d1626;
+  --primary: #1f3fbf;
+  --accent: #ff5a36;
   --bar-h: 52px;
 }
 
@@ -31,14 +34,14 @@
 .reveal p { margin-bottom: 0.35em; }
 .reveal strong { font-weight: 700; color: #111; }
 .reveal em { font-style: italic; }
-.reveal a { color: var(--brand); }
+.reveal a { color: var(--primary); }
 .reveal ul { list-style: none; padding: 0; margin: 0; }
 .reveal ul li { padding-left: 1.1em; position: relative; margin-bottom: 0.3em; }
 .reveal ul li::before { content: '–'; position: absolute; left: 0; color: #aaa; }
 .reveal ol li { margin-bottom: 0.3em; }
 .reveal .slides section { padding-bottom: calc(var(--bar-h) + 16px) !important; box-sizing: border-box; text-align: left; }
-.reveal .progress span { background: var(--brand); }
-.reveal .controls { color: var(--brand); bottom: calc(var(--bar-h) + 10px) !important; }
+.reveal .progress span { background: var(--accent); }
+.reveal .controls { color: var(--primary); bottom: calc(var(--bar-h) + 10px) !important; }
 
 /* ── Footer bar ── */
 #slide-footer-bar {
@@ -52,43 +55,49 @@
 #footer-clock { margin-left: auto; font-size: 12px; color: rgba(255,255,255,.45); font-family: system-ui; font-variant-numeric: tabular-nums; }
 #slide-footer-bar.bar-light { background: #fff; box-shadow: 0 -1px 0 rgba(0,0,0,.1); }
 #slide-footer-bar.bar-light #footer-num,
-#slide-footer-bar.bar-light #footer-clock { color: rgba(22,51,116,.4); }
+#slide-footer-bar.bar-light #footer-clock { color: rgba(13,22,38,.4); }
 #slide-footer-bar.bar-light #footer-logo { color: var(--brand); }
 
 /* ── UI buttons ── */
-.home-btn {
-  position: fixed; top: 1em; right: 1em; width: 1.9em; height: 1.9em;
-  border-radius: 50%; border: 1px solid rgba(0,0,0,.15); background: rgba(255,255,255,.9);
-  color: #555; font-size: 1em; display: flex; align-items: center; justify-content: center;
-  text-decoration: none; z-index: 300; box-shadow: 0 1px 4px rgba(0,0,0,.1);
-}
-.home-btn.light { color: var(--brand); }
-.fab {
-  width: 1.9em; height: 1.9em; border-radius: 50%; border: 1px solid rgba(0,0,0,.15);
-  background: rgba(255,255,255,.9); color: #555; font-size: 1em; cursor: pointer;
+.ic { width: 16px; height: 16px; flex-shrink: 0; display: block; }
+.home-btn, .fab {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(13,22,38,.12); background: rgba(255,255,255,.92);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: #2b3445; cursor: pointer; padding: 0;
   display: flex; align-items: center; justify-content: center; text-decoration: none;
-  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+  box-shadow: 0 1px 2px rgba(13,22,38,.08), 0 4px 14px -4px rgba(13,22,38,.18);
+  transition: background .15s, color .15s, transform .1s;
 }
-.fab.light { color: var(--brand); }
+.home-btn { position: fixed; top: 1em; right: 1em; z-index: 300; font-size: 1em; }
+.home-btn:hover, .fab:hover { background: #fff; color: var(--primary); }
+.fab:active { transform: scale(.95); }
+.home-btn.light, .fab.light { color: var(--brand); }
+#fab-toggle { background: var(--brand); color: #fff; border-color: var(--brand); }
+#fab-toggle:hover { background: var(--primary); color: #fff; }
+.fab-count { font: 600 9px/1 system-ui, sans-serif; letter-spacing: -.02em; }
+.fab.busy .ic { animation: spin 1s linear infinite; }
 /* ── Collapsible FAB cluster ── */
 #fab-cluster {
-  position: fixed; top: 1em; right: 3.5em;
-  display: flex; align-items: center; gap: .4em;
+  position: fixed; top: 1em; right: calc(1em + 44px);
+  display: flex; align-items: center; gap: 6px;
   z-index: 300;
 }
 #fab-tools {
-  display: flex; gap: .4em; align-items: center;
-  max-width: 0; overflow: hidden; opacity: 0;
+  display: flex; gap: 6px; align-items: center;
+  max-width: 0; overflow: hidden; opacity: 0; padding: 2px 0;
   transition: max-width .28s ease, opacity .2s ease;
 }
-#fab-cluster.open #fab-tools { max-width: 22em; opacity: 1; }
-#img-btn.generating { animation: spin 1.2s linear infinite; cursor: default; }
+#fab-cluster.open #fab-tools { max-width: 30em; opacity: 1; }
+#fab-tools .fab-sep { width: 1px; height: 20px; background: rgba(13,22,38,.15); margin: 0 2px; }
+#img-btn.generating { cursor: default; }
+#img-btn.generating .ic { animation: spin 1.2s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── Toast ── */
 #img-toast {
   position: fixed; bottom: calc(var(--bar-h) + 12px); left: 50%; transform: translateX(-50%);
-  background: rgba(22,51,116,.92); color: #fff; font-size: .7rem; padding: .38rem 1.1rem;
+  background: rgba(13,22,38,.94); color: #fff; font-size: .7rem; padding: .38rem 1.1rem;
   border-radius: 20px; pointer-events: none; opacity: 0; transition: opacity .4s;
   z-index: 400; white-space: nowrap; font-family: system-ui;
 }
@@ -129,9 +138,10 @@
   padding: .6em .4em; cursor: pointer; background: #fafafa;
   transition: border-color .15s, background .15s; text-align: center;
 }
-.layout-opt:hover { border-color: var(--brand); background: #f0f4fd; }
-.layout-opt.active { border-color: var(--brand); background: #eef2fc; }
-.lo-icon { font-size: 1.4em; margin-bottom: .25em; color: #444; }
+.layout-opt:hover { border-color: var(--primary); background: #f3f5fd; }
+.layout-opt.active { border-color: var(--primary); background: #eef1fc; }
+.lo-icon { margin: 0 auto .45em; width: 64px; }
+.lo-icon svg { display: block; width: 100%; height: auto; }
 .lo-name { font-size: .62rem; font-weight: 700; color: #222; font-family: system-ui; }
 .lo-desc { font-size: .55rem; color: #888; margin-top: .15em; font-family: system-ui; line-height: 1.4; }
 
@@ -142,8 +152,8 @@
   cursor: pointer; background: #fafafa; transition: border-color .15s;
   display: flex; align-items: center; gap: .8em;
 }
-.font-opt:hover { border-color: var(--brand); }
-.font-opt.active { border-color: var(--brand); background: #eef2fc; }
+.font-opt:hover { border-color: var(--primary); }
+.font-opt.active { border-color: var(--primary); background: #eef1fc; }
 .fo-sample { font-size: 1.15em; font-weight: 700; color: #111; flex-shrink: 0; width: 2.8em; }
 .fo-info { flex: 1; }
 .fo-name { font-size: .66rem; font-weight: 700; color: #222; font-family: system-ui; }
@@ -512,24 +522,24 @@
 </div><!-- /reveal -->
 
 <!-- Home Button -->
-<a class="home-btn" id="home-btn" href="../index.html" title="Zurück zum Artikel">⌂</a>
+<a class="home-btn" id="home-btn" href="../index.html" title="Zur Startseite" data-icon="home"></a>
 
 <!-- Panels -->
 <div id="panel-layout" class="ui-panel">
   <div class="panel-title">Design-Variante — Text immer fix oben links</div>
   <div class="layout-opts">
     <button class="layout-opt" id="lopt-rein" onclick="setLayout('rein')">
-      <div class="lo-icon">▭</div>
+      <div class="lo-icon"><svg viewBox="0 0 64 36" fill="none"><rect x=".5" y=".5" width="63" height="35" rx="3" fill="#fff" stroke="#cfccc2"/><rect x="6" y="7" width="22" height="3" rx="1" fill="#0d1626"/><rect x="6" y="13" width="16" height="2" rx="1" fill="#8d929c"/><rect x="6" y="17" width="19" height="2" rx="1" fill="#8d929c"/><rect x="6" y="21" width="13" height="2" rx="1" fill="#8d929c"/></svg></div>
       <div class="lo-name">Rein</div>
       <div class="lo-desc">Kein Bild, klarer Hintergrund</div>
     </button>
     <button class="layout-opt" id="lopt-gradient" onclick="setLayout('gradient')">
-      <div class="lo-icon">◁▨</div>
+      <div class="lo-icon"><svg viewBox="0 0 64 36" fill="none"><rect x=".5" y=".5" width="63" height="35" rx="3" fill="#fff" stroke="#cfccc2"/><defs><linearGradient id="lg" x1="0" x2="1"><stop offset=".35" stop-color="#1f3fbf" stop-opacity="0"/><stop offset="1" stop-color="#1f3fbf"/></linearGradient></defs><rect x="1" y="1" width="62" height="34" rx="2.5" fill="url(#lg)"/><rect x="6" y="7" width="22" height="3" rx="1" fill="#0d1626"/><rect x="6" y="13" width="16" height="2" rx="1" fill="#8d929c"/><rect x="6" y="17" width="19" height="2" rx="1" fill="#8d929c"/><rect x="6" y="21" width="13" height="2" rx="1" fill="#8d929c"/></svg></div>
       <div class="lo-name">Verlauf</div>
       <div class="lo-desc">Bild blendet rechts ein</div>
     </button>
     <button class="layout-opt" id="lopt-bg" onclick="setLayout('bg')">
-      <div class="lo-icon">▨</div>
+      <div class="lo-icon"><svg viewBox="0 0 64 36" fill="none"><rect x=".5" y=".5" width="63" height="35" rx="3" fill="#fff" stroke="#cfccc2"/><rect x="1" y="1" width="62" height="34" rx="2.5" fill="#1f3fbf" fill-opacity=".16"/><rect x="6" y="7" width="22" height="3" rx="1" fill="#0d1626"/><rect x="6" y="13" width="16" height="2" rx="1" fill="#8d929c"/><rect x="6" y="17" width="19" height="2" rx="1" fill="#8d929c"/><rect x="6" y="21" width="13" height="2" rx="1" fill="#8d929c"/></svg></div>
       <div class="lo-name">Hintergrund</div>
       <div class="lo-desc">Bild blass dahinter</div>
     </button>
@@ -545,7 +555,7 @@
   <div class="panel-title">Hintergrundfarbe — aktuelle Folie</div>
   <div class="color-swatches" id="color-swatches"></div>
   <div class="color-row">
-    <input type="color" id="custom-color-input" value="#163374" oninput="applySlideColor(this.value)"/>
+    <input type="color" id="custom-color-input" value="#1f3fbf" oninput="applySlideColor(this.value)"/>
     <label>Eigene Farbe</label>
   </div>
   <button class="panel-btn danger" onclick="clearSlideColor()">Farbe entfernen</button>
@@ -553,23 +563,25 @@
 
 <!-- FAB Cluster — standardmäßig eingeklappt -->
 <div id="fab-cluster">
-  <button class="fab" id="fab-toggle" title="Werkzeuge" onclick="toggleFabCluster()">⚙</button>
   <div id="fab-tools">
-    <a class="fab" id="stil-btn" href="stile.html" title="Bildstil">◈</a>
-    <button class="fab" id="img-btn" title="Alle Folien generieren" onclick="generateAllImages()">✦</button>
-    <button class="fab" id="regen-btn" title="Nur diese Folie" onclick="regenCurrentSlide()">◎</button>
-    <button class="fab" id="layout-btn" title="Design-Variante" onclick="togglePanel('layout')">⊞</button>
-    <button class="fab" id="font-btn" title="Schriftstil" onclick="togglePanel('font')">Aa</button>
-    <button class="fab" id="color-btn" title="Farbe" onclick="togglePanel('color')">◉</button>
-    <button class="fab" id="save-btn" title="Speichern" onclick="saveAllSettings()">⊡</button>
-    <button class="fab" id="deploy-btn" title="Deployment-ZIP erstellen" onclick="buildDeployment()">⬇</button>
-    <button class="fab" id="pptx-btn" title="PowerPoint exportieren" onclick="exportPPTX()">⬇P</button>
+    <a class="fab" id="stil-btn" href="stile.html" title="Bildstil-Galerie" data-icon="image"></a>
+    <button class="fab" id="img-btn" title="Alle Folienbilder generieren" onclick="generateAllImages()" data-icon="sparkles"></button>
+    <button class="fab" id="regen-btn" title="Nur diese Folie neu generieren" onclick="regenCurrentSlide()" data-icon="target"></button>
+    <span class="fab-sep"></span>
+    <button class="fab" id="layout-btn" title="Layout-Variante" onclick="togglePanel('layout')" data-icon="layout"></button>
+    <button class="fab" id="font-btn" title="Schriftstil" onclick="togglePanel('font')" data-icon="type"></button>
+    <button class="fab" id="color-btn" title="Hintergrundfarbe" onclick="togglePanel('color')" data-icon="palette"></button>
+    <span class="fab-sep"></span>
+    <button class="fab" id="save-btn" title="Einstellungen exportieren (JSON)" onclick="saveAllSettings()" data-icon="save"></button>
+    <button class="fab" id="deploy-btn" title="Deployment-ZIP erstellen" onclick="buildDeployment()" data-icon="package"></button>
+    <button class="fab" id="pptx-btn" title="PowerPoint exportieren" onclick="exportPPTX()" data-icon="pptx"></button>
   </div>
+  <button class="fab" id="fab-toggle" title="Werkzeuge" onclick="toggleFabCluster()" data-icon="gear"></button>
 </div>
 
 <!-- Fixed Footer Bar -->
 <div id="slide-footer-bar">
-  <svg id="footer-logo" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15m0-9.007c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/></svg>
+  <svg id="footer-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M15 4h4v16h-4"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/></svg>
   <span id="footer-num"></span>
   <span id="footer-clock"></span>
 </div>
@@ -598,6 +610,15 @@ Reveal.initialize({
   plugins: []
 });
 
+// ── Icons (assets/icons.js) ──
+function _ic(name) { return window.icon ? window.icon(name) : ''; }
+function _setIcon(el, name) { if (el) el.innerHTML = _ic(name); }
+function _setBusy(el, busy, name) {
+  if (!el) return;
+  el.classList.toggle('busy', busy);
+  el.innerHTML = _ic(busy ? 'loader' : name);
+}
+
 // ── Footer bar ──
 const homeBtn    = document.getElementById('home-btn');
 const imgBtn     = document.getElementById('img-btn');
@@ -609,7 +630,7 @@ var totalSlides  = 0;
 
 (function() {
   var sn = localStorage.getItem('fal_presentation_style_name');
-  if (sn) imgBtn.title = 'KI-Bilder generieren · Stil: ' + sn;
+  if (sn && imgBtn) imgBtn.title = 'KI-Bilder generieren · Stil: ' + sn;
 })();
 
 function isDarkSlide(slide) {
@@ -621,17 +642,8 @@ function updateFooter() {
   const slide = Reveal.getCurrentSlide();
   const idx   = Reveal.getState().indexh + 1;
   const dark  = isDarkSlide(slide);
-  if (dark) {
-    footerBar.classList.add('bar-light');
-    homeBtn.classList.remove('light');
-    imgBtn.classList.remove('light');
-    stilBtn.classList.remove('light');
-  } else {
-    footerBar.classList.remove('bar-light');
-    homeBtn.classList.add('light');
-    imgBtn.classList.add('light');
-    stilBtn.classList.add('light');
-  }
+  footerBar.classList.toggle('bar-light', dark);
+  [homeBtn, imgBtn, stilBtn].forEach(function(b) { if (b) b.classList.toggle('light', !dark); });
   if (totalSlides > 0) footerNum.textContent = idx + ' / ' + totalSlides;
 }
 
@@ -824,12 +836,12 @@ window.generateAllImages = async function() {
   var total = allSects.length;
   var done  = 0;
 
-  _toast('Generiere ' + total + ' Bilder — Navigation weiter möglich ✓', 3500);
+  _toast('Generiere ' + total + ' Bilder — Navigation weiter möglich', 3500);
 
   for (var i = 0; i < allSects.length; i++) {
     var section = allSects[i];
     done++;
-    imgBtn.textContent = done + '/' + total;
+    imgBtn.innerHTML = '<span class="fab-count">' + done + '/' + total + '</span>';
 
     var visual = _slideVisual(section);
     var url = await _fetchImage(visual);
@@ -841,9 +853,9 @@ window.generateAllImages = async function() {
 
   _imgGenerating = false;
   imgBtn.classList.remove('generating');
-  imgBtn.textContent = '↺';
+  _setIcon(imgBtn, 'refresh');
   imgBtn.title = 'Bilder neu generieren';
-  _toast('Fertig — alle Bilder generiert ✓', 3000);
+  _toast('Fertig — alle Bilder generiert', 3000);
 };
 
 // ── Per-Folie neu generieren ──
@@ -854,14 +866,14 @@ window.regenCurrentSlide = async function() {
   var allSects = [...document.querySelectorAll('.reveal .slides > section')];
   var section  = Reveal.getCurrentSlide();
   var idx      = allSects.indexOf(section);
-  document.getElementById('regen-btn').textContent = '…';
+  _setBusy(document.getElementById('regen-btn'), true);
   var url = await _fetchImage(_slideVisual(section));
   if (url) {
     _slideCacheSet(idx, url);
     _applyBackground(section, url);
-    _toast('Bild aktualisiert ✓', 2000);
+    _toast('Bild aktualisiert', 2000);
   }
-  document.getElementById('regen-btn').textContent = '◎';
+  _setBusy(document.getElementById('regen-btn'), false, 'target');
 };
 
 // ══ LAYOUT-VARIANTEN ══
@@ -1066,7 +1078,7 @@ window.applyFontTheme = function(id) {
 var _COLORS_KEY = 'pres_colors_v1';
 var _COLOR_PRESETS = [
   '#ffffff','#f8f7f4','#f0f4fd','#e8f5ee','#fdf6e3',
-  '#0c0f18','#163374','#1a3a1a','#2d2d2d','#f5e6d3'
+  '#0d1626','#1f3fbf','#1a3a1a','#2d2d2d','#f5e6d3'
 ];
 
 function _renderColorPanel() {
@@ -1130,7 +1142,7 @@ var _fabOpen = false;
 window.toggleFabCluster = function() {
   _fabOpen = !_fabOpen;
   document.getElementById('fab-cluster').classList.toggle('open', _fabOpen);
-  document.getElementById('fab-toggle').textContent = _fabOpen ? '✕' : '⚙';
+  _setIcon(document.getElementById('fab-toggle'), _fabOpen ? 'x' : 'gear');
   if (!_fabOpen && _openPanel) closePanel(_openPanel);
 };
 
@@ -1160,7 +1172,7 @@ document.addEventListener('click', function(e) {
   if (_fabOpen && !inFab && !inPanel) {
     _fabOpen = false;
     document.getElementById('fab-cluster').classList.remove('open');
-    document.getElementById('fab-toggle').textContent = '⚙';
+    _setIcon(document.getElementById('fab-toggle'), 'gear');
   }
 });
 
@@ -1181,7 +1193,7 @@ window.saveAllSettings = function() {
   a.href = URL.createObjectURL(blob);
   a.download = 'praesentation-einstellungen.json';
   a.click();
-  _toast('Einstellungen gespeichert ✓', 2500);
+  _toast('Einstellungen gespeichert', 2500);
 };
 
 // ══ INIT ══
@@ -1200,7 +1212,7 @@ Reveal.on('ready', function() {
 // standalone.html, quellen.html und lokalen Schriften.
 window.buildDeployment = async function() {
   var deployBtn = document.getElementById('deploy-btn');
-  deployBtn.textContent = '…';
+  _setBusy(deployBtn, true);
 
   // JSZip dynamisch laden
   if (!window.JSZip) {
@@ -1245,7 +1257,8 @@ window.buildDeployment = async function() {
   }
 
   // ── 3. Artikel und Quellen ──
-  for (var pf of ['standalone.html', 'quellen.html']) {
+  for (var pf of ['standalone.html', 'quellen.html', 'handbuch.html', 'index.html',
+                  'assets/css/site.css', 'assets/css/paper.css', 'assets/icons.js']) {
     try {
       var r2 = await fetch('../' + pf);
       if (r2.ok) zip.file(pf, await r2.text());
@@ -1254,18 +1267,18 @@ window.buildDeployment = async function() {
 
   // ── 4. Landingpage ──
   var meta = document.title || 'Forschungsartikel';
-  zip.file('index.html', '<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="UTF-8"/>\n' +
+  if (!zip.file('index.html')) zip.file('index.html', '<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="UTF-8"/>\n' +
     '<meta name="viewport" content="width=device-width,initial-scale=1"/>\n' +
     '<title>' + meta + '</title>\n' +
     '<style>body{font-family:system-ui,sans-serif;max-width:680px;margin:4rem auto;padding:0 2rem;color:#222}' +
     'h1{font-size:1.4rem;margin-bottom:.5rem}p{color:#666;margin-bottom:2rem}' +
     'nav{display:flex;flex-direction:column;gap:.8rem}' +
-    'a{display:inline-block;padding:.7rem 1.2rem;background:#163374;color:#fff;text-decoration:none;border-radius:6px;width:fit-content}' +
+    'a{display:inline-block;padding:.7rem 1.2rem;background:#1f3fbf;color:#fff;text-decoration:none;border-radius:6px;width:fit-content}' +
     'a:hover{background:#0f2456}</style>\n</head>\n<body>\n' +
     '<h1>' + meta + '</h1>\n<p>Wähle einen Bereich:</p>\n<nav>\n' +
-    '<a href="standalone.html">📄 Artikel lesen</a>\n' +
-    '<a href="quellen.html">📚 Quelldatenbank</a>\n' +
-    '<a href="presentation/index.html">▶ Präsentation</a>\n' +
+    '<a href="standalone.html">Artikel lesen</a>\n' +
+    '<a href="quellen.html">Quelldatenbank</a>\n' +
+    '<a href="presentation/index.html">Präsentation</a>\n' +
     '</nav>\n</body>\n</html>');
 
   // ── 5. ZIP herunterladen ──
@@ -1274,15 +1287,15 @@ window.buildDeployment = async function() {
   a.href = URL.createObjectURL(blob);
   a.download = 'deployment.zip';
   a.click();
-  deployBtn.textContent = '⬇';
-  _toast('deployment.zip heruntergeladen ✓', 3000);
+  _setBusy(deployBtn, false, 'package');
+  _toast('deployment.zip heruntergeladen', 3000);
 };
 
 // ══ PPTX-EXPORT ══
 // Erzeugt eine echte .pptx-Datei mit pptxgenjs — editierbar in PowerPoint/LibreOffice
 window.exportPPTX = async function() {
   var btn = document.getElementById('pptx-btn');
-  btn.textContent = '…';
+  _setBusy(btn, true);
   _toast('PowerPoint wird erstellt …', 8000);
 
   // pptxgenjs dynamisch laden
@@ -1421,8 +1434,8 @@ window.exportPPTX = async function() {
 
   var filename = (document.title || 'praesentation').replace(/[^a-zA-Z0-9äöüÄÖÜß\-_ ]/g, '').trim();
   await pptx.writeFile({ fileName: filename + '.pptx' });
-  btn.textContent = '⬇P';
-  _toast('PowerPoint heruntergeladen ✓', 3000);
+  _setBusy(btn, false, 'pptx');
+  _toast('PowerPoint heruntergeladen', 3000);
 };
 
 // ── Stil-Wechsel aus stile.html automatisch erkennen und Bilder neu generieren ──

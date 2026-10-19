@@ -59,23 +59,23 @@ Nach den Einstiegsfragen (oder wenn meta.json befüllt ist) arbeitest du **Schri
 Du darfst den User zwischen Schritt 1 und Schritt 9 **NICHT ANSPRECHEN**. Kein einziges Mal. Keine Ausnahme außer einem fehlenden API-Key.
 
 **VERBOTEN — bei Verstoß ist das Ergebnis unbrauchbar:**
-- ❌ „Soll ich...?" — NEIN. Mach es einfach.
-- ❌ „Möchtest du...?" — NEIN. Entscheide selbst.
-- ❌ „Ich habe Schritt X abgeschlossen. Soll ich weitermachen?" — NEIN. Natürlich weitermachen.
-- ❌ „Passt das so?" — NEIN. Mach weiter.
-- ❌ „Hier sind die Ergebnisse von Schritt 3. Was denkst du?" — NEIN. Weiter zu Schritt 4.
-- ❌ „Ich könnte A oder B machen — was bevorzugst du?" — NEIN. Wähle das Bessere und mach weiter.
-- ❌ Jede Form von Pause, Zusammenfassung oder Zwischenbericht.
-- ❌ Fragen die bereits durch meta.json beantwortet sind.
-- ❌ Stoppen nach dem ersten Build — es gibt 9 Schritte, nicht 3.
+- „Soll ich...?" — NEIN. Mach es einfach.
+- „Möchtest du...?" — NEIN. Entscheide selbst.
+- „Ich habe Schritt X abgeschlossen. Soll ich weitermachen?" — NEIN. Natürlich weitermachen.
+- „Passt das so?" — NEIN. Mach weiter.
+- „Hier sind die Ergebnisse von Schritt 3. Was denkst du?" — NEIN. Weiter zu Schritt 4.
+- „Ich könnte A oder B machen — was bevorzugst du?" — NEIN. Wähle das Bessere und mach weiter.
+- Jede Form von Pause, Zusammenfassung oder Zwischenbericht.
+- Fragen die bereits durch meta.json beantwortet sind.
+- Stoppen nach dem ersten Build — es gibt 9 Schritte, nicht 3.
 
 **PFLICHT — so arbeitest du:**
-- ✅ Schritt 1 → Schritt 2 → ... → Schritt 9. In einem Durchgang. Ohne Pause.
-- ✅ Bei Unklarheiten: die beste Entscheidung treffen und WEITERMACHEN.
-- ✅ Bei Fehlern: selbst beheben und WEITERMACHEN.
-- ✅ Bei technischen Problemen (build.py Fehler etc.): selbst debuggen und WEITERMACHEN.
-- ✅ Erst bei Schritt 9 (Übergabe) den User wieder ansprechen.
-- ✅ Die Übergabe enthält eine freundliche Zusammenfassung: was wurde erstellt, wie viele Quellen, welche Kapitel.
+- Schritt 1 → Schritt 2 → ... → Schritt 9 (inklusive 3g Forschungsdesiderata und 8a–8c Prüfdurchgänge). In einem Durchgang. Ohne Pause.
+- Bei Unklarheiten: die beste Entscheidung treffen und WEITERMACHEN.
+- Bei Fehlern: selbst beheben und WEITERMACHEN.
+- Bei technischen Problemen (build.py Fehler etc.): selbst debuggen und WEITERMACHEN.
+- Erst bei Schritt 9 (Übergabe) den User wieder ansprechen.
+- Die Übergabe enthält eine freundliche Zusammenfassung: was wurde erstellt, wie viele Quellen, welche Kapitel.
 
 **Einzige Ausnahme:** Ein API-Key oder Login-Credential fehlt physisch und existiert nirgends im Projekt. Nur dann darfst du fragen. Alles andere löst du selbst.
 
@@ -161,7 +161,23 @@ Arbeite in Blöcken von 10 Quellen, dann `python3 build.py`. Dieser Schritt ist 
 - `methodology` / `empirical` / `review` / `theory` — Quellentyp
 
 ### Schritt 3f — Quellenanzahl prüfen
-Zähle die Einträge in `sources.json` und vergleiche mit `target_sources` aus `meta.json`. Wenn die Zielanzahl noch nicht erreicht ist: zurück zu Schritt 3c und weitere Quellen recherchieren. Erst wenn das Ziel erreicht ist: weiter zu Schritt 4.
+Zähle die Einträge in `sources.json` und vergleiche mit `target_sources` aus `meta.json`. Wenn die Zielanzahl noch nicht erreicht ist: zurück zu Schritt 3c und weitere Quellen recherchieren. Erst wenn das Ziel erreicht ist: weiter zu Schritt 3g.
+
+### Schritt 3g — Forschungsdesiderata: fünf offene Forschungsvorhaben
+Die Literaturarbeit zeigt nicht nur, was bekannt ist — sondern auch, was fehlt. Leite aus den recherchierten Quellen **genau fünf Forschungsdesiderata** ab: konkrete Forschungsvorhaben zum Thema, die in der Literatur noch nicht oder nur unzureichend bearbeitet sind. Schreibe sie in `content/forschungsdesiderata.md` (Vorlage liegt bereit). `build.py` setzt den Abschnitt automatisch nach dem letzten Kapitel in Artikel, Inhaltsverzeichnis und LaTeX-Export.
+
+So gehst du vor:
+1. **Lücken sammeln:** Beim Lesen der Abstracts notieren, wo Quellen selbst Grenzen benennen („future research should …"), wo Zielgruppen, Schulstufen, Länder oder Methoden fehlen, wo Befunde widersprüchlich sind oder nur Kleinstudien existieren.
+2. **Verdichten:** Die stärksten fünf Lücken auswählen — Kriterien: Neuheit (nicht bereits beforscht), Machbarkeit (mit realistischen Mitteln durchführbar), Relevanz für die Praxis, nach Möglichkeit Bezug zu Österreich.
+3. **Ausformulieren** — pro Vorhaben vier Felder:
+   - `## N. Projekttitel` — prägnant, als möglicher Antrags- oder Projekttitel
+   - `**Forschungslücke:**` — was bisher fehlt, **mit mindestens einem Beleg** `(Nachname, Jahr)` aus `sources.json`
+   - `**Forschungsfrage:**` — eine präzise, empirisch prüfbare Frage
+   - `**Mögliches Design:**` — Methode, Stichprobe, Setting, Dauer (z. B. „Quasi-Experiment, sechs Klassen der Sekundarstufe I, Prä-Post-Test, zwölf Wochen")
+   - `**Erwarteter Beitrag:**` — Nutzen für Forschung und Praxis
+4. **Einleitender Absatz** (3–4 Sätze) unter der H1: welche Lücken die Literatur zeigt und warum gerade diese fünf Vorhaben.
+
+Die fünf Vorhaben dürfen sich nicht überschneiden und sollen unterschiedliche Zugänge abdecken (z. B. empirisch-quantitativ, qualitativ, Entwicklungsforschung/Design-Based Research, Längsschnitt, Lehrer*innenbildung). In Kapitel 10 (Ausblick) kurz auf den Abschnitt verweisen.
 
 ### Schritt 4 — Kapitel vollständig ausschreiben (mit Build nach jedem Kapitel)
 Schreibe die 10 Kapitel nacheinander. **Nach jedem fertiggestellten Kapitel sofort `python3 build.py` ausführen** — so wächst der Artikel sichtbar im Browser mit, Kapitel für Kapitel.
@@ -212,21 +228,25 @@ Folienanzahl: abhängig von Vortragslänge — Faustregel: ~1 Folie pro Minute. 
 Jede Folie bekommt eine thematisch passende Bildbeschreibung. Die Funktion analysiert h1/h2/h3-Text per Regex und gibt einen visuellen Prompt zurück, der zum Folieninhalt passt (z. B. Volksschule → Schulbank mit Bauklötzen). Kein Foto-Stil, kein Text im Bild. Standard: Engineering-Schematik / Blaupausen-Ästhetik.
 
 **UI-Elemente (alle in `presentation/index.html` integriert):**
-- `#fab-cluster` — eingeklappte Werkzeugbox (⚙-Button öffnet/schließt)
-- `✦` — Alle Folien mit KI-Bildern generieren (fal.ai Flux Schnell)
-- `◎` — Nur aktuelle Folie neu generieren
-- `⊞` — Panel: 3 Layout-Varianten wählen
-- `Aa` — Panel: 8 Schriftstil-Themes (Google Fonts)
-- `◉` — Panel: Hintergrundfarbe für aktuelle Folie
-- `⊡` — Einstellungen als JSON herunterladen
-- `◈` — Link zu `stile.html` (Bildstil-Auswahl)
+Alle Buttons verwenden SVG-Icons aus `assets/icons.js` (`data-icon="…"`) — keine Unicode-Symbole, keine Emojis.
+- `#fab-cluster` — eingeklappte Werkzeugbox (Icon `gear` öffnet, `x` schließt)
+- `sparkles` — Alle Folien mit KI-Bildern generieren (fal.ai Flux Schnell)
+- `target` — Nur aktuelle Folie neu generieren
+- `layout` — Panel: 3 Layout-Varianten wählen
+- `type` — Panel: 8 Schriftstil-Themes
+- `palette` — Panel: Hintergrundfarbe für aktuelle Folie
+- `save` — Einstellungen als JSON herunterladen
+- `image` — Link zu `stile.html` (Bildstil-Auswahl)
+- `package` / `pptx` — Deployment-ZIP / PowerPoint-Export
 
-**3 Layout-Varianten (Panel `⊞`):**
+**Folie zu den Forschungsdesiderata:** Vor Fazit und Danke eine Folie „Was noch zu erforschen ist" mit den fünf Projekttiteln aus `content/forschungsdesiderata.md`.
+
+**3 Layout-Varianten (Panel `layout`):**
 - `rein` — Kein Bild, klarer Hintergrund
 - `gradient` — Verlauf von links (weiß) nach rechts (volles Bild). Der Verlauf wird per Canvas API direkt ins Bild eingebacken (`_processImageWithGradient`): Bild laden → 1280×720 Canvas → weißes `fillRect` mit `createLinearGradient` drüber → als JPEG Data-URL zurück. Kein CSS-Layer, kein z-index-Problem. Opacity 1.
 - `bg` — Bild blass im gesamten Hintergrund (`data-background-opacity: 0.18`)
 
-**8 Schriftstil-Themes (Panel `Aa`):**
+**8 Schriftstil-Themes (Panel `type`):**
 1. System — system-ui (neutral)
 2. Fraunces + Inter — eleganter Serif
 3. Space Grotesk — geometrisch/technisch
@@ -252,19 +272,47 @@ Bilder werden in `localStorage['fal_slide_bg_v4']` gecacht (55 Min. TTL).
 Falls der User in Frage 9 einen Bildstil gewählt hat:
 - Setze die Variable `_DEFAULT_STYLE` auf den passenden englischen Prompt (kein Text, keine Buchstaben, kein Jahr im Bild).
 - `IMG_STYLE` wird beim Start aus localStorage geladen oder fällt auf `_DEFAULT_STYLE` zurück.
-- Der User wählt den Stil im Browser über `stile.html` (◈-Button).
+- Der User wählt den Stil im Browser über `stile.html` (Button mit Icon `image`).
 
 ### Schritt 8 — index.html anpassen
 Passe `index.html` an: Titel, Untertitel, Autor, Datum, Veranstaltung.
 
-### Schritt 9 — Übergabe an den User
-Wenn alle Schritte abgeschlossen sind (Artikel, Quellen, Präsentation, Build fehlerfrei), schreibe dem User eine freundliche Abschlussnachricht:
+### Schritt 8a — Prüfdurchgang 1: Quellen und Zitate
+Systematisch prüfen und **jeden Fund sofort beheben**:
+- Jedes Inline-Zitat `(Nachname, Jahr)` hat einen passenden Eintrag in `sources.json` (Erstautor*in + Jahr). In `standalone.html` muss jedes Zitat als klickbarer Link erscheinen — nicht verlinkte Zitate suchen und korrigieren.
+- Kein `[S…]`-Muster im Text: `grep -rn "\[S[0-9]" content/` liefert nichts.
+- Literaturlisten am Kapitelende vollständig, APA 7, nur tatsächlich zitierte Quellen.
+- `score` = `authority` + `recency` + `relevance` bei jeder Quelle; `recency` passt zum Jahr; keine doppelten Quellen (gleicher Titel/DOI); IDs fortlaufend.
+- Forschungsdesiderata: jedes der fünf Vorhaben belegt seine Lücke mit mindestens einer Quelle.
+Danach `python3 build.py`.
 
-> Die Literatur-Review und der Artikel sind abgeschlossen. Die Präsentation ist erstellt. Du kannst jetzt alles im Browser anschauen:
+### Schritt 8b — Prüfdurchgang 2: Inhalt und Sprache
+Jedes Kapitel und die Forschungsdesiderata noch einmal vollständig lesen:
+- Roter Faden: Die Forschungsfragen aus Kapitel 1 werden in Kapitel 10 beantwortet. Keine Widersprüche zwischen Kapiteln.
+- Jede Zahl und jede empirische Aussage ist durch eine Quelle gedeckt — sonst belegen oder streichen.
+- Sprache nach den Stil-Hinweisen: Gender-Sternchen durchgängig, keine Floskeln, keine Emojis, Satzanfänge variiert, österreichische Variante.
+- Längen: Hauptkapitel 800–1.500 Wörter, jedes Kapitel beginnt mit H1.
+- Forschungsdesiderata: genau fünf, überschneidungsfrei, jeweils mit präziser Forschungsfrage und realistischem Design.
+Danach `python3 build.py`.
+
+### Schritt 8c — Complete Review: Gesamtabnahme
+Zum Schluss das **gesamte Paket** als Ganzes prüfen — so, wie es ein*e Gutachter*in oder Tagungsteilnehmer*in sehen würde:
+- Build läuft fehlerfrei; Inhaltsverzeichnis vollständig inkl. Forschungsdesiderata.
+- Konsistenz über alle Ausgaben: Titel, Untertitel, Autor*in, Datum, Veranstaltung und Quellenzahl stimmen in `meta.json`, `index.html`, `standalone.html`, `quellen.html` und Präsentation überein.
+- Präsentation deckt alle Kapitel ab, Zahlen auf den Folien stimmen mit dem Artikel überein, Folie zu den Forschungsdesiderata vorhanden.
+- Abstract fasst den fertigen Artikel korrekt zusammen; `source_count` aktuell.
+- Die Checkliste „Qualitätskontrolle vor Abschluss" (unten) Punkt für Punkt abhaken.
+
+Ergebnis in `content/review.md` protokollieren: was geprüft wurde, was gefunden und behoben wurde, was offen bleibt (falls etwas nicht lösbar war). Erst dann weiter zu Schritt 9.
+
+### Schritt 9 — Übergabe an den User
+Wenn alle Schritte abgeschlossen sind (Artikel, Quellen, Forschungsdesiderata, Präsentation, Prüfdurchgänge, Build fehlerfrei), schreibe dem User eine freundliche Abschlussnachricht:
+
+> Die Literatur-Review und der Artikel sind abgeschlossen, inklusive fünf Forschungsdesiderata. Die Präsentation ist erstellt, und alles wurde in zwei Prüfdurchgängen und einem Complete Review kontrolliert (Protokoll: `content/review.md`). Du kannst jetzt alles im Browser anschauen:
 >
 > - **standalone.html** — Fachartikel
 > - **quellen.html** — Quellenverzeichnis
-> - **presentation/index.html** — Folien (⚙ → ✦ für Bildgenerierung)
+> - **presentation/index.html** — Folien (Zahnrad → Funken-Symbol für Bildgenerierung)
 >
 > Sag mir, was du ändern möchtest — einzelne Kapitel überarbeiten, mehr Quellen ergänzen, die Präsentation anpassen, oder etwas ganz anderes.
 >
@@ -294,7 +342,9 @@ projektordner/
 ├── sources/
 │   └── sources.json            ← Alle Quellen (befüllen!)
 ├── figures/                    ← Abbildungen ablegen (PNG empfohlen)
-├── assets/css/paper.css        ← Stylesheet (nicht verändern)
+├── assets/css/site.css         ← Designsystem: Farben, Schriften, Kopfleiste, Badges
+├── assets/css/paper.css        ← Artikel-Typografie
+├── assets/icons.js             ← SVG-Icon-Set (einzige Icon-Quelle)
 ├── API Key.js                  ← fal.ai API-Schlüssel (nicht weitergeben!)
 └── presentation/
     ├── index.html              ← Präsentationsfolien (erstellen!)
@@ -412,8 +462,8 @@ Damit die automatische Verlinkung funktioniert, muss der **Nachname der ersten A
 **KRITISCH — Falsche Zitierweise:**
 
 ```
-❌ VERBOTEN: [S02], [S001], [S012] — diese IDs sind nicht klickbar und werden von build.py nicht erkannt
-✅ KORREKT:  (Nachname, Jahr), (Nachname & Nachname, Jahr), (Nachname et al., Jahr)
+VERBOTEN: [S02], [S001], [S012] — diese IDs sind nicht klickbar und werden von build.py nicht erkannt
+KORREKT:   (Nachname, Jahr), (Nachname & Nachname, Jahr), (Nachname et al., Jahr)
 ```
 
 **Nach dem Schreiben jedes Kapitels obligatorisch:**
@@ -426,7 +476,7 @@ Prüfe mit grep ob `[S` im Text vorkommt und ersetze jeden Fund durch die korrek
 - Deutsch, österreichische Variante (z. B. „heuer")
 - Wissenschaftlich aber zugänglich — keine unnötige Fachterminologie
 - **Gendergerechte Sprache mit Gender-Sternchen (*)** — IMMER und überall: Schüler\*innen, Lehrer\*innen, Forscher\*innen, Autor\*innen, Teilnehmer\*innen. Gilt für Artikel, Präsentation, alle Texte. NIEMALS generisches Maskulinum, NIEMALS Doppelpunkt-Form (Schüler:innen).
-- Keine Emojis im Fließtext
+- Keine Emojis — weder im Fließtext noch in Oberflächen, Buttons, Badges oder Folien. Für Symbole ausschließlich SVG-Icons aus `assets/icons.js` verwenden (`<span data-icon="name"></span>` bzw. `icon("name")`).
 - Keine übertriebenen Versprechen über KI-Fähigkeiten
 - Lokal-Bezug stärken wo möglich (nationale Institutionen, Hochschulen, Bildungsministerium)
 - Konkrete Beispiele und Zahlen bevorzugen — keine vagen Aussagen
@@ -486,15 +536,15 @@ Wird automatisch als nummerierte `<figure>` (HTML) und `\begin{figure}` (LaTeX) 
 
 ## KI-Bildgenerierung (fal.ai Flux)
 
-Der ✦-Button in der Präsentation ruft die fal.ai REST API auf und generiert Hintergrundbilder für alle Kapitel- und Titelfolien.
+Der Button mit dem Funken-Icon (`sparkles`) in der Präsentation ruft die fal.ai REST API auf und generiert Hintergrundbilder für alle Kapitel- und Titelfolien.
 
 **Voraussetzungen:**
 - `API Key.js` im Projektstamm mit einem gültigen fal.ai API-Key
 - `<script src="../API Key.js"></script>` im `<head>` von `presentation/index.html`
 
 **Bedienung:**
-- ✦ = Bilder generieren (erster Durchgang)
-- ↺ = Alle Bilder neu generieren
+- `sparkles` = Bilder generieren (erster Durchgang)
+- `refresh` = Alle Bilder neu generieren (erscheint nach dem ersten Durchgang)
 - Pro Klick: alle chapter-slides + title-slides erhalten ein neues Bild
 
 **Stil anpassen:**
@@ -513,6 +563,8 @@ var IMG_STYLE = "architectural photography, blue tones, minimal, elegant, ultra 
 ## Qualitätskontrolle vor Abschluss
 
 - [ ] Alle 10 Kapitel vorhanden und inhaltlich vollständig?
+- [ ] `content/forschungsdesiderata.md` mit genau fünf belegten Forschungsvorhaben?
+- [ ] Prüfdurchgang 1, Prüfdurchgang 2 und Complete Review durchgeführt, Protokoll in `content/review.md`?
 - [ ] Jedes Kapitel beginnt mit `# Kapitelname` (H1)? Inhaltsverzeichnis im Browser prüfen!
 - [ ] Kein `[S...]`-Muster im Fließtext? (grep -r "\[S" content/ darf nichts liefern)
 - [ ] Jede im Text zitierte Quelle in sources.json vorhanden?
@@ -520,7 +572,8 @@ var IMG_STYLE = "architectural photography, blue tones, minimal, elegant, ultra 
 - [ ] `python3 build.py` läuft ohne Fehler durch?
 - [ ] `standalone.html` öffnet sich im Browser korrekt?
 - [ ] Präsentation erstellt? `_DEFAULT_STYLE` / `_slideVisual()` implementiert?
-- [ ] FAB-Cluster vorhanden (⚙, ✦, ◎, ⊞, Aa, ◉, ⊡, ◈)?
+- [ ] FAB-Cluster vorhanden (Icons: gear, image, sparkles, target, layout, type, palette, save, package, pptx)?
+- [ ] Keine Emojis in irgendeiner Datei (Artikel, Quellen, Folien, Startseite)?
 - [ ] `stile.html` verlinkt und mit passenden Stilen befüllt?
 - [ ] `index.html` mit korrektem Titel und Datum?
 - [ ] `API Key.js` vorhanden (oder bewusst leer gelassen)?
