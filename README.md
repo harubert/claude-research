@@ -16,6 +16,7 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 - **Research desiderata** — after the literature review, Claude derives five concrete, still-unexplored research projects (gap, research question, design, contribution) from the sources
 - **Built-in quality control** — two review passes (sources & citations, content & language) plus a final complete review, logged in `content/review.md`
 - **Clean academic design** — one design system across article, source database, landing page and slides; custom SVG icon set, no emojis
+- **Six switchable styles** — Akademie, Klassik, Nacht (dark mode), Labor, Wald, Minimal; chosen once in the navigation bar, remembered across all pages
 - **Publication-ready export** — `build.py` generates `standalone.html` (interactive, printable) and `standalone.tex` (LaTeX/Overleaf-ready)
 - **Presentation** — Reveal.js slides with AI-generated background images (fal.ai Flux), 3 layout modes, 8 font themes, 18 visual styles
 - **PowerPoint export** — one-click `.pptx` generation with editable text and embedded background images
@@ -26,28 +27,51 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 
 ## Screenshots
 
+### Landing page
+
+**One entry point for article, slides, source database and manual**
+![Landing page](docs/screenshots/landingpage.png)
+
+**Six switchable styles — Akademie, Klassik, Nacht, Labor, Wald, Minimal**
+![Six styles](docs/screenshots/stile.png)
+
+### Article
+
+**Title block, abstract and table of contents**
+![Article header](docs/screenshots/artikel-kopf.png)
+
+**Article text with clickable inline citations — every (Author, Year) links to the source**
+![Article text](docs/screenshots/artikel-text.png)
+
+**Citation popup with score, badges, abstract and link to the original**
+![Citation modal](docs/screenshots/zitat-modal.png)
+
+**Research desiderata — five unexplored research projects derived from the literature**
+![Research desiderata](docs/screenshots/forschungsdesiderata.png)
+
+**Further reading and full source appendix with quality badges**
+![Literature list](docs/screenshots/quellen-liste.png)
+
+**Dark mode ("Nacht")**
+![Article in dark mode](docs/screenshots/artikel-nacht.png)
+
 ### Source Database
 
-**Statistics dashboard — 290 sources, peer-review rate, score distribution, type and language breakdown**
+**Statistics dashboard — source count, peer-review rate, score distribution, type and language breakdown**
 ![Stats overview](docs/screenshots/quellen-statistiken.png)
 
-**Source cards with score badges, citation links and full metadata**
+**Source cards with score, badges, citation backlinks and one-click APA copy**
 ![Source cards](docs/screenshots/quellen-karten.png)
 
 **Rating methodology — authority, recency and relevance dimensions explained**
 ![Rating methodology](docs/screenshots/quellen-methodik.png)
 
-### Article
-
-**Article text with clickable inline citations — every (Author, Year) links to the source**
-![Article text](docs/screenshots/artikel-text.png)
-
-**Source list with badges, citation status and DOI links**
-![Literature list](docs/screenshots/quellen-liste.png)
+**Style switcher in the navigation bar**
+![Style menu](docs/screenshots/stil-menue.png)
 
 ### Presentation
 
-**Reveal.js slide with AI-generated sticker-style background (fal.ai Flux)**
+**Reveal.js slides with SVG toolbox — layout, fonts, colors, AI images, ZIP and PowerPoint export**
 ![Presentation slide](docs/screenshots/praesentation.png)
 
 **Visual style gallery — 18 styles, one click to switch**
@@ -115,7 +139,8 @@ claude-research/
 ├── assets/
 │   ├── css/site.css        ← Design system (colors, fonts, nav, badges)
 │   ├── css/paper.css       ← Article typography
-│   └── icons.js            ← SVG icon set (single source for all icons)
+│   ├── icons.js            ← SVG icon set (single source for all icons)
+│   └── theme.js            ← Style switcher (6 styles)
 ├── presentation/
 │   ├── index.html          ← Reveal.js presentation with FAB toolbar
 │   ├── stile.html          ← Visual style gallery (18 styles)
@@ -135,6 +160,7 @@ claude-research/
 | APA 7 compliance | Inline citations auto-linked, chapter bibliographies generated |
 | Research desiderata | Five evidence-based, unexplored research projects as a dedicated article section |
 | Review passes | Two check passes + complete review before handover |
+| Style switcher | Six CSS styles incl. dark mode for landing page, article, sources and manual |
 | URL verification | Every source URL checked for accessibility |
 | PDF download | Open-access PDFs saved locally; paywall → excerpt extraction |
 | HTML article | Responsive, printable, with TOC and citation modals |

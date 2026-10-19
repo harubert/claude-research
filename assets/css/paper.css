@@ -21,7 +21,7 @@ header.paper-header { margin-bottom: 3rem; padding-bottom: 2.25rem; border-botto
 header.paper-header .kicker { margin-bottom: 1.1rem; }
 header.paper-header h1 {
   font-family: var(--font-display); font-size: clamp(2rem, 4.6vw, 2.9rem); font-weight: 600;
-  line-height: 1.08; letter-spacing: -.02em; margin-bottom: .9rem; color: var(--ink);
+  line-height: 1.08; letter-spacing: -.02em; margin-bottom: .9rem; color: var(--heading);
   font-variation-settings: "opsz" 96;
 }
 header.paper-header .subtitle { font-family: var(--font-display); font-size: 1.2rem; font-style: italic; font-weight: 400; color: var(--muted); line-height: 1.4; margin-bottom: 1.6rem; }
@@ -41,8 +41,8 @@ section.abstract h2 { font: 600 .7rem/1 var(--font-mono); letter-spacing: .16em;
 section.abstract p { margin: 0; }
 
 /* ── Überschriften ── */
-h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 0 0 1.2rem; }
-h2 { font-family: var(--font-ui); font-size: 1.22rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; color: var(--ink); margin: 2.6rem 0 .8rem; }
+h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.15; letter-spacing: -.015em; color: var(--heading); margin: 0 0 1.2rem; }
+h2 { font-family: var(--font-ui); font-size: 1.22rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; color: var(--heading); margin: 2.6rem 0 .8rem; }
 h3 { font-family: var(--font-ui); font-size: 1rem; font-weight: 600; color: var(--ink-2); margin: 1.9rem 0 .5rem; }
 h4 { font-family: var(--font-ui); font-size: .9rem; font-weight: 600; color: var(--muted); margin: 1.4rem 0 .4rem; }
 
@@ -50,7 +50,7 @@ h4 { font-family: var(--font-ui); font-size: .9rem; font-weight: 600; color: var
 p { margin-bottom: 1.05rem; hyphens: auto; }
 a { color: var(--primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--primary) 35%, transparent); }
 a:hover { color: var(--primary-dark); text-decoration-color: currentColor; }
-strong { font-weight: 700; color: var(--ink); }
+strong { font-weight: 700; color: var(--heading); }
 ul, ol { margin: 0 0 1.1rem 1.4rem; }
 li { margin-bottom: .35rem; }
 li::marker { color: var(--faint); }
@@ -70,7 +70,7 @@ tbody tr:hover td { background: rgba(31,63,191,.025); }
 caption { caption-side: bottom; font-size: .8rem; color: var(--muted); margin-top: .5rem; text-align: left; }
 
 /* ── Code ── */
-code { font-family: var(--font-mono); font-size: .84em; background: #ecebe5; padding: .12em .38em; border-radius: 4px; }
+code { font-family: var(--font-mono); font-size: .84em; background: var(--code-bg); padding: .12em .38em; border-radius: 4px; }
 pre { background: var(--ink); color: #dfe5f0; border-radius: var(--radius-sm); padding: 1rem 1.15rem; overflow-x: auto; font: .8rem/1.6 var(--font-mono); margin: 1.5rem 0; }
 pre code { background: none; padding: 0; color: inherit; }
 
@@ -114,7 +114,7 @@ nav.toc a:hover { color: var(--primary); }
   padding: 1.3rem 1.5rem 1.1rem; box-shadow: var(--shadow-sm); font-size: .95rem;
 }
 .fd-card::before { content: ''; position: absolute; left: 0; top: 1.3rem; width: 3px; height: 1.6rem; background: var(--accent); border-radius: 0 3px 3px 0; }
-.fd-card h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; margin: 0 0 .8rem; color: var(--ink); }
+.fd-card h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; margin: 0 0 .8rem; color: var(--heading); }
 .fd-card p { margin-bottom: .55rem; }
 .fd-card p strong:first-child {
   display: block; font: 600 .66rem/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;

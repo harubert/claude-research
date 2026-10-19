@@ -7,6 +7,8 @@
 @font-face { font-family: 'Inter'; font-weight: 400 700; font-display: swap; src: url('../../presentation/fonts/inter.woff2') format('woff2'); }
 @font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 400 900; font-display: swap; src: url('../../presentation/fonts/fraunces-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400 900; font-display: swap; src: url('../../presentation/fonts/fraunces-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-weight: 300 700; font-display: swap; src: url('../../presentation/fonts/space-grotesk.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-weight: 400 900; font-display: swap; src: url('../../presentation/fonts/PlayfairDisplay-700.woff2') format('woff2'); }
 
 :root {
   /* Farben */
@@ -45,7 +47,119 @@
   --shadow:    0 1px 2px rgba(13,22,38,.05), 0 8px 24px -8px rgba(13,22,38,.14);
   --shadow-lg: 0 24px 60px -20px rgba(13,22,38,.35);
   --topbar-h:  56px;
+
+  /* Abgeleitete Rollen (pro Stil überschreibbar) */
+  --heading:   var(--ink);
+  --topbar-bg: rgba(13,22,38,.94);
+  --hero-bg:   var(--ink);
+  --code-bg:   #ecebe5;
+  color-scheme: light;
 }
+
+/* ============================================================
+   Stile — umschaltbar über <html data-theme="…"> (assets/theme.js)
+   akademie (Standard) · klassik · nacht · labor · wald · minimal
+   ============================================================ */
+
+/* Klassik — Bordeaux, Creme, Gold; Playfair Display */
+[data-theme="klassik"] {
+  --ink: #2a1418; --ink-2: #4a2a2f;
+  --primary: #7a1f2b; --primary-dark: #5c1520; --primary-soft: #f6e9e6;
+  --accent: #b8892b;
+  --paper: #f8f3ea; --surface: #fffdf8; --line: #e8dfd0; --line-strong: #d4c7b2;
+  --text: #2a2220; --muted: #6f625a; --faint: #9a8d84;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --topbar-bg: rgba(42,20,24,.95); --hero-bg: #2a1418; --code-bg: #efe6d6;
+  --star: #b8892b;
+}
+
+/* Nacht — Dunkelmodus */
+[data-theme="nacht"] {
+  --ink: #05080f; --ink-2: #c9d3e6; --heading: #f1f4fa;
+  --primary: #7c9cff; --primary-dark: #a8bcff; --primary-soft: rgba(124,156,255,.12);
+  --accent: #ff7a59;
+  --paper: #0b1019; --surface: #131a27; --line: #222c3d; --line-strong: #33405a;
+  --text: #dbe2ee; --muted: #9aa5b8; --faint: #6c778b;
+  --star-off: #2c3648;
+  --topbar-bg: rgba(5,8,15,.92); --hero-bg: #05080f; --code-bg: #1d2638;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow:    0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
+  --shadow-lg: 0 24px 60px -20px rgba(0,0,0,.8);
+  color-scheme: dark;
+}
+[data-theme="nacht"] .badge:not(.badge-cited) { filter: brightness(1.75) saturate(.85); }
+[data-theme="nacht"] .badge-austria .ic { filter: brightness(.6); }
+[data-theme="nacht"] .filter-btn.active { background: var(--primary) !important; border-color: var(--primary) !important; color: #0b1019 !important; }
+[data-theme="nacht"] .card.primary { color: #0b1019; }
+[data-theme="nacht"] .card.primary h2, [data-theme="nacht"] .card.primary .card-go { color: #0b1019 !important; }
+[data-theme="nacht"] .card.primary p, [data-theme="nacht"] .card.primary .card-num { color: rgba(11,16,25,.7) !important; }
+
+/* Labor — technisch, Space Grotesk, Schwarz & Elektroblau */
+[data-theme="labor"] {
+  --ink: #0a0a0a; --ink-2: #262626;
+  --primary: #0055ff; --primary-dark: #0040c2; --primary-soft: #e8efff;
+  --accent: #00c37a;
+  --paper: #f2f2f0; --surface: #ffffff; --line: #e2e2df; --line-strong: #c9c9c4;
+  --text: #121212; --muted: #5c5c5c; --faint: #8c8c8c;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-ui: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-read: 'Inter', system-ui, sans-serif;
+  --radius: 4px; --radius-sm: 3px;
+  --topbar-bg: rgba(10,10,10,.95); --hero-bg: #0a0a0a; --code-bg: #e8e8e4;
+}
+
+/* Wald — Tannengrün & Ocker */
+[data-theme="wald"] {
+  --ink: #10241b; --ink-2: #29443a;
+  --primary: #1f6b4f; --primary-dark: #15523b; --primary-soft: #e6f1ec;
+  --accent: #d9921f;
+  --paper: #f3f3ec; --surface: #fdfdf8; --line: #e1e2d6; --line-strong: #c8cbb9;
+  --text: #1b2620; --muted: #5d6a62; --faint: #8b968f;
+  --topbar-bg: rgba(16,36,27,.95); --hero-bg: #10241b; --code-bg: #e8e9de;
+}
+
+/* Minimal — Schwarz-Weiß, ein Akzent */
+[data-theme="minimal"] {
+  --ink: #111111; --ink-2: #333333;
+  --primary: #111111; --primary-dark: #000000; --primary-soft: #f1f1f1;
+  --accent: #e5484d;
+  --paper: #ffffff; --surface: #ffffff; --line: #ebebeb; --line-strong: #d4d4d4;
+  --text: #1a1a1a; --muted: #6b6b6b; --faint: #9b9b9b;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --shadow-sm: none; --shadow: 0 0 0 1px rgba(0,0,0,.04); --shadow-lg: 0 20px 50px -20px rgba(0,0,0,.25);
+  --topbar-bg: rgba(17,17,17,.96); --hero-bg: #111111; --code-bg: #f1f1f1;
+}
+[data-theme="minimal"] .paper-header h1, [data-theme="minimal"] .page-head h1, [data-theme="minimal"] .hero h1 { letter-spacing: -.04em; font-weight: 700; }
+
+/* ── Stil-Umschalter ── */
+.theme-switch { position: relative; }
+.theme-btn {
+  display: inline-flex; align-items: center; gap: .45rem; height: 32px; padding: 0 .65rem;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.8); font: 500 .76rem var(--font-ui); cursor: pointer; transition: background .15s, color .15s;
+}
+.theme-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+.theme-btn .ic { width: 15px; height: 15px; }
+.theme-menu {
+  position: absolute; right: 0; top: calc(100% + 10px); width: 300px; z-index: 900;
+  background: #fff; color: #141a24; border: 1px solid #e4e2db; border-radius: 12px; padding: .45rem;
+  box-shadow: 0 24px 60px -20px rgba(13,22,38,.45); display: none; font-family: 'Inter', system-ui, sans-serif;
+}
+.theme-switch.open .theme-menu { display: block; }
+.theme-menu .tm-head { font: 600 .62rem/1 ui-monospace, Consolas, monospace; letter-spacing: .14em; text-transform: uppercase; color: #8d929c; padding: .55rem .6rem .5rem; }
+.theme-opt {
+  display: grid; grid-template-columns: 46px 1fr 16px; align-items: center; gap: .7rem; width: 100%;
+  padding: .5rem .6rem; border: 0; background: none; border-radius: 8px; cursor: pointer; text-align: left; color: inherit;
+}
+.theme-opt:hover { background: #f4f3ef; }
+.theme-opt .sw { display: flex; height: 26px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.theme-opt .sw i { flex: 1; }
+.theme-opt .tn { font-size: .82rem; font-weight: 600; line-height: 1.2; }
+.theme-opt .td { display: block; font-size: .7rem; font-weight: 400; color: #6b7280; }
+.theme-opt .tick { color: #1f3fbf; opacity: 0; }
+.theme-opt.active .tick { opacity: 1; }
+.theme-opt.active { background: #f4f3ef; }
+@media (max-width: 860px) { .theme-btn .tb-label { display: none; } }
 
 /* ── Icons ── */
 .ic { width: 1.15em; height: 1.15em; flex-shrink: 0; vertical-align: -0.2em; display: inline-block; }
@@ -62,7 +176,7 @@
 .topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 800;
   height: var(--topbar-h);
-  background: rgba(13,22,38,.94);
+  background: var(--topbar-bg);
   -webkit-backdrop-filter: saturate(140%) blur(12px); backdrop-filter: saturate(140%) blur(12px);
   border-bottom: 1px solid rgba(255,255,255,.06);
   font-family: var(--font-ui);

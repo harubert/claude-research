@@ -1258,7 +1258,7 @@ window.buildDeployment = async function() {
 
   // ── 3. Artikel und Quellen ──
   for (var pf of ['standalone.html', 'quellen.html', 'handbuch.html', 'index.html',
-                  'assets/css/site.css', 'assets/css/paper.css', 'assets/icons.js']) {
+                  'assets/css/site.css', 'assets/css/paper.css', 'assets/icons.js', 'assets/theme.js']) {
     try {
       var r2 = await fetch('../' + pf);
       if (r2.ok) zip.file(pf, await r2.text());

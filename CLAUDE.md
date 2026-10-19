@@ -345,6 +345,7 @@ projektordner/
 ├── assets/css/site.css         ← Designsystem: Farben, Schriften, Kopfleiste, Badges
 ├── assets/css/paper.css        ← Artikel-Typografie
 ├── assets/icons.js             ← SVG-Icon-Set (einzige Icon-Quelle)
+├── assets/theme.js             ← Stil-Umschalter: 6 Stile (Akademie, Klassik, Nacht, Labor, Wald, Minimal)
 ├── API Key.js                  ← fal.ai API-Schlüssel (nicht weitergeben!)
 └── presentation/
     ├── index.html              ← Präsentationsfolien (erstellen!)
@@ -476,6 +477,7 @@ Prüfe mit grep ob `[S` im Text vorkommt und ersetze jeden Fund durch die korrek
 - Deutsch, österreichische Variante (z. B. „heuer")
 - Wissenschaftlich aber zugänglich — keine unnötige Fachterminologie
 - **Gendergerechte Sprache mit Gender-Sternchen (*)** — IMMER und überall: Schüler\*innen, Lehrer\*innen, Forscher\*innen, Autor\*innen, Teilnehmer\*innen. Gilt für Artikel, Präsentation, alle Texte. NIEMALS generisches Maskulinum, NIEMALS Doppelpunkt-Form (Schüler:innen).
+- Farben und Schriften nie fest im HTML verdrahten, sondern über die Tokens aus `assets/css/site.css` (`var(--primary)`, `var(--heading)`, `var(--surface)` …) — nur so funktionieren alle sechs Stile inkl. Dunkelmodus.
 - Keine Emojis — weder im Fließtext noch in Oberflächen, Buttons, Badges oder Folien. Für Symbole ausschließlich SVG-Icons aus `assets/icons.js` verwenden (`<span data-icon="name"></span>` bzw. `icon("name")`).
 - Keine übertriebenen Versprechen über KI-Fähigkeiten
 - Lokal-Bezug stärken wo möglich (nationale Institutionen, Hochschulen, Bildungsministerium)
