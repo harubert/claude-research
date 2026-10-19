@@ -1,118 +1,132 @@
 /* ============================================================
-   paper.css — Scientific Paper Stylesheet
+   paper.css — Artikel-Typografie (baut auf site.css auf)
    ============================================================ */
-
-:root {
-  --font-body:    "Georgia", "Times New Roman", serif;
-  --font-ui:      "Helvetica Neue", Arial, sans-serif;
-  --font-mono:    "Courier New", monospace;
-  --color-text:   #1a1a1a;
-  --color-muted:  #555;
-  --color-link:   #1a4e8a;
-  --color-rule:   #ccc;
-  --color-bg:     #fafaf8;
-  --color-card:   #fff;
-  --max-width:    780px;
-}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 17px; background: var(--color-bg); color: var(--color-text); }
+html { font-size: 17px; background: var(--paper); color: var(--text); scroll-padding-top: calc(var(--topbar-h) + 1.5rem); }
 
 body {
-  font-family: var(--font-body);
-  line-height: 1.75;
-  max-width: var(--max-width);
+  font-family: var(--font-read);
+  line-height: 1.72;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 3rem 2rem 6rem;
+  padding: calc(var(--topbar-h) + 3.5rem) 1.5rem 6rem;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* ── Header / Title block ── */
-header.paper-header { text-align: center; margin-bottom: 3rem; border-bottom: 2px solid var(--color-rule); padding-bottom: 2rem; }
-header.paper-header h1 { font-size: 1.8rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.75rem; }
-header.paper-header .subtitle { font-size: 1.05rem; color: var(--color-muted); font-style: italic; margin-bottom: 1rem; }
-header.paper-header .authors { font-family: var(--font-ui); font-size: 0.9rem; color: var(--color-muted); }
-header.paper-header .meta { font-family: var(--font-ui); font-size: 0.8rem; color: var(--color-muted); margin-top: 0.5rem; }
+/* ── Titelblock ── */
+header.paper-header { margin-bottom: 3rem; padding-bottom: 2.25rem; border-bottom: 1px solid var(--line-strong); }
+header.paper-header .kicker { margin-bottom: 1.1rem; }
+header.paper-header h1 {
+  font-family: var(--font-display); font-size: clamp(2rem, 4.6vw, 2.9rem); font-weight: 600;
+  line-height: 1.08; letter-spacing: -.02em; margin-bottom: .9rem; color: var(--ink);
+  font-variation-settings: "opsz" 96;
+}
+header.paper-header .subtitle { font-family: var(--font-display); font-size: 1.2rem; font-style: italic; font-weight: 400; color: var(--muted); line-height: 1.4; margin-bottom: 1.6rem; }
+header.paper-header .authors { font-family: var(--font-ui); font-size: .9rem; font-weight: 600; color: var(--text); }
+header.paper-header .authors em { font-style: normal; font-weight: 400; color: var(--muted); }
+header.paper-header .meta { font-family: var(--font-mono); font-size: .74rem; letter-spacing: .04em; color: var(--muted); margin-top: .45rem; }
+header.paper-header .meta small { display: block; font-family: var(--font-ui); letter-spacing: 0; color: var(--faint); margin-top: .6rem; font-style: normal; }
 
 /* ── Abstract ── */
 section.abstract {
-  background: #f0f0eb;
-  border-left: 4px solid #aaa;
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 2.5rem;
-  font-size: 0.95rem;
+  position: relative; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.5rem 1.75rem 1.4rem 2rem;
+  margin-bottom: 2.5rem; font-size: .96rem; box-shadow: var(--shadow-sm);
 }
-section.abstract h2 { font-size: 0.85rem; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; color: var(--color-muted); }
+section.abstract::before { content: ''; position: absolute; left: 0; top: 1.2rem; bottom: 1.2rem; width: 3px; background: var(--accent); border-radius: 0 3px 3px 0; }
+section.abstract h2 { font: 600 .7rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0 0 .7rem; padding: 0; border: 0; }
+section.abstract p { margin: 0; }
 
-/* ── Section headings ── */
-h2 { font-size: 1.25rem; margin-top: 2.5rem; margin-bottom: 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--color-rule); }
-h3 { font-size: 1.05rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
-h4 { font-size: 0.95rem; margin-top: 1.25rem; margin-bottom: 0.4rem; color: var(--color-muted); }
+/* ── Überschriften ── */
+h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.15; letter-spacing: -.015em; color: var(--ink); margin: 0 0 1.2rem; }
+h2 { font-family: var(--font-ui); font-size: 1.22rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; color: var(--ink); margin: 2.6rem 0 .8rem; }
+h3 { font-family: var(--font-ui); font-size: 1rem; font-weight: 600; color: var(--ink-2); margin: 1.9rem 0 .5rem; }
+h4 { font-family: var(--font-ui); font-size: .9rem; font-weight: 600; color: var(--muted); margin: 1.4rem 0 .4rem; }
 
-/* ── Body text ── */
-p { margin-bottom: 1rem; }
-a { color: var(--color-link); text-decoration: underline; text-underline-offset: 2px; }
-a:hover { color: #0d2e55; }
+/* ── Fließtext ── */
+p { margin-bottom: 1.05rem; hyphens: auto; }
+a { color: var(--primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--primary) 35%, transparent); }
+a:hover { color: var(--primary-dark); text-decoration-color: currentColor; }
+strong { font-weight: 700; color: var(--ink); }
+ul, ol { margin: 0 0 1.1rem 1.4rem; }
+li { margin-bottom: .35rem; }
+li::marker { color: var(--faint); }
+hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0; }
 
-/* ── Figures ── */
-figure {
-  margin: 2rem 0;
-  text-align: center;
-}
-figure img { max-width: 100%; height: auto; border: 1px solid var(--color-rule); }
-figcaption { font-family: var(--font-ui); font-size: 0.82rem; color: var(--color-muted); margin-top: 0.5rem; }
+/* ── Abbildungen ── */
+figure { margin: 2.2rem 0; text-align: center; }
+figure img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+figcaption { font-family: var(--font-ui); font-size: .8rem; color: var(--muted); margin-top: .6rem; }
+figcaption strong { color: var(--text); }
 
-/* ── Tables ── */
-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; font-family: var(--font-ui); }
-th { background: #eee; border-bottom: 2px solid #aaa; padding: 0.5rem 0.75rem; text-align: left; }
-td { border-bottom: 1px solid #ddd; padding: 0.45rem 0.75rem; vertical-align: top; }
-caption { caption-side: bottom; font-size: 0.8rem; color: var(--color-muted); margin-top: 0.4rem; text-align: left; }
+/* ── Tabellen ── */
+table { width: 100%; border-collapse: collapse; margin: 2rem 0; font: .86rem/1.5 var(--font-ui); }
+th { text-align: left; font-weight: 600; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--ink); padding: .55rem .75rem; }
+td { border-bottom: 1px solid var(--line); padding: .55rem .75rem; vertical-align: top; }
+tbody tr:hover td { background: rgba(31,63,191,.025); }
+caption { caption-side: bottom; font-size: .8rem; color: var(--muted); margin-top: .5rem; text-align: left; }
 
-/* ── Code / Pre ── */
-code { font-family: var(--font-mono); font-size: 0.85em; background: #eee; padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: #f4f4f0; border: 1px solid var(--color-rule); padding: 1rem; overflow-x: auto; font-size: 0.82rem; margin: 1.5rem 0; }
+/* ── Code ── */
+code { font-family: var(--font-mono); font-size: .84em; background: #ecebe5; padding: .12em .38em; border-radius: 4px; }
+pre { background: var(--ink); color: #dfe5f0; border-radius: var(--radius-sm); padding: 1rem 1.15rem; overflow-x: auto; font: .8rem/1.6 var(--font-mono); margin: 1.5rem 0; }
+pre code { background: none; padding: 0; color: inherit; }
 
-/* ── Blockquote ── */
-blockquote { border-left: 3px solid #bbb; margin: 1.5rem 0; padding: 0.5rem 1.25rem; color: var(--color-muted); font-style: italic; }
+/* ── Zitate ── */
+blockquote { border-left: 3px solid var(--accent); margin: 1.8rem 0; padding: .2rem 0 .2rem 1.3rem; font-family: var(--font-display); font-style: italic; font-size: 1.08rem; color: var(--ink-2); }
+blockquote p { margin: 0; }
 
-/* ── Footnotes ── */
-section.footnotes { margin-top: 3rem; border-top: 1px solid var(--color-rule); padding-top: 1rem; font-size: 0.82rem; font-family: var(--font-ui); color: var(--color-muted); }
+/* ── Fußnoten / Referenzen ── */
+section.footnotes { margin-top: 3rem; border-top: 1px solid var(--line); padding-top: 1rem; font: .82rem/1.6 var(--font-ui); color: var(--muted); }
 section.footnotes ol { padding-left: 1.2rem; }
-section.footnotes li { margin-bottom: 0.4rem; }
+ol.references { padding-left: 1.5rem; font: .86rem/1.6 var(--font-ui); }
+ol.references li { margin-bottom: .75rem; }
 
-/* ── References ── */
-section#references { margin-top: 3rem; }
-section#references h2 { font-size: 1.1rem; }
-ol.references { padding-left: 1.5rem; font-size: 0.88rem; font-family: var(--font-ui); }
-ol.references li { margin-bottom: 0.75rem; }
-
-/* ── Source cards (local archive links) ── */
-.source-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  background: var(--color-card);
-  border: 1px solid var(--color-rule);
-  border-radius: 4px;
-  padding: 0.75rem 1rem;
-  margin: 0.5rem 0;
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
+/* ── Inhaltsverzeichnis ── */
+nav.toc {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.4rem 1.6rem 1.2rem; margin-bottom: 3.5rem; font-family: var(--font-ui); box-shadow: var(--shadow-sm);
 }
-.source-card .sc-icon { font-size: 1.2rem; flex-shrink: 0; }
-.source-card .sc-title { font-weight: 600; }
-.source-card .sc-meta  { color: var(--color-muted); font-size: 0.78rem; }
+nav.toc h2 { font: 600 .7rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0 0 .9rem; padding: 0; border: 0; }
+nav.toc ol { list-style: none; margin: 0; padding: 0 !important; counter-reset: toc; columns: 2; column-gap: 2rem; }
+nav.toc li { margin: 0; break-inside: avoid; }
+nav.toc a {
+  display: flex; gap: .7rem; align-items: baseline; padding: .42rem 0; border-bottom: 1px solid var(--line);
+  font-size: .86rem; font-weight: 500; color: var(--text); text-decoration: none; transition: color .15s;
+}
+nav.toc a:hover { color: var(--primary); }
+@media (max-width: 640px) { nav.toc ol { columns: 1; } }
 
-/* ── Table of Contents ── */
-nav.toc { background: #f4f4f0; border: 1px solid var(--color-rule); padding: 1rem 1.5rem; margin-bottom: 2.5rem; font-family: var(--font-ui); font-size: 0.88rem; }
-nav.toc h2 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-muted); border: none; margin-top: 0; margin-bottom: 0.5rem; padding: 0; }
-nav.toc ol { padding-left: 1.2rem; }
-nav.toc li { margin-bottom: 0.2rem; }
+/* ── Kapitel ── */
+.chapter-block { position: relative; }
+.chapter-block + .chapter-block { margin-top: 4.5rem; padding-top: 3rem; border-top: 1px solid var(--line-strong); }
+.chapter-block > h1 .ch-num {
+  display: block; font: 600 .72rem/1 var(--font-mono); letter-spacing: .16em; color: var(--accent);
+  margin-bottom: .8rem; text-transform: uppercase;
+}
 
-/* ── Print ── */
+/* ── Forschungsdesiderata ── */
+.fd-grid { display: grid; gap: 1rem; margin-top: 1.6rem; counter-reset: fd; }
+.fd-card {
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.3rem 1.5rem 1.1rem; box-shadow: var(--shadow-sm); font-size: .95rem;
+}
+.fd-card::before { content: ''; position: absolute; left: 0; top: 1.3rem; width: 3px; height: 1.6rem; background: var(--accent); border-radius: 0 3px 3px 0; }
+.fd-card h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; margin: 0 0 .8rem; color: var(--ink); }
+.fd-card p { margin-bottom: .55rem; }
+.fd-card p strong:first-child {
+  display: block; font: 600 .66rem/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: .3rem;
+}
+
+/* ── Druck ── */
 @media print {
+  html { background: #fff; }
+  .fd-card { box-shadow: none; break-inside: avoid; }
   body { max-width: 100%; padding: 0; font-size: 11pt; }
   a { color: inherit; text-decoration: none; }
-  a[href]::after { content: " (" attr(href) ")"; font-size: 0.75em; color: #555; }
+  section.abstract, nav.toc { box-shadow: none; }
   .no-print { display: none; }
 }

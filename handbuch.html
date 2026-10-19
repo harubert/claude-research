@@ -4,86 +4,86 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Handbuch — Forschungsartikel-Template</title>
+  <link rel="stylesheet" href="assets/css/site.css"/>
   <link rel="stylesheet" href="assets/css/paper.css"/>
+  <script src="assets/icons.js"></script>
   <style>
-    body { max-width: 820px; margin: 0 auto; padding: 2.5rem 2rem 6rem; }
-    .badge {
-      display: inline-block; font-size: .72rem; font-family: sans-serif;
-      padding: .1rem .45rem; border-radius: 20px; margin: .1rem .15rem;
-      vertical-align: middle; font-weight: 500;
-    }
-    .badge-peer        { background:#e3f2fd; color:#0d47a1; border:1px solid #90caf9; }
-    .badge-institution { background:#e8eaf6; color:#283593; border:1px solid #9fa8da; }
-    .badge-book        { background:#f3e5f5; color:#6a1b9a; border:1px solid #ce93d8; }
-    .badge-preprint    { background:#fff3e0; color:#e65100; border:1px solid #ffcc80; }
-    .badge-web         { background:#f5f5f5; color:#424242; border:1px solid #bdbdbd; }
-    .badge-austria     { background:#ffebee; color:#b71c1c; border:1px solid #ef9a9a; }
-    .badge-openaccess  { background:#e0f2f1; color:#004d40; border:1px solid #80cbc4; }
-    .badge-paywall     { background:#fce4ec; color:#880e4f; border:1px solid #f48fb1; }
-    .badge-math        { background:#e8f5e9; color:#1b5e20; border:1px solid #a5d6a7; }
-    .badge-cited       { background:#e3f2fd; color:#0d47a1; border:1px solid #64b5f6; }
-
+    body { font-family: var(--font-ui); font-size: .95rem; }
+    h2 { scroll-margin-top: calc(var(--topbar-h) + 1rem); }
     .function-card {
-      border: 1px solid #e0e0e0; border-left: 4px solid #1a4e8a;
-      border-radius: 6px; padding: .9rem 1.1rem; margin: 1rem 0;
-      font-family: sans-serif; font-size: .88rem;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1rem 1.2rem; margin: .8rem 0; font-size: .88rem;
     }
-    .function-card h4 { margin: 0 0 .35rem; font-size: .92rem; color: #1a4e8a; }
-    .function-card p  { margin: 0; color: #444; line-height: 1.5; }
+    .function-card h4 { display: flex; align-items: center; gap: .5rem; margin: 0 0 .35rem; font-size: .92rem; color: var(--ink); }
+    .function-card h4 .ic { color: var(--primary); }
+    .function-card p  { margin: 0; color: var(--muted); line-height: 1.55; }
+    .function-card p + p { margin-top: .4rem; }
 
-    .pill-demo {
-      display: inline-block; background: #1a4e8a; color: #fff;
-      border-radius: 20px; padding: .18rem .65rem; font-size: .75rem;
-      font-family: sans-serif; margin: .1rem;
-    }
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .4rem .9rem; margin-top: .6rem; }
+    .tool { display: flex; align-items: center; gap: .55rem; font-size: .82rem; color: var(--muted); }
+    .tool .key { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: var(--paper); border: 1px solid var(--line-strong); color: var(--ink); }
+    .tool .key .ic { width: 14px; height: 14px; }
 
-    .score-bar { display: flex; gap: .3rem; align-items: center; margin: .3rem 0; font-family: sans-serif; font-size: .85rem; }
+    .score-bar { display: flex; gap: .5rem; align-items: center; margin: .35rem 0; font-size: .86rem; }
     .score-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
+    .steps { counter-reset: step; display: grid; gap: .6rem; margin: 1rem 0 1.5rem; }
     .install-step {
-      border: 1px solid #e0e0e0; border-left: 4px solid #e65100;
-      border-radius: 6px; padding: .9rem 1.1rem; margin: .75rem 0;
-      font-family: sans-serif; font-size: .88rem;
+      position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: .95rem 1.2rem .95rem 3.6rem; font-size: .88rem;
     }
-    .install-step h4 { margin: 0 0 .25rem; font-size: .88rem; color: #e65100; }
-    .install-step p  { margin: 0; color: #444; line-height: 1.5; }
-    .install-step a  { color: #1a4e8a; }
-    .install-step .optional { color: #999; font-size: .8rem; font-style: italic; }
-
-    code { font-family: "Courier New", monospace; font-size: .85em; background: #f0f0ec; padding: .1em .35em; border-radius: 3px; }
-    pre  { background: #f4f4f0; border: 1px solid #ddd; padding: .9rem 1rem; overflow-x: auto; font-size: .82rem; border-radius: 4px; margin: .75rem 0; }
-    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-family: sans-serif; font-size: .86rem; }
-    th { background: #f0f0eb; border-bottom: 2px solid #bbb; padding: .4rem .75rem; text-align: left; }
-    td { border-bottom: 1px solid #e5e5e5; padding: .38rem .75rem; vertical-align: top; }
-    .toc-back { font-family: sans-serif; font-size: .8rem; color: #999; text-decoration: none; float: right; margin-top: .2rem; }
-    .toc-back:hover { color: #1a4e8a; }
+    .install-step::before {
+      counter-increment: step; content: counter(step, decimal-leading-zero);
+      position: absolute; left: 1.1rem; top: 1rem; font: 600 .78rem var(--font-mono); color: var(--accent);
+    }
+    .install-step h4 { margin: 0 0 .25rem; font-size: .92rem; color: var(--ink); }
+    .install-step p  { margin: 0; color: var(--muted); line-height: 1.55; }
+    .install-step .optional { color: var(--faint); font-size: .8rem; font-weight: 400; }
   </style>
 </head>
 <body>
 
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" data-icon="mark"></span>
+      <span class="brand-text"><span class="brand-title">Forschungsartikel-Template</span><span class="brand-sub">Handbuch</span></span>
+    </a>
+    <nav>
+      <a href="standalone.html"><span data-icon="article"></span><span class="nav-label">Artikel</span></a>
+      <a href="quellen.html"><span data-icon="library"></span><span class="nav-label">Quellen</span></a>
+      <a href="presentation/index.html"><span data-icon="slides"></span><span class="nav-label">Folien</span></a>
+      <a class="active" href="handbuch.html"><span data-icon="handbook"></span><span class="nav-label">Handbuch</span></a>
+    </nav>
+  </div>
+</header>
+
 <header class="paper-header">
+  <div class="kicker"><span class="dot"></span>Dokumentation</div>
   <h1>Handbuch</h1>
   <p class="subtitle">Installation, Funktionen und technische Dokumentation</p>
-  <p class="authors">Forschungsartikel-Template — Claude Code (Anthropic)</p>
-  <p class="meta"><a href="index.html">← Zurück zur Startseite</a></p>
+  <p class="authors">Forschungsartikel-Template <em>· Claude Code (Anthropic)</em></p>
 </header>
 
 <nav class="toc">
   <h2>Inhalt</h2>
-  <ol style="list-style:none;padding-left:1.2rem">
-    <li><a href="#installation">1. Installation</a></li>
-    <li><a href="#konzept">2. Konzept und Arbeitsweise</a></li>
-    <li><a href="#seiten">3. Seiten und Navigation</a></li>
-    <li><a href="#artikel">4. Fachartikel — Funktionen</a></li>
-    <li><a href="#latex-export">5. LaTeX-Export</a></li>
-    <li><a href="#quellen">6. Quellenverzeichnis</a></li>
-    <li><a href="#badges">7. Badges — Bedeutung und Farben</a></li>
-    <li><a href="#score">8. Qualitätsbewertung (Score)</a></li>
-    <li><a href="#relevanz">9. Relevanz-Kategorien anpassen</a></li>
-    <li><a href="#abbildungen">10. Abbildungen einbinden</a></li>
-    <li><a href="#build">11. Build-System</a></li>
-    <li><a href="#quellen-hinzufuegen">12. Neue Quellen hinzufügen</a></li>
-    <li><a href="#praesentation">13. Präsentation</a></li>
+  <ol>
+    <li><a href="#installation"><span class="kicker">01</span><span>Installation</span></a></li>
+    <li><a href="#konzept"><span class="kicker">02</span><span>Konzept und Arbeitsweise</span></a></li>
+    <li><a href="#seiten"><span class="kicker">03</span><span>Seiten und Navigation</span></a></li>
+    <li><a href="#artikel"><span class="kicker">04</span><span>Fachartikel — Funktionen</span></a></li>
+    <li><a href="#latex-export"><span class="kicker">05</span><span>Export (LaTeX + Web-Paket)</span></a></li>
+    <li><a href="#quellen"><span class="kicker">06</span><span>Quellenverzeichnis</span></a></li>
+    <li><a href="#badges"><span class="kicker">07</span><span>Badges</span></a></li>
+    <li><a href="#score"><span class="kicker">08</span><span>Qualitätsbewertung (Score)</span></a></li>
+    <li><a href="#relevanz"><span class="kicker">09</span><span>Relevanz-Kategorien anpassen</span></a></li>
+    <li><a href="#abbildungen"><span class="kicker">10</span><span>Abbildungen einbinden</span></a></li>
+    <li><a href="#build"><span class="kicker">11</span><span>Build-System</span></a></li>
+    <li><a href="#quellen-hinzufuegen"><span class="kicker">12</span><span>Neue Quellen hinzufügen</span></a></li>
+    <li><a href="#praesentation"><span class="kicker">13</span><span>Präsentation</span></a></li>
+    <li><a href="#forschungsdesiderata"><span class="kicker">14</span><span>Forschungsdesiderata</span></a></li>
+    <li><a href="#pruefung"><span class="kicker">15</span><span>Prüfdurchgänge und Complete Review</span></a></li>
+    <li><a href="#design"><span class="kicker">16</span><span>Designsystem und Icons</span></a></li>
   </ol>
 </nav>
 
@@ -92,18 +92,19 @@
 
 <p>Dieses Template benötigt drei Komponenten. Die gesamte Einrichtung dauert etwa drei Minuten.</p>
 
+<div class="steps">
 <div class="install-step">
-  <h4>Schritt 1 — Visual Studio Code</h4>
+  <h4>Visual Studio Code</h4>
   <p>Lade <a href="https://code.visualstudio.com/download" target="_blank" rel="noopener">Visual Studio Code</a> herunter und installiere es. Verfügbar für macOS, Windows und Linux.</p>
 </div>
 
 <div class="install-step">
-  <h4>Schritt 2 — Claude Code Extension</h4>
+  <h4>Claude Code Extension</h4>
   <p>Installiere die <a href="https://marketplace.visualstudio.com/items?itemName=anthropics.claude-code" target="_blank" rel="noopener">Claude Code Extension</a> aus dem VS Code Marketplace. Du brauchst einen <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Anthropic-Account</a> (Claude) — die Anmeldung erfolgt direkt in VS Code.</p>
 </div>
 
 <div class="install-step">
-  <h4>Schritt 3 — Python 3</h4>
+  <h4>Python 3</h4>
   <p>Python wird für das Build-Script benötigt, das den Artikel zusammenbaut.</p>
   <p>
     <strong>macOS:</strong> <a href="https://www.python.org/downloads/macos/" target="_blank" rel="noopener">python.org/downloads/macos</a><br>
@@ -113,14 +114,15 @@
 </div>
 
 <div class="install-step">
-  <h4>Schritt 4 — fal.ai API-Key <span class="optional">(optional)</span></h4>
+  <h4>fal.ai API-Key <span class="optional">(optional)</span></h4>
   <p>Nur nötig, wenn du KI-generierte Hintergrundbilder für die Präsentation möchtest. Erstelle einen kostenlosen Key auf <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">fal.ai/dashboard/keys</a> und trage ihn in <code>API Key.js</code> ein.</p>
 </div>
 
 <div class="install-step">
-  <h4>Schritt 5 — Los geht's</h4>
-  <p>Öffne den Template-Ordner in VS Code → Claude-Panel öffnen → eintippen: <strong>Leg los</strong></p>
+  <h4>Los geht's</h4>
+  <p>Öffne den Template-Ordner in VS Code, öffne das Claude-Panel und tippe: <strong>Leg los</strong></p>
   <p>Claude stellt dir einige Fragen zu Thema, Veranstaltung und Umfang — danach läuft der gesamte Workflow automatisch: Quellenrecherche, Kapitel schreiben, Präsentation erstellen.</p>
+</div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
@@ -139,11 +141,13 @@
 <p><strong>Typischer Workflow:</strong></p>
 <ol>
   <li>Claude befüllt <code>meta.json</code> mit deinen Angaben</li>
-  <li>Recherchiert 5–10 Kernquellen → erster Build → du siehst sofort die Quellenübersicht</li>
-  <li>Legt Kapitelgerüste an → Build → du siehst die Seitenstruktur</li>
+  <li>Recherchiert 5–10 Kernquellen, erster Build — du siehst sofort die Quellenübersicht</li>
+  <li>Legt Kapitelgerüste an, Build — du siehst die Seitenstruktur</li>
   <li>Recherchiert weitere Quellen (bis 100–150) mit URL-Verifikation</li>
-  <li>Schreibt die Kapitel aus → Build nach jedem Kapitel</li>
+  <li>Leitet aus den Forschungslücken fünf <strong>Forschungsdesiderata</strong> ab (offene Forschungsvorhaben)</li>
+  <li>Schreibt die Kapitel aus — Build nach jedem Kapitel</li>
   <li>Erstellt die Präsentation mit KI-Folienbildern</li>
+  <li>Führt zwei <strong>Prüfdurchgänge</strong> und ein abschließendes <strong>Complete Review</strong> durch</li>
 </ol>
 
 <!-- ══════════════════════════════════════════════════════════ -->
@@ -166,56 +170,56 @@
 <p>Der Fachartikel (<a href="standalone.html">standalone.html</a>) enthält mehrere interaktive Elemente:</p>
 
 <div class="function-card">
-  <h4>Navigationsleiste (rechts unten)</h4>
-  <p>Sechs kleine Pills am rechten unteren Rand:<br>
-  <span class="pill-demo">↑ oben</span>
-  <span class="pill-demo">ℹ Info</span>
-  <span class="pill-demo">📊 Folien</span>
-  <span class="pill-demo">📚 Quellen</span>
-  <span class="pill-demo">↓ LaTeX</span>
-  <span class="pill-demo">🖨 Drucken</span><br>
-  Beim Drucken (Browser-Dialog oder PDF) werden diese Elemente automatisch ausgeblendet.</p>
+  <h4><span data-icon="layout"></span>Kopfleiste</h4>
+  <p>Fixe Navigationsleiste oben auf allen Seiten — Artikel, Quellen, Folien, Handbuch. Im Artikel rechts zusätzlich die Werkzeuge; eine dünne Linie zeigt den Lesefortschritt.</p>
+  <div class="tool-grid">
+    <div class="tool"><span class="key" data-icon="info"></span>Dokumentinfo</div>
+    <div class="tool"><span class="key" data-icon="download"></span>Export (LaTeX / ZIP)</div>
+    <div class="tool"><span class="key" data-icon="printer"></span>Drucken</div>
+    <div class="tool"><span class="key" data-icon="arrow-up"></span>Nach oben (erscheint beim Scrollen)</div>
+  </div>
+  <p>Beim Drucken (Browser-Dialog oder PDF) werden diese Elemente automatisch ausgeblendet.</p>
 </div>
 
 <div class="function-card">
-  <h4>ℹ Info-Panel (Dokumentstatistik)</h4>
-  <p>Zeigt Kapitelanzahl, Quellenanzahl, Wortzahl und geschätzte Seitenzahl (A4 und A5). Standardmäßig ausgeblendet — wird über den <strong>ℹ Info</strong>-Button ein- und ausgeblendet.</p>
+  <h4><span data-icon="info"></span>Info-Panel (Dokumentstatistik)</h4>
+  <p>Zeigt Kapitelanzahl, Quellenanzahl, Wortzahl und geschätzte Seitenzahl (A4 und A5). Standardmäßig ausgeblendet — wird über das Info-Symbol in der Kopfleiste ein- und ausgeblendet.</p>
 </div>
 
 <div class="function-card">
-  <h4>Inline-Zitationen (anklickbar)</h4>
+  <h4><span data-icon="quote"></span>Inline-Zitationen (anklickbar)</h4>
   <p>Alle Quellenverweise im Text im Format <em>(Autor, Jahr)</em> sind anklickbar. Ein Klick öffnet eine Quellenkarte mit Titel, Autoren, Jahr, Journal, Score, Badges und Abstract. Enthält einen Link zur Primärquelle (DOI oder URL).</p>
 </div>
 
 <div class="function-card">
-  <h4>Inhaltsverzeichnis</h4>
+  <h4><span data-icon="list"></span>Inhaltsverzeichnis</h4>
   <p>Alle zehn Kapitel mit Sprunglinks. <strong>Wichtig:</strong> Jedes Kapitel muss mit einer H1-Überschrift (<code># Kapitelname</code>) beginnen — sonst bleibt das Inhaltsverzeichnis leer.</p>
 </div>
 
 <div class="function-card">
-  <h4>Weiterführende Literatur (Ende des Artikels)</h4>
+  <h4><span data-icon="star"></span>Weiterführende Literatur (Ende des Artikels)</h4>
   <p>Alle zitierten Quellen mit Score ≥ 9 — die hochwertigsten Empfehlungen. Mit Badges, Sternebewertung und DOI-Links.</p>
 </div>
 
 <div class="function-card">
-  <h4>Vollständiges Quellenverzeichnis (Anhang)</h4>
+  <h4><span data-icon="library"></span>Vollständiges Quellenverzeichnis (Anhang)</h4>
   <p>Alle Quellen kompakt, zweispaltig, mit Quellen-ID und Markierung ob zitiert. Dient als Referenz und Druckbeilage.</p>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
 <h2 id="latex-export">5. Export (LaTeX + Web-Paket)</h2>
 
-<p>Der <strong>↓ Export</strong>-Button im Artikel öffnet ein Overlay mit zwei Tabs:</p>
+<p>Das Export-Symbol in der Kopfleiste des Artikels öffnet ein Overlay mit zwei Tabs:</p>
 
 <div class="function-card">
-  <h4>Tab 1: LaTeX</h4>
+  <h4><span data-icon="code"></span>Tab 1: LaTeX</h4>
   <p>Erzeugt eine <code>.tex</code>-Datei für professionellen Druck (Overleaf, pdflatex).</p>
 </div>
 
 <div class="function-card">
-  <h4>Tab 2: Web-Paket (ZIP)</h4>
+  <h4><span data-icon="package"></span>Tab 2: Web-Paket (ZIP)</h4>
   <p>Erstellt ein ZIP mit allen Seiten für eine Website: Artikel, Quellen, Handbuch, Präsentation, Landingpage und Stylesheets. Den Inhalt einfach per SFTP/FTP in ein Verzeichnis auf einem Webserver hochladen — fertig. Kein Server-Setup, keine Datenbank, keine Installation nötig.</p>
-  <p style="margin-top:.4rem;font-size:.82rem;color:#888"><strong>Hinweis:</strong> Folienbilder (KI-generiert) werden nicht eingebettet. Für Folien mit eingebetteten Bildern verwende den ⬇-Button direkt in der Präsentation.</p>
+  <p><strong>Hinweis:</strong> Folienbilder (KI-generiert) werden nicht eingebettet. Für Folien mit eingebetteten Bildern verwende den Deployment-Export direkt in der Präsentation.</p>
 </div>
 
 <p><strong>LaTeX-Optionen im Detail:</strong></p>
@@ -242,8 +246,9 @@
   <li><strong>Volltextsuche</strong> über Titel, Autoren, Abstract und Notizen</li>
   <li><strong>Filter</strong> nach Typ (Journal, Konferenz, Buch, Preprint, Bericht, Web), Sprache, Badges und Score</li>
   <li><strong>Sortierung</strong> nach Score, Jahr, Titel</li>
-  <li><strong>Zitations-Backlinks:</strong> Bei zitierten Quellen erscheinen ①②③-Symbole, die direkt zur Textstelle im Artikel springen</li>
-  <li>Qualitätsbadges, Sternebewertung, Abstract-Vorschau, DOI/URL-Links</li>
+  <li><strong>Zitations-Backlinks:</strong> Bei zitierten Quellen erscheinen nummerierte Marken (1, 2, 3 …), die direkt zur Textstelle im Artikel springen</li>
+  <li>Qualitätsbadges, Score mit Sternebewertung, Abstract-Vorschau, DOI/URL-Links, APA-Zitat kopieren</li>
+  <li><strong>Live-Aktualisierung</strong> (Play-Symbol in der Kopfleiste): lädt die Seite alle 20 Sekunden neu — praktisch, um die Recherche live mitzuverfolgen</li>
 </ul>
 
 <!-- ══════════════════════════════════════════════════════════ -->
@@ -254,16 +259,20 @@
 <table>
   <thead><tr><th>Badge</th><th>Bedeutung</th></tr></thead>
   <tbody>
-    <tr><td><span class="badge badge-peer">🎓 Peer-reviewed</span></td><td>Begutachteter Fachartikel — höchste wissenschaftliche Glaubwürdigkeit</td></tr>
-    <tr><td><span class="badge badge-institution">🏛️ Institution</span></td><td>Offizieller Bericht einer Behörde, Organisation oder Hochschule</td></tr>
-    <tr><td><span class="badge badge-book">📚 Verlag</span></td><td>Gedrucktes Buch oder Buchkapitel aus einem Wissenschaftsverlag</td></tr>
-    <tr><td><span class="badge badge-preprint">🔬 Preprint</span></td><td>Noch nicht peer-reviewed — frühes Forschungsergebnis (arXiv, bioRxiv etc.)</td></tr>
-    <tr><td><span class="badge badge-web">🌐 Web</span></td><td>Webquelle — Blogs, Nachrichtenartikel, Dokumentationen</td></tr>
-    <tr><td><span class="badge badge-austria">🇦🇹 Österreich</span></td><td>Österreichischer Bezug</td></tr>
-    <tr><td><span class="badge badge-openaccess">🔓 Open Access</span></td><td>Frei zugänglich, keine Paywall</td></tr>
-    <tr><td><span class="badge badge-paywall">🔒 Paywall</span></td><td>Nur mit Institutionszugang oder Bezahlung verfügbar</td></tr>
-    <tr><td><span class="badge badge-math">🧮 Mathematik</span></td><td>Inhaltlich stark mathematisch — Formeln, Beweise, theoretische Grundlagen</td></tr>
-    <tr><td><span class="badge badge-cited">● zitiert</span></td><td>Diese Quelle wird im Artikel direkt zitiert</td></tr>
+    <tr><td><span class="badge badge-peer"><span data-icon="peer"></span>Peer-reviewed</span></td><td>Begutachteter Fachartikel — höchste wissenschaftliche Glaubwürdigkeit</td></tr>
+    <tr><td><span class="badge badge-institution"><span data-icon="institution"></span>Institution</span></td><td>Offizieller Bericht einer Behörde, Organisation oder Hochschule</td></tr>
+    <tr><td><span class="badge badge-book"><span data-icon="book"></span>Buch / Verlag</span></td><td>Gedrucktes Buch oder Buchkapitel aus einem Wissenschaftsverlag</td></tr>
+    <tr><td><span class="badge badge-preprint"><span data-icon="preprint"></span>Preprint</span></td><td>Noch nicht peer-reviewed — frühes Forschungsergebnis (arXiv, bioRxiv etc.)</td></tr>
+    <tr><td><span class="badge badge-web"><span data-icon="web"></span>Web</span></td><td>Webquelle — Blogs, Nachrichtenartikel, Dokumentationen</td></tr>
+    <tr><td><span class="badge badge-austria"><span data-icon="austria"></span>Österreich</span></td><td>Österreichischer Bezug</td></tr>
+    <tr><td><span class="badge badge-openaccess"><span data-icon="openaccess"></span>Open Access</span></td><td>Frei zugänglich, keine Paywall</td></tr>
+    <tr><td><span class="badge badge-paywall"><span data-icon="paywall"></span>Paywall</span></td><td>Nur mit Institutionszugang oder Bezahlung verfügbar</td></tr>
+    <tr><td><span class="badge badge-empirical"><span data-icon="empirical"></span>Empirisch</span></td><td>Experiment, Quasi-Experiment, Survey, Fallstudie</td></tr>
+    <tr><td><span class="badge badge-review"><span data-icon="review"></span>Review</span></td><td>Systematisches Review, Meta-Analyse, Scoping Review</td></tr>
+    <tr><td><span class="badge badge-theory"><span data-icon="theory"></span>Theorie</span></td><td>Theoretische/konzeptionelle Arbeit, Framework, Modell</td></tr>
+    <tr><td><span class="badge badge-practice"><span data-icon="practice"></span>Praxis</span></td><td>Praxisbericht, Unterrichtsentwurf, Best Practice, Handreichung</td></tr>
+    <tr><td><span class="badge badge-technology"><span data-icon="technology"></span>Technologie</span></td><td>Technologiefokus — KI, Software, Tools, Plattformen</td></tr>
+    <tr><td><span class="badge badge-cited"><span data-icon="check"></span>Im Artikel</span></td><td>Diese Quelle wird im Artikel direkt zitiert</td></tr>
   </tbody>
 </table>
 
@@ -276,16 +285,16 @@
   <thead><tr><th>Kriterium</th><th>Skala</th><th>Bedeutung</th></tr></thead>
   <tbody>
     <tr><td><strong>Authority</strong></td><td>1–4</td><td>Herkunft und wissenschaftliche Reputation (Peer-Review-Journal = 4, Blog = 1)</td></tr>
-    <tr><td><strong>Recency</strong></td><td>1–3</td><td>Aktualität (2024–2026 = 3, vor 2022 = 1)</td></tr>
+    <tr><td><strong>Recency</strong></td><td>1–3</td><td>Aktualität (2023–2026 = 3, 2019–2022 = 2, vor 2019 = 1)</td></tr>
     <tr><td><strong>Relevance</strong></td><td>1–3</td><td>Thematische Nähe zum Kernthema des Artikels (siehe nächstes Kapitel)</td></tr>
   </tbody>
 </table>
 
 <p>Score = Authority + Recency + Relevance (Maximum 10). Farbcodierung:</p>
-<div class="score-bar"><span class="score-dot" style="background:#1a6b3c"></span> <strong>9–10:</strong> Exzellent — Weiterführende Literatur</div>
-<div class="score-bar"><span class="score-dot" style="background:#2e7d32"></span> <strong>7–8:</strong> Gut — solide Fachliteratur</div>
-<div class="score-bar"><span class="score-dot" style="background:#e65100"></span> <strong>5–6:</strong> Mittel — ergänzend nutzbar</div>
-<div class="score-bar"><span class="score-dot" style="background:#b71c1c"></span> <strong>3–4:</strong> Schwach — nur als Hintergrund</div>
+<div class="score-bar"><span class="score-dot" style="background:var(--s5)"></span> <strong>9–10:</strong> Exzellent — Weiterführende Literatur</div>
+<div class="score-bar"><span class="score-dot" style="background:var(--s4)"></span> <strong>7–8:</strong> Gut — solide Fachliteratur</div>
+<div class="score-bar"><span class="score-dot" style="background:var(--s3)"></span> <strong>5–6:</strong> Mittel — ergänzend nutzbar</div>
+<div class="score-bar"><span class="score-dot" style="background:var(--s2)"></span> <strong>3–4:</strong> Schwach — nur als Hintergrund</div>
 
 <!-- ══════════════════════════════════════════════════════════ -->
 <h2 id="relevanz">9. Relevanz-Kategorien anpassen</h2>
@@ -391,45 +400,106 @@ Empfehlung für maximale Kompatibilität: <strong>PNG</strong> verwenden.</p>
 <p>Die Präsentation (<a href="presentation/index.html">presentation/index.html</a>) basiert auf <strong>Reveal.js 5.1.0</strong> und bietet:</p>
 
 <div class="function-card">
-  <h4>⚙ Werkzeugbox (FAB-Cluster)</h4>
-  <p>Klick auf ⚙ öffnet die Werkzeugbox:<br>
-  <strong>✦</strong> Alle Folienbilder generieren · <strong>◎</strong> Aktuelle Folie neu generieren ·
-  <strong>⊞</strong> Layout wählen · <strong>Aa</strong> Schriftstil ·
-  <strong>◉</strong> Hintergrundfarbe · <strong>⊡</strong> Einstellungen exportieren ·
-  <strong>◈</strong> Bildstil-Galerie · <strong>⬇</strong> Deployment-ZIP · <strong>⬇P</strong> PowerPoint-Export</p>
+  <h4><span data-icon="gear"></span>Werkzeugbox</h4>
+  <p>Das Zahnrad oben rechts öffnet die Werkzeugbox:</p>
+  <div class="tool-grid">
+    <div class="tool"><span class="key" data-icon="image"></span>Bildstil-Galerie</div>
+    <div class="tool"><span class="key" data-icon="sparkles"></span>Alle Folienbilder generieren</div>
+    <div class="tool"><span class="key" data-icon="target"></span>Aktuelle Folie neu generieren</div>
+    <div class="tool"><span class="key" data-icon="layout"></span>Layout-Variante</div>
+    <div class="tool"><span class="key" data-icon="type"></span>Schriftstil</div>
+    <div class="tool"><span class="key" data-icon="palette"></span>Hintergrundfarbe</div>
+    <div class="tool"><span class="key" data-icon="save"></span>Einstellungen exportieren</div>
+    <div class="tool"><span class="key" data-icon="package"></span>Deployment-ZIP</div>
+    <div class="tool"><span class="key" data-icon="pptx"></span>PowerPoint-Export</div>
+  </div>
 </div>
 
 <div class="function-card">
-  <h4>3 Layout-Varianten</h4>
+  <h4><span data-icon="layout"></span>3 Layout-Varianten</h4>
   <p><strong>Rein:</strong> Kein Bild, klarer Hintergrund<br>
   <strong>Gradient:</strong> Verlauf von links (weiß) nach rechts (volles Bild) — per Canvas API ins Bild eingebacken<br>
   <strong>BG:</strong> Bild blass im gesamten Hintergrund (18 % Opacity)</p>
 </div>
 
 <div class="function-card">
-  <h4>8 Schriftstil-Themes</h4>
+  <h4><span data-icon="type"></span>8 Schriftstil-Themes</h4>
   <p>System · Fraunces + Inter · Space Grotesk · Syne · Bricolage Grotesque · Barlow Condensed · Caveat Brush · Satisfy</p>
 </div>
 
 <div class="function-card">
-  <h4>Bildstil-Galerie (stile.html)</h4>
-  <p>18 vordefinierte Stile (Blueprint, Aquarell, Holzschnitt, Pop Art, Sticker etc.). Stil-Wechsel in <code>stile.html</code> löst automatisch eine Neugenerierung aller Folienbilder aus — kein manuelles ✦ nötig.</p>
+  <h4><span data-icon="image"></span>Bildstil-Galerie (stile.html)</h4>
+  <p>18 vordefinierte Stile (Blueprint, Aquarell, Holzschnitt, Pop Art, Sticker etc.). Stil-Wechsel in <code>stile.html</code> löst automatisch eine Neugenerierung aller Folienbilder aus — kein manuelles Neugenerieren nötig.</p>
 </div>
 
 <div class="function-card">
-  <h4>⬇ Deployment-ZIP</h4>
+  <h4><span data-icon="package"></span>Deployment-ZIP</h4>
   <p>Erstellt ein selbständiges ZIP-Paket mit allen Seiten und eingebetteten Bildern (als Data-URLs). Das ZIP kann direkt per SFTP/FTP auf einen Webserver hochgeladen werden — kein fal.ai-Key online nötig.</p>
 </div>
 
 <div class="function-card">
-  <h4>⬇P PowerPoint-Export</h4>
+  <h4><span data-icon="pptx"></span>PowerPoint-Export</h4>
   <p>Erzeugt eine echte <code>.pptx</code>-Datei, die in PowerPoint und LibreOffice Impress geöffnet werden kann. Alle Texte sind editierbar. Hintergrundbilder (inkl. Gradient-Verlauf) werden als Folienhintergründe eingebettet. Die Library <em>pptxgenjs</em> wird beim ersten Klick automatisch vom CDN geladen.</p>
 </div>
 
-<footer style="margin-top:3rem;padding-top:1rem;border-top:1px solid #eee;font-size:.78rem;color:#aaa;font-family:sans-serif">
-  Handbuch zum Forschungsartikel-Template ·
-  <a href="https://github.com/harubert/claude-research" style="color:#aaa" target="_blank" rel="noopener">GitHub</a> ·
-  <a href="index.html" style="color:#aaa">Startseite</a>
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2 id="forschungsdesiderata">14. Forschungsdesiderata</h2>
+
+<p>Nach der Literaturarbeit leitet Claude aus den gefundenen Lücken <strong>fünf Forschungsdesiderata</strong> ab — konkrete Forschungsvorhaben, die in der recherchierten Literatur noch nicht oder nur unzureichend bearbeitet sind. Sie stehen in <code>content/forschungsdesiderata.md</code> und erscheinen im Artikel als eigener Abschnitt nach dem letzten Kapitel.</p>
+
+<p>Jedes Vorhaben enthält:</p>
+<ul>
+  <li><strong>Titel</strong> — prägnant, als möglicher Projekttitel formuliert</li>
+  <li><strong>Forschungslücke</strong> — was die Literatur bisher nicht beantwortet, mit Belegen <em>(Autor, Jahr)</em></li>
+  <li><strong>Forschungsfrage</strong> — eine präzise, prüfbare Frage</li>
+  <li><strong>Mögliches Design</strong> — Methode, Stichprobe, Setting (z. B. Quasi-Experiment mit 6 Klassen der Sekundarstufe I)</li>
+  <li><strong>Erwarteter Beitrag</strong> — für Forschung und Praxis, ggf. mit Österreich-Bezug</li>
+</ul>
+
+<div class="function-card">
+  <h4><span data-icon="theory"></span>Format in Markdown</h4>
+<pre>## 1. Projekttitel
+
+**Forschungslücke:** … (Autor, Jahr) …
+**Forschungsfrage:** …
+**Mögliches Design:** …
+**Erwarteter Beitrag:** …</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2 id="pruefung">15. Prüfdurchgänge und Complete Review</h2>
+
+<p>Vor der Übergabe prüft Claude das Ergebnis in drei aufeinander aufbauenden Durchgängen. Gefundene Fehler werden sofort behoben, danach wird neu gebaut.</p>
+
+<div class="steps">
+  <div class="install-step">
+    <h4>Prüfdurchgang 1 — Quellen und Zitate</h4>
+    <p>Jedes Inline-Zitat hat einen Eintrag in <code>sources.json</code>, kein <code>[S…]</code>-Muster im Text, Literaturlisten am Kapitelende vollständig in APA 7, Scores = Authority + Recency + Relevance, keine doppelten Quellen, URLs und DOIs plausibel.</p>
+  </div>
+  <div class="install-step">
+    <h4>Prüfdurchgang 2 — Inhalt und Sprache</h4>
+    <p>Roter Faden über alle Kapitel, Forschungsfragen aus Kapitel 1 im Fazit beantwortet, Zahlen und Aussagen durch Quellen gedeckt, Gender-Sternchen durchgängig, keine Floskeln, keine Emojis, österreichische Variante, Forschungsdesiderata klar von der Literatur abgeleitet.</p>
+  </div>
+  <div class="install-step">
+    <h4>Complete Review — Gesamtabnahme</h4>
+    <p>Alle Ausgaben gemeinsam: Build fehlerfrei, Inhaltsverzeichnis vollständig, Artikel, Quellenverzeichnis, Präsentation und Startseite konsistent (Titel, Datum, Quellenzahl), Folien mit Artikel abgeglichen. Ergebnis wird in <code>content/review.md</code> protokolliert.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2 id="design">16. Designsystem und Icons</h2>
+
+<p>Alle Seiten teilen ein gemeinsames Designsystem — tiefes Nachtblau, ein kräftiges Primärblau und ein sparsam eingesetzter Signal-Akzent. Überschriften in <em>Fraunces</em>, Oberfläche in <em>Inter</em>, alle Schriften lokal eingebunden.</p>
+<ul>
+  <li><code>assets/css/site.css</code> — Farben, Schriften, Kopfleiste, Buttons, Badges</li>
+  <li><code>assets/css/paper.css</code> — Typografie des Artikels</li>
+  <li><code>assets/icons.js</code> — einheitliches SVG-Icon-Set. In HTML: <code>&lt;span data-icon="book"&gt;&lt;/span&gt;</code>, in JavaScript: <code>icon("book")</code>. <code>build.py</code> liest dieselbe Datei.</li>
+</ul>
+<p><strong>Keine Emojis</strong> in Oberflächen und Texten — ausschließlich SVG-Icons aus <code>icons.js</code>.</p>
+
+<footer class="site-footer" style="max-width:none;padding-left:0;padding-right:0">
+  <span>Handbuch zum Forschungsartikel-Template</span>
+  <span><a href="https://github.com/harubert/claude-research" target="_blank" rel="noopener">GitHub</a> · <a href="index.html">Startseite</a></span>
 </footer>
 
 </body>

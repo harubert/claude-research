@@ -15,3 +15,6 @@ Thumbs.db
 
 # Editor
 .vscode/settings.json
+
+# Build-Nebenprodukt
+sources/cited_ids.json

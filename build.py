@@ -3,17 +3,43 @@ import json, pathlib, subprocess, sys
 base = pathlib.Path(__file__).parent
 
 meta    = json.loads((base / "content/meta.json").read_text(encoding="utf-8"))
-css     = (base / "assets/css/paper.css").read_text(encoding="utf-8")
+# site.css (Designsystem) + paper.css (Artikel) werden inline eingebettet.
+# Font-Pfade sind relativ zu assets/css/ → für standalone.html (Projektstamm) umschreiben.
+css     = ((base / "assets/css/site.css").read_text(encoding="utf-8") + "\n" +
+           (base / "assets/css/paper.css").read_text(encoding="utf-8")
+          ).replace("../../presentation/fonts/", "presentation/fonts/")
 sources = json.loads((base / "sources/sources.json").read_text(encoding="utf-8"))
+
+# ── Icons: einzige Quelle ist assets/icons.js (JSON zwischen ICONS_START / ICONS_END) ──
+_icons_js = (base / "assets/icons.js").read_text(encoding="utf-8")
+ICONS = json.loads(_icons_js.split("/* ICONS_START */", 1)[1].split("/* ICONS_END */", 1)[0])
+
+def ic(name, cls=""):
+    """Inline-SVG-Icon als HTML-String."""
+    body = ICONS.get(name, "")
+    if not body:
+        return ""
+    return (f'<svg class="ic{(" " + cls) if cls else ""}" viewBox="0 0 24 24" fill="none" '
+            f'stroke="currentColor" stroke-width="1.75" stroke-linecap="round" '
+            f'stroke-linejoin="round" aria-hidden="true" focusable="false">{body}</svg>')
+
+import re
+
+def _strip_comments(md):
+    """Entfernt (auch mehrzeilige) HTML-Kommentare aus Markdown."""
+    return re.sub(r'<!--.*?-->', '', md, flags=re.S)
 
 chapters_md = []
 for fname in meta["chapters"]:
     p = base / "content" / fname
     if p.exists():
-        chapters_md.append(p.read_text(encoding="utf-8"))
+        chapters_md.append(_strip_comments(p.read_text(encoding="utf-8")))
+
+# Forschungsdesiderata (optional, nach der Literaturarbeit befüllt)
+_fd_path = base / "content" / "forschungsdesiderata.md"
+fd_md = _strip_comments(_fd_path.read_text(encoding="utf-8")) if _fd_path.exists() else ""
 
 # Minimaler Markdown→HTML-Konverter (kein externes Package nötig)
-import re
 
 # Global figure counter (reset per build, shared across chapters)
 _fig_counter = [0]
@@ -134,53 +160,44 @@ def md2html(md):
 
 # Quellen rendern
 BADGE_LABELS = {
-    "peer":"🎓 Peer-reviewed","institution":"🏛️ Institution","book":"📚 Verlag",
-    "preprint":"🔬 Preprint","web":"🌐 Web","austria":"🇦🇹 Österreich",
-    "openaccess":"🔓 Open Access","paywall":"🔒 Paywall","math":"🧮 Mathematik",
-    "empirical":"🔬 Empirisch","review":"📊 Review","theory":"💡 Theorie",
-    "practice":"🎯 Praxis","technology":"💻 Technologie"
+    "peer":"Peer-reviewed","institution":"Institution","book":"Buch / Verlag",
+    "preprint":"Preprint","web":"Web","austria":"Österreich",
+    "openaccess":"Open Access","paywall":"Paywall","math":"Mathematik",
+    "empirical":"Empirisch","review":"Review","theory":"Theorie",
+    "practice":"Praxis","technology":"Technologie"
 }
 
+def badge_html(b):
+    """Badge-Pill mit Icon (Klassen aus site.css)."""
+    return f'<span class="badge badge-{b}">{ic(b)}{BADGE_LABELS.get(b, b)}</span>'
+
 def score_color(s):
-    return "#1a6b3c" if s>=9 else "#2e7d32" if s>=7 else "#e65100" if s>=5 else "#b71c1c"
+    return "var(--s5)" if s>=9 else "var(--s4)" if s>=7 else "var(--s3)" if s>=5 else "var(--s2)"
 
 def stars_html(sc):
     n = 5 if sc>=9 else 4 if sc>=7 else 3 if sc>=5 else 2
-    return '★'*n + '<span style="color:#ddd">★</span>'*(5-n)
+    return ('<span class="stars">' + ic("star", "on")*n + ic("star", "off")*(5-n) + '</span>')
 
 AGE_GROUP_LABELS = {
-    "vorschule":  "👶 Vorschule (3–6)",
-    "primarstufe": "🧒 Primarstufe (6–10)",
-    "sek1":       "📘 SEK I (10–15)",
-    "sek2":       "📗 SEK II (15–19)",
-    "hochschule": "🎓 Hochschule",
-    "lehrende":   "👩‍🏫 Lehrende/Studierende",
-    "mixed":      "👥 Gemischt",
+    "vorschule":  "Vorschule (3–6)",
+    "primarstufe": "Primarstufe (6–10)",
+    "sek1":       "SEK I (10–15)",
+    "sek2":       "SEK II (15–19)",
+    "hochschule": "Hochschule",
+    "lehrende":   "Lehrende/Studierende",
+    "mixed":      "Gemischt",
     "none":       "—",
 }
 
 def source_card(s, cited=False):
-    badges = "".join(
-        f'<span style="font-size:.68rem;padding:.1rem .45rem;border-radius:10px;'
-        f'border:1px solid currentColor;margin-right:.25rem;white-space:nowrap">'
-        f'{BADGE_LABELS.get(b,b)}</span>'
-        for b in (s.get("badges") or [])
-    )
+    badges = "".join(badge_html(b) for b in (s.get("badges") or []))
     # "Verwendet im Artikel"-Badge
     if cited:
-        badges += (
-            '<span style="font-size:.68rem;padding:.1rem .45rem;border-radius:10px;'
-            'background:#e8f5e9;color:#2e7d32;border:1px solid #81c784;'
-            'margin-right:.25rem;white-space:nowrap;font-weight:600">✓ Im Artikel</span>'
-        )
+        badges += f'<span class="badge badge-cited">{ic("check")}Im Artikel</span>'
     # Altersgruppen-Badge
     age_group = s.get("age_group", "")
     if age_group and age_group in AGE_GROUP_LABELS and age_group != "none":
-        badges += (
-            f'<span style="font-size:.68rem;padding:.1rem .45rem;border-radius:10px;'
-            f'background:#f3f4f6;color:#374151;border:1px solid #d1d5db;'
-            f'margin-right:.25rem;white-space:nowrap">{AGE_GROUP_LABELS[age_group]}</span>'
-        )
+        badges += f'<span class="badge badge-age">{AGE_GROUP_LABELS[age_group]}</span>'
 
     url = s.get("url","#")
     title = s["title"]
@@ -199,20 +216,17 @@ def source_card(s, cited=False):
 
     card = (
         f'<div class="src-card" data-cited="{"1" if cited else "0"}" data-age="{age_grp}" data-type="{s.get("type","")}" '
-        f'style="background:#fff;border:1px solid #ddd;border-left:5px solid {score_color(sc)};'
-        f'border-radius:4px;padding:.85rem 1.1rem;margin-bottom:.75rem">'
+        f'style="background:var(--surface);border:1px solid var(--line);border-left:3px solid {score_color(sc)};'
+        f'border-radius:var(--radius-sm);padding:.85rem 1.1rem;margin-bottom:.75rem;font-family:var(--font-ui)">'
         f'<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.35rem">'
         f'<div style="flex:1">'
-        f'<span style="font-size:.7rem;color:#999;font-family:monospace">[{sid}]</span> '
+        f'<span style="font:.68rem var(--font-mono);color:var(--faint)">{sid}</span> '
         f'<strong style="font-size:.9rem;line-height:1.4">{title_html}</strong><br>'
-        f'<span style="font-size:.79rem;color:#666">{meta_line}</span>'
+        f'<span style="font-size:.79rem;color:var(--muted)">{meta_line}</span>'
         f'</div>'
-        f'<div style="font-size:.95rem;white-space:nowrap">'
-        f'<span style="color:#f5a623">{stars_html(sc)}</span> '
-        f'<span style="font-size:.7rem;color:#888">{sc}/10</span>'
-        f'</div></div>'
-        f'<div style="margin:.35rem 0">{badges}</div>'
-        + (f'<p style="font-size:.82rem;color:#444;margin:.35rem 0 0;line-height:1.55">{abstract}</p>' if abstract else "")
+        f'<div style="white-space:nowrap">{stars_html(sc)}<span class="score-num">{sc}/10</span></div></div>'
+        f'<div style="margin:.35rem 0;display:flex;flex-wrap:wrap;gap:.3rem">{badges}</div>'
+        + (f'<p style="font-size:.82rem;color:var(--muted);margin:.35rem 0 0;line-height:1.55">{abstract}</p>' if abstract else "")
         + '</div>'
     )
     return card
@@ -331,56 +345,66 @@ _src_json = json.dumps([_compact_src(s) for s in real_sources],
 
 _TOOLTIP_CSS = (
     "\n/* Literatur-Tooltip */\n"
-    ".lit-ref{cursor:help;position:relative;display:block}\n"
-    ".lit-ref:hover{background:rgba(26,78,138,.07);border-radius:3px}\n"
+    ".lit-ref{cursor:help;position:relative;display:block;border-radius:4px;transition:background .12s}\n"
+    ".lit-ref:hover{background:rgba(31,63,191,.05)}\n"
     ".src-tooltip{display:none;position:absolute;left:0;top:100%;z-index:9999;"
-    "background:#fff;border:1px solid #c8d6e8;border-left:4px solid #1a4e8a;"
-    "border-radius:6px;padding:.85rem 1.05rem;box-shadow:0 6px 24px rgba(0,0,0,.15);"
-    "max-width:460px;min-width:300px;font-size:.79rem;line-height:1.5;color:#333;"
+    "background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);"
+    "padding:1rem 1.15rem;box-shadow:var(--shadow-lg);font-family:var(--font-ui);"
+    "max-width:460px;min-width:300px;font-size:.79rem;line-height:1.5;color:var(--text);"
     "pointer-events:none;white-space:normal}\n"
     ".lit-ref:hover .src-tooltip{display:block}\n"
     ".tip-above .src-tooltip{top:auto;bottom:100%}\n"
-    ".tip-title{font-weight:600;font-size:.87rem;margin-bottom:.2rem}\n"
-    ".tip-title a{color:#1a4e8a;text-decoration:none}\n"
-    ".tip-title a:hover{text-decoration:underline}\n"
-    ".tip-meta{font-size:.74rem;color:#666;margin-bottom:.2rem}\n"
-    ".tip-abstract{font-size:.76rem;color:#555;font-style:italic;margin-top:.3rem;"
-    "border-top:1px solid #eee;padding-top:.3rem}\n"
+    ".tip-title{font-weight:600;font-size:.87rem;line-height:1.4;margin-bottom:.3rem}\n"
+    ".tip-title a{color:var(--ink);text-decoration:none}\n"
+    ".tip-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.74rem;color:var(--muted)}\n"
+    ".tip-abstract{font-size:.76rem;color:var(--muted);margin-top:.55rem;"
+    "border-top:1px solid var(--line);padding-top:.55rem}\n"
     "/* Inline-Zitat klickbar */\n"
-    ".cite-inline{cursor:pointer;color:#1a4e8a;text-decoration:underline dotted;"
-    "text-underline-offset:2px;border-radius:2px;transition:background .1s}\n"
-    ".cite-inline:hover{background:rgba(26,78,138,.11)}\n"
+    ".cite-inline{cursor:pointer;color:var(--primary);text-decoration:underline;"
+    "text-decoration-style:dotted;text-decoration-color:color-mix(in srgb,var(--primary) 55%,transparent);"
+    "text-underline-offset:3px;border-radius:3px;transition:background .12s}\n"
+    ".cite-inline:hover{background:var(--primary-soft);text-decoration-style:solid}\n"
     "/* Zitat-Modal */\n"
-    "#cite-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.46);"
-    "z-index:99998;align-items:center;justify-content:center}\n"
+    "#cite-modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,22,38,.55);"
+    "-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);"
+    "z-index:99998;align-items:center;justify-content:center;padding:1rem}\n"
     "#cite-modal-overlay.open{display:flex}\n"
-    "#cite-modal-box{background:#fff;border-radius:8px;padding:1.4rem 1.6rem;"
-    "max-width:530px;width:92%;max-height:80vh;overflow-y:auto;"
-    "box-shadow:0 8px 40px rgba(0,0,0,.28);position:relative;border-left:4px solid #1a4e8a}\n"
-    "#cite-modal-close{position:absolute;top:.55rem;right:.75rem;background:none;"
-    "border:none;font-size:1.4rem;cursor:pointer;color:#999;line-height:1;padding:.1rem .3rem}\n"
-    "#cite-modal-close:hover{color:#333}\n"
-    ".cite-modal-title{font-weight:600;font-size:.93rem;line-height:1.4;margin-bottom:.25rem}\n"
-    ".cite-modal-title a{color:#1a4e8a;text-decoration:none}\n"
-    ".cite-modal-title a:hover{text-decoration:underline}\n"
-    ".cite-modal-meta{font-size:.78rem;color:#666;margin-bottom:.35rem}\n"
-    ".cite-modal-badges{display:flex;flex-wrap:wrap;gap:.25rem;margin:.35rem 0}\n"
-    ".cite-modal-badge{font-size:.67rem;padding:.08rem .4rem;border-radius:10px;"
-    "border:1px solid currentColor;white-space:nowrap}\n"
-    ".cite-modal-abstract{font-size:.8rem;color:#444;font-style:italic;line-height:1.55;"
-    "border-top:1px solid #eee;padding-top:.35rem;margin-top:.35rem}\n"
+    "#cite-modal-box{background:var(--surface);border-radius:14px;padding:1.6rem 1.75rem 1.5rem;"
+    "max-width:560px;width:100%;max-height:80vh;overflow-y:auto;font-family:var(--font-ui);"
+    "box-shadow:var(--shadow-lg);position:relative;border-top:3px solid var(--accent)}\n"
+    "#cite-modal-close{position:absolute;top:.8rem;right:.8rem;background:none;width:32px;height:32px;"
+    "border:none;cursor:pointer;color:var(--faint);border-radius:8px;display:grid;place-items:center}\n"
+    "#cite-modal-close:hover{color:var(--text);background:var(--paper)}\n"
+    ".cite-modal-kicker{font:600 .66rem/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem}\n"
+    ".cite-modal-title{font-family:var(--font-display);font-weight:600;font-size:1.15rem;line-height:1.3;margin:0 2rem .45rem 0;color:var(--ink)}\n"
+    ".cite-modal-title a{color:inherit;text-decoration:none}\n"
+    ".cite-modal-title a:hover{color:var(--primary)}\n"
+    ".cite-modal-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;font-size:.8rem;color:var(--muted);margin-bottom:.6rem}\n"
+    ".cite-modal-badges{display:flex;flex-wrap:wrap;gap:.3rem;margin:.5rem 0}\n"
+    ".cite-modal-abstract{font-family:var(--font-read);font-size:.9rem;color:var(--text);line-height:1.6;"
+    "border-top:1px solid var(--line);padding-top:.8rem;margin-top:.8rem}\n"
+    ".cite-modal-link{display:inline-flex;align-items:center;gap:.35rem;margin-top:1rem;font-size:.8rem;font-weight:600;"
+    "color:var(--primary);text-decoration:none}\n"
+    ".cite-modal-link:hover{text-decoration:underline}\n"
 )
+
+# Icon-Bausteine für das client-seitige Tooltip-/Modal-Rendering
+_JS_ICONS = json.dumps({
+    "on": ic("star", "on"), "off": ic("star", "off"),
+    "x": ic("x"), "ext": ic("external"),
+    "badges": {b: badge_html(b) for b in BADGE_LABELS},
+}, ensure_ascii=False).replace("</", "<\\/")
 
 _TOOLTIP_JS = (
     '<script>\n(function(){\n'
     'var D=' + _src_json + ';\n'
+    'var IC=' + _JS_ICONS + ';\n'
+    'function starsHtml(sc){var n=sc>=9?5:sc>=7?4:sc>=5?3:2;\n'
+    '  return "<span class=\'stars\'>"+IC.on.repeat(n)+IC.off.repeat(5-n)+"</span><span class=\'score-num\'>"+sc+"/10</span>";}\n'
     'function tipHtml(s){\n'
     '  var u=s.url&&s.url!="#"?s.url:(s.doi?"https://doi.org/"+s.doi:"");\n'
     '  var ti=u?"<a href=\'"+u+"\' target=\'_blank\' rel=\'noopener\'>"+s.title+"</a>":s.title;\n'
-    '  var n=s.score>=9?5:s.score>=7?4:s.score>=5?3:2;\n'
-    '  var st="<span style=\'color:#f5a623\'>"+"\\u2605".repeat(n)+"</span>"\n'
-    '        +"<span style=\'color:#ddd\'>"+"\\u2605".repeat(5-n)+"</span>"\n'
-    '        +" <small style=\'color:#999\'>"+s.score+"/10</small>";\n'
+    '  var st=starsHtml(s.score);\n'
     '  var m=[s.authors.join(", "),s.year,s.journal].filter(Boolean).join(" \\xb7 ");\n'
     '  var ab=s.abstract?"<div class=\'tip-abstract\'>"+s.abstract.slice(0,260)\n'
     '         +(s.abstract.length>260?"\\u2026":"")+"</div>":"";\n'
@@ -423,11 +447,6 @@ _TOOLTIP_JS = (
     'document.body.appendChild(_ov);\n'
     '_ov.addEventListener("click",function(e){if(e.target===_ov)_ov.classList.remove("open");});\n'
     'document.addEventListener("keydown",function(e){if(e.key==="Escape")_ov.classList.remove("open");});\n'
-    'var _BL={peer:"\\ud83c\\udf93 Peer-reviewed",institution:"\\ud83c\\udfd7\\ufe0f Institution",'
-    'book:"\\ud83d\\udcda Verlag",preprint:"\\ud83d\\udd2c Preprint",'
-    'web:"\\ud83c\\udf10 Web",austria:"\\ud83c\\udde6\\ud83c\\uddf9 \\xd6sterreich",'
-    'openaccess:"\\ud83d\\udd13 Open Access",paywall:"\\ud83d\\udd12 Paywall",'
-    'math:"\\ud83e\\udde0 Mathematik"};\n'
     'document.querySelectorAll(".cite-inline").forEach(function(sp){\n'
     '  sp.addEventListener("click",function(e){\n'
     '    e.preventDefault();e.stopPropagation();\n'
@@ -435,21 +454,20 @@ _TOOLTIP_JS = (
     '    if(!src)return;\n'
     '    var u=src.url&&src.url!="#"?src.url:(src.doi?"https://doi.org/"+src.doi:"");\n'
     '    var ti=u?"<a href=\'"+u+"\' target=\'_blank\' rel=\'noopener\'>"+src.title+"</a>":src.title;\n'
-    '    var n=src.score>=9?5:src.score>=7?4:src.score>=5?3:2;\n'
-    '    var st="<span style=\'color:#f5a623\'>"+"\\u2605".repeat(n)+"</span>"\n'
-    '          +"<span style=\'color:#ddd\'>"+"\\u2605".repeat(5-n)+"</span>"\n'
-    '          +" <small style=\'color:#888\'>"+src.score+"/10</small>";\n'
+    '    var st=starsHtml(src.score);\n'
     '    var m=[src.authors.join(", "),src.year,src.journal].filter(Boolean).join(" \\xb7 ");\n'
     '    var bdg=(src.badges||[]).map(function(b){\n'
-    '      return "<span class=\'cite-modal-badge\'>"+(_BL[b]||b)+"</span>";\n'
+    '      return IC.badges[b]||"<span class=\'badge\'>"+b+"</span>";\n'
     '    }).join("");\n'
     '    var ab=src.abstract?"<div class=\'cite-modal-abstract\'>"+src.abstract+"</div>":"";\n'
-    '    _bx.innerHTML="<button id=\'cite-modal-close\' onclick=\'document.getElementById"'
-    '      +"(\\"cite-modal-overlay\\").classList.remove(\\"open\\")\'>&times;</button>"\n'
+    '    var lk=u?"<a class=\'cite-modal-link\' href=\'"+u+"\' target=\'_blank\' rel=\'noopener\'>Zur Quelle "+IC.ext+"</a>":"";\n'
+    '    _bx.innerHTML="<button id=\'cite-modal-close\' aria-label=\'Schließen\' onclick=\'document.getElementById"'
+    '      +"(\\"cite-modal-overlay\\").classList.remove(\\"open\\")\'>"+IC.x+"</button>"\n'
+    '      +"<div class=\'cite-modal-kicker\'>Quelle "+src.id+"</div>"\n'
     '      +"<div class=\'cite-modal-title\'>"+ti+"</div>"\n'
-    '      +"<div class=\'cite-modal-meta\'>"+m+" "+st+"</div>"\n'
+    '      +"<div class=\'cite-modal-meta\'><span>"+m+"</span>"+st+"</div>"\n'
     '      +(bdg?"<div class=\'cite-modal-badges\'>"+bdg+"</div>":"")\n'
-    '      +ab;\n'
+    '      +ab+lk;\n'
     '    _ov.classList.add("open");\n'
     '  });\n'
     '});\n'
@@ -460,21 +478,50 @@ _TOOLTIP_JS = (
 chapters_html = []
 for i, md in enumerate(chapters_md, 1):
     html_chapter = md2html(md)
-    # Erste h1 nummerieren
-    html_chapter = re.sub(r'^<h1>(.*?)</h1>', f'<h1>{i}. \\1</h1>', html_chapter, count=1)
+    # Erste h1 nummerieren (Kapitelnummer als eigene Zeile über dem Titel)
+    html_chapter = re.sub(r'^<h1>(.*?)</h1>',
+                          f'<h1><span class="ch-num">Kapitel {i:02d}</span>\\1</h1>',
+                          html_chapter, count=1)
     chapters_html.append(html_chapter)
 
-# Inline-Zitate annotieren (erzeugt auch _cit_locations für quellen.html)
-chapters_html = _annotate_chapters(chapters_html)
+# Forschungsdesiderata: H1 ohne Kapitelnummer, jedes Vorhaben (H2) als Karte
+fd_html = md2html(fd_md) if fd_md.strip() else ""
+if fd_html:
+    fd_html = re.sub(r'<h1>(.*?)</h1>',
+                     r'<h1><span class="ch-num">Ausblick für die Forschung</span>\1</h1>',
+                     fd_html, count=1)
+    _fd_parts = re.split(r'(?=<h2>)', fd_html)
+    fd_html = _fd_parts[0] + '<div class="fd-grid">' + "".join(
+        f'<div class="fd-card">{part}</div>' for part in _fd_parts[1:]) + '</div>'
+
+# Inline-Zitate annotieren — Kapitel und Desiderata in einem Durchlauf
+# (erzeugt auch _cit_locations für quellen.html)
+_annotated = _annotate_chapters(chapters_html + [fd_html])
+chapters_html, fd_html = _annotated[:-1], _annotated[-1]
+
+def _chapter_title(html_ch):
+    """Kapiteltitel ohne Nummern-Label, als Klartext."""
+    m = re.search(r'<h1>(.*?)</h1>', html_ch)
+    if not m:
+        return None
+    inner = re.sub(r'<span class="ch-num">.*?</span>', '', m.group(1))
+    return re.sub('<[^>]+>', '', inner).strip()
+
+def _chapter_slug(i, title):
+    return f"{i}-" + re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
 
 # TOC
 toc_items = ""
-for html_ch in chapters_html:
-    m = re.search(r'<h1>(.*?)</h1>', html_ch)
-    if m:
-        title = re.sub('<[^>]+>','', m.group(1))
-        slug = re.sub(r'[^a-z0-9]+','-', title.lower()).strip('-')
-        toc_items += f'<li><a href="#{slug}">{title}</a></li>\n'
+for i, html_ch in enumerate(chapters_html, 1):
+    title = _chapter_title(html_ch)
+    if title:
+        toc_items += (f'<li><a href="#{_chapter_slug(i, title)}">'
+                      f'<span style="font:600 .7rem var(--font-mono);color:var(--faint);min-width:1.6rem">{i:02d}</span>'
+                      f'<span>{title}</span></a></li>\n')
+if fd_html:
+    toc_items += ('<li><a href="#forschungsdesiderata">'
+                  '<span style="font:600 .7rem var(--font-mono);color:var(--accent);min-width:1.6rem">FD</span>'
+                  '<span>Forschungsdesiderata</span></a></li>\n')
 
 # Autoren
 authors_html = "<br>".join(
@@ -493,14 +540,11 @@ def _badge_inline(badges, cited=False):
     """Kompakte Badge-Zeile für Anhang 7."""
     parts = []
     if cited:
-        parts.append('<span style="font-size:.63rem;padding:.05rem .32rem;border-radius:8px;'
-                     'background:#e8f5e9;color:#2e7d32;border:1px solid #81c784;'
-                     'white-space:nowrap;font-weight:600">✓ zitiert</span>')
+        parts.append(f'<span class="badge badge-cited">{ic("check")}zitiert</span>')
     for b in (badges or []):
-        lbl = BADGE_LABELS.get(b, b)
-        parts.append(f'<span style="font-size:.63rem;padding:.05rem .32rem;border-radius:8px;'
-                     f'border:1px solid currentColor;white-space:nowrap">{lbl}</span>')
-    return ' '.join(parts)
+        parts.append(badge_html(b))
+    return ('<span style="display:inline-flex;flex-wrap:wrap;gap:.25rem;vertical-align:middle">'
+            + ''.join(parts) + '</span>')
 
 def _weiterfuehrende_section():
     top = sorted(
@@ -516,25 +560,24 @@ def _weiterfuehrende_section():
         doi = s.get("doi") or ""
         url = s.get("url") or ""
         link = f"https://doi.org/{doi}" if doi else (url if url not in ("", "#") else "")
-        title_html = (f'<a href="{link}" target="_blank" rel="noopener" '
-                      f'style="color:#1a4e8a">{title}</a>') if link else title
+        title_html = (f'<a href="{link}" target="_blank" rel="noopener">{title}</a>') if link else title
         sc = s.get("score", 3)
-        n = 5 if sc >= 9 else 4 if sc >= 7 else 3
-        stars = f'<span style="color:#f5a623;font-size:.72rem">{"★"*n}{"☆"*(5-n)}</span>'
         bdg = _badge_inline(s.get("badges"), cited=True)
         meta_str = f'{authors} ({year})'
         if journal:
             meta_str += f'. <em>{journal}</em>'
         items.append(
-            f'<p style="margin-bottom:.7rem;font-size:.84rem;line-height:1.5;'
-            f'border-left:3px solid {score_color(sc)};padding-left:.6rem">'
-            f'{meta_str}. {title_html} {stars}<br>'
-            f'<span style="font-size:.75rem">{bdg}</span></p>'
+            f'<div style="margin-bottom:.8rem;padding:.8rem 1rem;background:var(--surface);'
+            f'border:1px solid var(--line);border-left:3px solid {score_color(sc)};border-radius:var(--radius-sm);'
+            f'font:.84rem/1.55 var(--font-ui)">'
+            f'<div>{meta_str}. {title_html}</div>'
+            f'<div style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-top:.45rem">'
+            f'{stars_html(sc)}{bdg}</div></div>'
         )
     return (
         '<section id="weiterfuehrende-literatur" style="margin-top:3rem">\n'
         '<h2>Weiterführende Literatur</h2>\n'
-        f'<p style="font-size:.84rem;color:#555;margin-bottom:1.2rem">'
+        f'<p style="font:.84rem/1.5 var(--font-ui);color:var(--muted);margin-bottom:1.2rem">'
         f'{len(top)} empfohlene Quellen (im Artikel zitiert, Score ≥ 9) — '
         f'vollständiges Verzeichnis: <a href="quellen.html">quellen.html</a> · '
         f'<a href="HIER-LINK-EINFÜGEN" target="_blank">Online-Version</a></p>\n'
@@ -554,21 +597,21 @@ def _anhang7_section():
         doi = s.get("doi", "") or ""
         url = s.get("url", "") or ""
         link = f"https://doi.org/{doi}" if doi else (url if url not in ("", "#") else "")
-        title_html = (f'<a href="{link}" target="_blank" rel="noopener" '
-                      f'style="color:#1a4e8a">{title}</a>') if link else title
+        title_html = (f'<a href="{link}" target="_blank" rel="noopener">{title}</a>') if link else title
         bdg = _badge_inline(s.get("badges"), cited=cited)
         meta_str = f'{authors} ({year})'
         if journal:
             meta_str += f'. <em>{journal}</em>'
         items.append(
-            f'<div style="margin-bottom:.38rem;font-size:.78rem;line-height:1.45">'
-            f'<span style="font-family:monospace;color:#aaa;font-size:.65rem">[{sid}]</span> '
-            f'{meta_str}. {title_html} — {bdg}</div>'
+            f'<div style="display:grid;grid-template-columns:3.2rem 1fr;gap:.5rem;padding:.55rem 0;'
+            f'border-bottom:1px solid var(--line);font:.8rem/1.5 var(--font-ui)">'
+            f'<span style="font:.68rem/1.9 var(--font-mono);color:var(--faint)">{sid}</span>'
+            f'<div>{meta_str}. {title_html}<div style="margin-top:.3rem">{bdg}</div></div></div>'
         )
     return (
-        '<section id="anhang-7" style="margin-top:3rem;border-top:2px solid #ddd;padding-top:2rem">\n'
+        '<section id="anhang-7" style="margin-top:4rem;border-top:1px solid var(--line-strong);padding-top:2.5rem">\n'
         '<h2>Anhang 7: Vollständiges Quellenverzeichnis</h2>\n'
-        f'<p style="font-size:.84rem;color:#555;margin-bottom:1.2rem">'
+        f'<p style="font:.84rem/1.5 var(--font-ui);color:var(--muted);margin-bottom:1.2rem">'
         f'{len(real_sources)} Quellen mit Qualitätslabels</p>\n'
         + "\n".join(items)
         + '\n</section>'
@@ -578,6 +621,8 @@ weiterfuehrende_section = _weiterfuehrende_section()
 anhang7_section = _anhang7_section()
 
 # (Quellenarchiv nur noch auf quellen.html — nicht mehr in standalone.html eingebettet)
+fd_section = (f'<section class="chapter-block fd-section" id="forschungsdesiderata">{fd_html}</section>'
+              if fd_html else "")
 sources_section = weiterfuehrende_section + "\n" + anhang7_section
 
 
@@ -591,33 +636,31 @@ pages_a4 = math.ceil(word_count / 450)
 pages_a5 = math.ceil(word_count / 250)
 
 # Stats-Panel HTML (fixed top right)
-stats_panel = f"""<div id="stats-panel" style="
-  position:fixed;top:1rem;right:1rem;z-index:1000;
-  background:rgba(255,255,255,0.97);border:1px solid #ddd;border-left:4px solid #1a4e8a;
-  border-radius:6px;padding:.6rem .9rem;font-family:sans-serif;
-  font-size:.76rem;line-height:1.6;box-shadow:0 2px 12px rgba(0,0,0,.1);
-  min-width:140px;display:none;
+def _stat(label, value):
+    return (f'<div style="display:flex;justify-content:space-between;gap:1.5rem;padding:.3rem 0;'
+            f'border-bottom:1px solid var(--line)"><span style="color:var(--muted)">{label}</span>'
+            f'<strong style="font-family:var(--font-mono);font-weight:600">{value}</strong></div>')
+
+stats_panel = f"""<div id="stats-panel" class="no-print" style="
+  position:fixed;top:calc(var(--topbar-h) + .75rem);right:1rem;z-index:1000;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:.9rem 1.1rem .8rem;font:.78rem/1.5 var(--font-ui);box-shadow:var(--shadow-lg);
+  min-width:220px;display:none;
 ">
-  <div style="font-weight:700;color:#1a4e8a;margin-bottom:.3rem;font-size:.78rem">📄 Dokument</div>
-  <div>Kapitel: <strong>{len(chapters_html)}</strong></div>
-  <div>Quellen: <strong>{len(real_sources)}</strong></div>
-  <div>Wörter: <strong>{word_count:,}</strong></div>
-  <div style="border-top:1px solid #eee;margin-top:.3rem;padding-top:.3rem">
-    ca. A4-Seiten: <strong>~{pages_a4}</strong></div>
-  <div>ca. A5-Seiten: <strong>~{pages_a5}</strong></div>
-  <div style="font-size:.65rem;color:#aaa;margin-top:.25rem">
-    (≈ 450 Wö/A4, 250 Wö/A5)</div>
+  <div class="kicker" style="margin-bottom:.5rem"><span class="dot"></span>Dokument</div>
+  {_stat("Kapitel", len(chapters_html))}
+  {_stat("Quellen", len(real_sources))}
+  {_stat("Wörter", f"{word_count:,}".replace(",", "."))}
+  {_stat("A4-Seiten", f"~{pages_a4}")}
+  {_stat("A5-Seiten", f"~{pages_a5}")}
+  <div style="font-size:.66rem;color:var(--faint);margin-top:.45rem">≈ 450 Wörter/A4, 250 Wörter/A5</div>
 </div>"""
 
 # Kapitel-Blöcke
 def make_chapter_block(html_ch, i):
-    m = re.search(r'<h1>(.*?)</h1>', html_ch)
-    slug = ""
-    if m:
-        title = re.sub('<[^>]+>','', m.group(1))
-        slug = re.sub(r'[^a-z0-9]+','-', title.lower()).strip('-')
-    border = "border-top:none;margin-top:0" if i==1 else "border-top:1px solid #ddd;margin-top:3rem;padding-top:.5rem"
-    return f'<div class="chapter-block" id="{slug}" style="{border}">{html_ch}</div>'
+    title = _chapter_title(html_ch)
+    slug = _chapter_slug(i, title) if title else ""
+    return f'<div class="chapter-block" id="{slug}">{html_ch}</div>'
 
 chapters_blocks = "\n".join(make_chapter_block(h, i) for i, h in enumerate(chapters_html, 1))
 
@@ -636,40 +679,58 @@ final = f"""<!DOCTYPE html>
   onload="renderMathInElement(document.body,{{delimiters:[{{left:'$$',right:'$$',display:true}},{{left:'$',right:'$',display:false}}],throwOnError:false}})"></script>
 <style>
 {css}
-body {{ max-width:820px; margin:0 auto; padding:2.5rem 2rem 6rem; }}
-.chapter-block {{ }}
-#nav-cluster button:hover, #nav-cluster a:hover {{ background:#0d2e55 !important; }}
-@media print {{ #nav-cluster{{display:none}} #stats-panel{{display:none}} }}
+#to-top {{ position:fixed; right:1.25rem; bottom:1.25rem; width:42px; height:42px; border-radius:50%;
+  background:var(--ink); color:#fff; border:0; cursor:pointer; display:grid; place-items:center;
+  box-shadow:var(--shadow); opacity:0; pointer-events:none; transform:translateY(8px);
+  transition:opacity .2s, transform .2s, background .15s; z-index:700; }}
+#to-top.show {{ opacity:1; pointer-events:auto; transform:none; }}
+#to-top:hover {{ background:var(--primary); }}
+@media print {{ #nav-cluster, #stats-panel, #to-top {{ display:none }} }}
 </style>
 </head>
 <body>
-<div id="nav-cluster" class="no-print" style="position:fixed;bottom:1.2rem;right:1.2rem;display:flex;flex-direction:column;gap:.3rem;align-items:stretch;z-index:500">
-  <button onclick="window.scrollTo({{top:0,behavior:'smooth'}})" style="background:#1a4e8a;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">↑ oben</button>
-  <button onclick="(function(){{var p=document.getElementById('stats-panel');p.style.display=p.style.display==='none'?'block':'none'}})()" style="background:#4a6fa5;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">ℹ Info</button>
-  <a href="presentation/index.html" style="background:#1a4e8a;color:#fff;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;text-decoration:none;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);text-align:center;white-space:nowrap">📊 Folien</a>
-  <a href="quellen.html" style="background:#1a4e8a;color:#fff;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;text-decoration:none;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);text-align:center;white-space:nowrap">📚 Quellen</a>
-  <button onclick="ltxOpenOverlay()" style="background:#1a4e8a;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">↓ Export</button>
-  <button onclick="window.print()" style="background:#1a4e8a;color:#fff;border:none;border-radius:20px;padding:.22rem .7rem;font-size:.72rem;cursor:pointer;font-family:sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.25);white-space:nowrap">🖨 Drucken</button>
-</div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">{ic("mark")}</span>
+      <span class="brand-text"><span class="brand-title">{meta['title']}</span><span class="brand-sub">Fachartikel</span></span>
+    </a>
+    <nav>
+      <a class="active" href="standalone.html">{ic("article")}<span class="nav-label">Artikel</span></a>
+      <a href="quellen.html">{ic("library")}<span class="nav-label">Quellen</span></a>
+      <a href="presentation/index.html">{ic("slides")}<span class="nav-label">Folien</span></a>
+      <a href="handbuch.html">{ic("handbook")}<span class="nav-label">Handbuch</span></a>
+    </nav>
+    <div id="nav-cluster" class="tb-tools">
+      <button class="tb-btn" data-tip="Dokumentinfo" onclick="(function(){{var p=document.getElementById('stats-panel');p.style.display=p.style.display==='none'?'block':'none'}})()">{ic("info")}</button>
+      <button class="tb-btn" data-tip="Export: LaTeX / Web-Paket" onclick="ltxOpenOverlay()">{ic("download")}</button>
+      <button class="tb-btn" data-tip="Drucken" onclick="window.print()">{ic("printer")}</button>
+    </div>
+  </div>
+  <div class="progress" id="read-progress"></div>
+</header>
 {stats_panel}
+<button id="to-top" class="no-print" aria-label="Nach oben" onclick="window.scrollTo({{top:0,behavior:'smooth'}})">{ic("arrow-up")}</button>
 
 <header class="paper-header">
+  <div class="kicker"><span class="dot"></span>{meta.get("event","")} &nbsp;/&nbsp; {meta.get("date","")}</div>
   <h1>{meta['title']}</h1>
   {f'<p class="subtitle">{meta["subtitle"]}</p>' if meta.get("subtitle") else ""}
   <p class="authors">{authors_html}</p>
-  <p class="meta">{meta.get("event","")} &nbsp;·&nbsp; {meta.get("date","")}<br>
-    <small style="font-style:italic">{meta.get("note","")}</small></p>
+  <p class="meta">{len(chapters_html)} Kapitel &nbsp;·&nbsp; {len(real_sources)} Quellen &nbsp;·&nbsp; ca. {pages_a4} Seiten
+    <small>{meta.get("note","")}</small></p>
 </header>
 
 {abstract_section}
 
 <nav class="toc">
   <h2>Inhaltsverzeichnis</h2>
-  <ol style="list-style:none;padding-left:1.2rem">{toc_items}</ol>
+  <ol>{toc_items}</ol>
 </nav>
 
 <main>
 {chapters_blocks}
+{fd_section}
 </main>
 
 {sources_section}
@@ -681,6 +742,15 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){{
     if(t){{e.preventDefault();t.scrollIntoView({{behavior:'smooth'}});}}
   }});
 }});
+(function(){{
+  var bar=document.getElementById('read-progress'), top=document.getElementById('to-top');
+  function upd(){{
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    if(bar) bar.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+    if(top) top.classList.toggle('show', h.scrollTop>600);
+  }}
+  window.addEventListener('scroll',upd,{{passive:true}}); upd();
+}})();
 </script>
 </body>
 </html>"""
@@ -905,6 +975,8 @@ def _anhang7_tex(bw=False):
 
 # Build LaTeX body
 chapters_tex = [md2latex(md) for md in chapters_md]
+if fd_md.strip():
+    chapters_tex.append(md2latex(fd_md))
 latex_body = '\n\n\\clearpage\n\n'.join(chapters_tex)
 
 authors_tex = ' \\and '.join(
@@ -1014,26 +1086,30 @@ _tex_meta = {
     'dateLine':   f'\\date{{{date_tex} \\\\ \\small {event_tex}}}',
 }
 
-_LATEX_OVERLAY_HTML = """\
-<div id="latex-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;padding:1rem">
-<div style="background:#fff;border-radius:8px;padding:1.5rem 1.75rem 1.1rem;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.28);font-family:sans-serif;font-size:.86rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
-    <strong style="font-size:.95rem;color:#1a1a1a">Export</strong>
-    <button onclick="document.getElementById('latex-overlay').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#aaa;line-height:1">×</button>
+_EXP_SEL = 'style="font:.84rem var(--font-ui);padding:.42rem .5rem;border:1px solid var(--line-strong);border-radius:6px;width:100%;background:var(--surface);color:var(--text)"'
+_EXP_TD = 'style="border:0;padding:.2rem 0;vertical-align:middle"'
+_EXP_TDL = 'style="border:0;padding:.2rem 0;vertical-align:middle;color:var(--muted);width:36%"'
+_EXP_ROW = 'style="display:flex;align-items:center;gap:.5rem"'
+_LATEX_OVERLAY_HTML = f"""\
+<div id="latex-overlay" style="display:none;position:fixed;inset:0;background:rgba(13,22,38,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:9000;align-items:center;justify-content:center;padding:1rem">
+<div style="background:var(--surface);border-radius:14px;padding:1.5rem 1.6rem 1.2rem;max-width:460px;width:100%;box-shadow:var(--shadow-lg);font:.86rem/1.5 var(--font-ui);color:var(--text);border-top:3px solid var(--accent)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div><div class="kicker" style="margin-bottom:.35rem">Export</div><strong style="font:600 1.15rem/1.2 var(--font-display);color:var(--ink)">Artikel herunterladen</strong></div>
+    <button aria-label="Schließen" onclick="document.getElementById('latex-overlay').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--faint);width:32px;height:32px;border-radius:8px;display:grid;place-items:center">{ic("x")}</button>
   </div>
-  <div style="display:flex;gap:.3rem;margin-bottom:1rem" id="export-tabs">
-    <button class="exp-tab exp-tab-active" onclick="expSwitchTab('latex')" id="exp-tab-latex" style="flex:1;padding:.4rem .6rem;border:1px solid #ddd;border-radius:5px;background:#1a4e8a;color:#fff;cursor:pointer;font-size:.78rem;font-family:inherit;font-weight:600">LaTeX</button>
-    <button class="exp-tab" onclick="expSwitchTab('web')" id="exp-tab-web" style="flex:1;padding:.4rem .6rem;border:1px solid #ddd;border-radius:5px;background:#fff;color:#333;cursor:pointer;font-size:.78rem;font-family:inherit;font-weight:500">Web-Paket (ZIP)</button>
+  <div style="display:flex;gap:.25rem;margin-bottom:1.1rem;background:var(--paper);padding:.25rem;border-radius:8px" id="export-tabs">
+    <button class="exp-tab exp-tab-active" onclick="expSwitchTab('latex')" id="exp-tab-latex" style="flex:1;padding:.45rem .6rem;border:0;border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer;font:600 .78rem var(--font-ui);box-shadow:var(--shadow-sm)">LaTeX</button>
+    <button class="exp-tab" onclick="expSwitchTab('web')" id="exp-tab-web" style="flex:1;padding:.45rem .6rem;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font:600 .78rem var(--font-ui)">Web-Paket (ZIP)</button>
   </div>
   <div id="exp-panel-latex">
-  <table style="width:100%;border-collapse:collapse;line-height:2">
+  <table style="width:100%;border-collapse:collapse;line-height:2;margin:0;font-size:.84rem">
     <tr>
-      <td style="color:#555;width:36%;vertical-align:middle">Farbmodus</td>
-      <td><label style="margin-right:.9rem"><input type="radio" name="ltx-color" value="farbe" checked> Farbe</label><label><input type="radio" name="ltx-color" value="sw"> Schwarz-Weiß</label></td>
+      <td {_EXP_TDL}>Farbmodus</td>
+      <td {_EXP_TD}><label style="margin-right:.9rem"><input type="radio" name="ltx-color" value="farbe" checked> Farbe</label><label><input type="radio" name="ltx-color" value="sw"> Schwarz-Weiß</label></td>
     </tr>
     <tr>
-      <td style="color:#555;vertical-align:middle">Schriftgröße</td>
-      <td><select id="ltx-size" style="font-size:.84rem;padding:.2rem .4rem;border:1px solid #ccc;border-radius:4px;width:100%">
+      <td {_EXP_TDL}>Schriftgröße</td>
+      <td {_EXP_TD}><select id="ltx-size" {_EXP_SEL}>
         <option value="9pt">9 pt — Taschenbuch</option>
         <option value="10pt">10 pt — Fachbuch Standard</option>
         <option value="10.5pt">10.5 pt — Luftig</option>
@@ -1041,49 +1117,48 @@ _LATEX_OVERLAY_HTML = """\
       </select></td>
     </tr>
     <tr>
-      <td style="color:#555;vertical-align:middle">Zeilenabstand</td>
-      <td><select id="ltx-stretch" style="font-size:.84rem;padding:.2rem .4rem;border:1px solid #ccc;border-radius:4px;width:100%">
+      <td {_EXP_TDL}>Zeilenabstand</td>
+      <td {_EXP_TD}><select id="ltx-stretch" {_EXP_SEL}>
         <option value="1.0">1.0 — Kompakt (Buchdruck)</option>
         <option value="1.15" selected>1.15 — Normal</option>
         <option value="1.25">1.25 — Luftig</option>
       </select></td>
     </tr>
     <tr>
-      <td style="color:#555;vertical-align:middle">Ränder</td>
-      <td><select id="ltx-margins" style="font-size:.84rem;padding:.2rem .4rem;border:1px solid #ccc;border-radius:4px;width:100%">
+      <td {_EXP_TDL}>Ränder</td>
+      <td {_EXP_TD}><select id="ltx-margins" {_EXP_SEL}>
         <option value="eng">Eng (±1.5 cm)</option>
         <option value="normal" selected>Normal (±1.8 cm)</option>
         <option value="bundsteg">Bundsteg — innen 2.5 / außen 1.5 cm</option>
       </select></td>
     </tr>
   </table>
-  <div style="background:#f5f5f2;border-radius:5px;padding:.4rem .85rem;margin:.75rem 0 .6rem;text-align:center;font-size:.83rem;color:#555">
-    Geschätzte Seitenanzahl (A5): <strong id="ltx-pages" style="color:#1a4e8a;font-size:1rem">—</strong>
-    <div style="font-size:.68rem;color:#bbb;margin-top:.05rem">Schätzung auf Basis der Wortzahl · Tabellen &amp; Abbildungen nicht eingerechnet</div>
+  <div style="background:var(--paper);border-radius:8px;padding:.6rem .85rem;margin:.9rem 0 .45rem;display:flex;align-items:baseline;justify-content:space-between;gap:1rem">
+    <span style="color:var(--muted);font-size:.8rem">Geschätzte Seitenanzahl (A5)</span>
+    <strong id="ltx-pages" style="font:600 1.1rem var(--font-mono);color:var(--primary)">—</strong>
   </div>
-  <div id="ltx-compile-hint" style="display:none;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:5px;padding:.35rem .75rem;margin-bottom:.55rem;font-size:.79rem;color:#2e7d32">
-    ✓ .tex-Datei heruntergeladen — bitte auf <strong>latexonline.cc</strong> hochladen und kompilieren.
+  <div style="font-size:.68rem;color:var(--faint);margin-bottom:.8rem">Schätzung auf Basis der Wortzahl · Tabellen &amp; Abbildungen nicht eingerechnet</div>
+  <div id="ltx-compile-hint" style="display:none;background:#e9f6ef;border:1px solid #b5dfc7;border-radius:6px;padding:.4rem .75rem;margin-bottom:.55rem;font-size:.79rem;color:var(--s5)">
+    .tex-Datei heruntergeladen — bitte auf <strong>latexonline.cc</strong> hochladen und kompilieren.
   </div>
-  <div style="margin-top:.4rem">
-    <button onclick="ltxDownload()" style="width:100%;background:#1a4e8a;color:#fff;border:none;border-radius:5px;padding:.55rem .4rem;cursor:pointer;font-size:.83rem;font-family:sans-serif">↓ Herunterladen (.tex)</button>
-  </div>
-  <div style="text-align:center;margin-top:.4rem;font-size:.69rem;color:#bbb">
-    Für PDF: .tex-Datei in Overleaf, pdflatex oder <a href="https://latexonline.cc" target="_blank" rel="noopener" style="color:#bbb">latexonline.cc</a> öffnen
+  <button class="btn btn-primary" onclick="ltxDownload()" style="width:100%">{ic("download")}Herunterladen (.tex)</button>
+  <div style="text-align:center;margin-top:.55rem;font-size:.69rem;color:var(--faint)">
+    Für PDF: .tex-Datei in Overleaf, pdflatex oder <a href="https://latexonline.cc" target="_blank" rel="noopener" style="color:var(--muted)">latexonline.cc</a> öffnen
   </div>
   </div>
   <div id="exp-panel-web" style="display:none">
-    <p style="color:#555;line-height:1.5;margin-bottom:.8rem">Erstellt ein ZIP-Paket mit allem, was für eine Website nötig ist. Den Inhalt einfach in ein Verzeichnis auf einem Webserver (SFTP/FTP) hochladen — fertig.</p>
-    <div style="background:#f5f5f2;border-radius:5px;padding:.6rem .85rem;margin-bottom:.8rem;font-size:.8rem;color:#555;line-height:1.5">
-      <strong>Enthält:</strong><br>
-      📄 Fachartikel (standalone.html)<br>
-      📚 Quellenverzeichnis (quellen.html)<br>
-      📖 Handbuch (handbuch.html)<br>
-      📊 Präsentation (presentation/)<br>
-      🎨 Stylesheets (assets/css/)<br>
-      🏠 Landingpage (index.html)
+    <p style="color:var(--muted);line-height:1.55;margin-bottom:.8rem;font-size:.84rem">Erstellt ein ZIP-Paket mit allem, was für eine Website nötig ist. Den Inhalt einfach in ein Verzeichnis auf einem Webserver (SFTP/FTP) hochladen — fertig.</p>
+    <div style="background:var(--paper);border-radius:8px;padding:.7rem .9rem;margin-bottom:.8rem;font-size:.8rem;line-height:1.9">
+      <div class="kicker" style="margin-bottom:.3rem">Enthält</div>
+      <div {_EXP_ROW}>{ic("article")}Fachartikel (standalone.html)</div>
+      <div {_EXP_ROW}>{ic("library")}Quellenverzeichnis (quellen.html)</div>
+      <div {_EXP_ROW}>{ic("handbook")}Handbuch (handbuch.html)</div>
+      <div {_EXP_ROW}>{ic("slides")}Präsentation (presentation/)</div>
+      <div {_EXP_ROW}>{ic("code")}Stylesheets &amp; Icons (assets/)</div>
+      <div {_EXP_ROW}>{ic("home")}Startseite (index.html)</div>
     </div>
-    <p style="font-size:.75rem;color:#999;margin-bottom:.8rem;line-height:1.4">Hinweis: Folienbilder der Präsentation werden nicht eingebettet. Für Folien mit eingebetteten KI-Bildern verwende den ⬇-Button in der Präsentation selbst.</p>
-    <button onclick="webPaketDownload()" id="web-paket-btn" style="width:100%;background:#1a4e8a;color:#fff;border:none;border-radius:5px;padding:.55rem .4rem;cursor:pointer;font-size:.83rem;font-family:sans-serif">↓ Web-Paket herunterladen (.zip)</button>
+    <p style="font-size:.74rem;color:var(--faint);margin-bottom:.8rem;line-height:1.45">Hinweis: Folienbilder der Präsentation werden nicht eingebettet. Für Folien mit eingebetteten KI-Bildern den Deployment-Export in der Präsentation selbst verwenden.</p>
+    <button class="btn btn-primary" onclick="webPaketDownload()" id="web-paket-btn" style="width:100%">{ic("package")}Web-Paket herunterladen (.zip)</button>
   </div>
 </div>
 </div>"""
@@ -1186,14 +1261,13 @@ _LATEX_OVERLAY_JS = (
     'window.expSwitchTab=function(tab){'
     'document.getElementById("exp-panel-latex").style.display=tab==="latex"?"block":"none";'
     'document.getElementById("exp-panel-web").style.display=tab==="web"?"block":"none";'
-    'document.getElementById("exp-tab-latex").style.background=tab==="latex"?"#1a4e8a":"#fff";'
-    'document.getElementById("exp-tab-latex").style.color=tab==="latex"?"#fff":"#333";'
-    'document.getElementById("exp-tab-web").style.background=tab==="web"?"#1a4e8a":"#fff";'
-    'document.getElementById("exp-tab-web").style.color=tab==="web"?"#fff":"#333";'
+    '["latex","web"].forEach(function(t){var b=document.getElementById("exp-tab-"+t),on=t===tab;'
+    'b.style.background=on?"var(--surface)":"transparent";b.style.color=on?"var(--ink)":"var(--muted)";'
+    'b.style.boxShadow=on?"var(--shadow-sm)":"none";});'
     '};\n'
     '/* ── Web-Paket (ZIP) ── */\n'
     'window.webPaketDownload=async function(){'
-    'var btn=document.getElementById("web-paket-btn");'
+    'var btn=document.getElementById("web-paket-btn");var _wpLabel=btn.innerHTML;'
     'btn.textContent="Wird erstellt …";btn.disabled=true;'
     'try{'
     'if(!window.JSZip){'
@@ -1222,28 +1296,28 @@ _LATEX_OVERLAY_JS = (
     'for(var i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);'
     'zip.file(k,arr);'
     '}else{zip.file(k,f.d);}});'
-    '/* Landingpage */\n'
+    '/* Landingpage (Fallback, falls index.html nicht eingebettet) */\n'
     'var ti=document.title||"Forschungsartikel";'
-    'zip.file("index.html","<!DOCTYPE html>\\n<html lang=\\"de\\">\\n<head>\\n"+'
+    'if(!wpText["index.html"])zip.file("index.html","<!DOCTYPE html>\\n<html lang=\\"de\\">\\n<head>\\n"+'
     '"<meta charset=\\"UTF-8\\"/>\\n<meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"/>\\n"+'
     '"<title>"+ti+"</title>\\n"+'
     '"<style>body{font-family:system-ui,sans-serif;max-width:680px;margin:4rem auto;padding:0 2rem;color:#222}"+'
     '"h1{font-size:1.4rem;margin-bottom:.5rem}p{color:#666;margin-bottom:2rem}"+'
     '"nav{display:flex;flex-direction:column;gap:.8rem}"+'
-    '"a{display:inline-block;padding:.7rem 1.2rem;background:#163374;color:#fff;text-decoration:none;border-radius:6px;width:fit-content}"+'
-    '"a:hover{background:#0f2456}</style>\\n</head>\\n<body>\\n"+'
+    '"a{display:inline-block;padding:.7rem 1.2rem;background:#1f3fbf;color:#fff;text-decoration:none;border-radius:6px;width:fit-content}"+'
+    '"a:hover{background:#162e8f}</style>\\n</head>\\n<body>\\n"+'
     '"<h1>"+ti+"</h1>\\n<p>Wähle einen Bereich:</p>\\n<nav>\\n"+'
-    '"<a href=\\"standalone.html\\">📄 Artikel lesen</a>\\n"+'
-    '"<a href=\\"quellen.html\\">📚 Quelldatenbank</a>\\n"+'
-    '"<a href=\\"presentation/index.html\\">📊 Präsentation</a>\\n"+'
-    '"<a href=\\"handbuch.html\\">📖 Handbuch</a>\\n"+'
+    '"<a href=\\"standalone.html\\">Artikel lesen</a>\\n"+'
+    '"<a href=\\"quellen.html\\">Quelldatenbank</a>\\n"+'
+    '"<a href=\\"presentation/index.html\\">Präsentation</a>\\n"+'
+    '"<a href=\\"handbuch.html\\">Handbuch</a>\\n"+'
     '"</nav>\\n</body>\\n</html>");'
     '/* Download */\n'
     'var blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});'
     'var a=document.createElement("a");a.href=URL.createObjectURL(blob);'
     'a.download="web-paket.zip";a.click();URL.revokeObjectURL(a.href);'
-    'btn.textContent="↓ Web-Paket herunterladen (.zip)";btn.disabled=false;'
-    '}catch(e){alert("Fehler: "+e.message);btn.textContent="↓ Web-Paket herunterladen (.zip)";btn.disabled=false;}'
+    'btn.innerHTML=_wpLabel;btn.disabled=false;'
+    '}catch(e){alert("Fehler: "+e.message);btn.innerHTML=_wpLabel;btn.disabled=false;}'
     '};\n'
     '})();</script>\n'
 )
@@ -1255,6 +1329,9 @@ for _wp_name, _wp_path in [
     ("quellen.html", base / "quellen.html"),
     ("handbuch.html", base / "handbuch.html"),
     ("assets/css/paper.css", base / "assets" / "css" / "paper.css"),
+    ("assets/css/site.css", base / "assets" / "css" / "site.css"),
+    ("assets/icons.js", base / "assets" / "icons.js"),
+    ("index.html", base / "index.html"),
     ("presentation/index.html", base / "presentation" / "index.html"),
     ("presentation/stile.html", base / "presentation" / "stile.html"),
 ]:
@@ -1272,10 +1349,13 @@ if _fonts_dir.exists():
             else:
                 _wp_fonts[f"presentation/fonts/{_ff.name}"] = {"t": "b64", "d": _b64.b64encode(_ff.read_bytes()).decode()}
 
+# (Ausdrücke vorab berechnen — Backslashes in f-Strings erst ab Python 3.12 erlaubt)
+_wp_text_js  = json.dumps(_wp_files, ensure_ascii=False).replace("</", "<\\/") if _wp_files else "{}"
+_wp_fonts_js = json.dumps(_wp_fonts, ensure_ascii=False).replace("</", "<\\/") if _wp_fonts else "{}"
 _WEB_PAKET_DATA = (
     '<script>\n'
-    f'window._WEB_PAKET_TEXT={json.dumps(_wp_files, ensure_ascii=False).replace("</", "<\\/") if _wp_files else "{}"};\n'
-    f'window._WEB_PAKET_FONTS={json.dumps(_wp_fonts, ensure_ascii=False).replace("</", "<\\/") if _wp_fonts else "{}"};\n'
+    f'window._WEB_PAKET_TEXT={_wp_text_js};\n'
+    f'window._WEB_PAKET_FONTS={_wp_fonts_js};\n'
     '</script>\n'
 )
 
@@ -1314,7 +1394,11 @@ if quellen_path.exists():
     import datetime
     datum_raw = meta.get("date", "")
     try:
-        datum_fmt = datetime.datetime.strptime(datum_raw, "%Y-%m-%d").strftime("%-d. %B %Y")
+        # Monatsnamen selbst setzen — "%-d" und "%B" sind plattform- bzw. locale-abhängig
+        _d = datetime.datetime.strptime(datum_raw, "%Y-%m-%d")
+        _monate = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli",
+                   "August", "September", "Oktober", "November", "Dezember"]
+        datum_fmt = f"{_d.day}. {_monate[_d.month - 1]} {_d.year}"
     except Exception:
         datum_fmt = datum_raw
     quellen_new = quellen_new.replace("{{TITEL}}", meta.get("title", ""))

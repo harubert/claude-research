@@ -1,0 +1,191 @@
+/* ============================================================
+   site.css — Designsystem: Tokens, Schriften, Navigation, Badges
+   Gemeinsam für index.html, standalone.html, quellen.html, handbuch.html
+   ============================================================ */
+
+/* ── Schriften (lokal, DSGVO-konform) ── */
+@font-face { font-family: 'Inter'; font-weight: 400 700; font-display: swap; src: url('../../presentation/fonts/inter.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 400 900; font-display: swap; src: url('../../presentation/fonts/fraunces-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400 900; font-display: swap; src: url('../../presentation/fonts/fraunces-italic.woff2') format('woff2'); }
+
+:root {
+  /* Farben */
+  --ink:          #0d1626;
+  --ink-2:        #1b2940;
+  --primary:      #1f3fbf;
+  --primary-dark: #162e8f;
+  --primary-soft: #eef1fc;
+  --accent:       #ff5a36;
+  --paper:        #f6f5f1;
+  --surface:      #ffffff;
+  --line:         #e4e2db;
+  --line-strong:  #cfccc2;
+  --text:         #141a24;
+  --muted:        #5b6371;
+  --faint:        #8d929c;
+
+  /* Score-Stufen */
+  --s5: #0b6e4f;
+  --s4: #2e9a6a;
+  --s3: #d4880f;
+  --s2: #c23b22;
+  --star: #e5a50a;
+  --star-off: #dedbd2;
+
+  /* Typografie */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-ui:      'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-read:    Charter, 'Iowan Old Style', 'Source Serif Pro', Georgia, serif;
+  --font-mono:    ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
+
+  /* Form */
+  --radius:    10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 2px rgba(13,22,38,.06), 0 1px 1px rgba(13,22,38,.04);
+  --shadow:    0 1px 2px rgba(13,22,38,.05), 0 8px 24px -8px rgba(13,22,38,.14);
+  --shadow-lg: 0 24px 60px -20px rgba(13,22,38,.35);
+  --topbar-h:  56px;
+}
+
+/* ── Icons ── */
+.ic { width: 1.15em; height: 1.15em; flex-shrink: 0; vertical-align: -0.2em; display: inline-block; }
+[data-icon] { display: inline-flex; align-items: center; }
+
+/* ── Kicker / Labels ── */
+.kicker {
+  font-family: var(--font-mono); font-size: .72rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.kicker .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: .55em; vertical-align: .12em; }
+
+/* ── Topbar ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+  height: var(--topbar-h);
+  background: rgba(13,22,38,.94);
+  -webkit-backdrop-filter: saturate(140%) blur(12px); backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-family: var(--font-ui);
+}
+.topbar-inner {
+  max-width: 1240px; height: 100%; margin: 0 auto; padding: 0 1.25rem;
+  display: flex; align-items: center; gap: 1.25rem;
+}
+.topbar .brand {
+  display: flex; align-items: center; gap: .65rem; min-width: 0; flex: 1;
+  color: #fff; text-decoration: none;
+}
+.topbar .brand-mark {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  background: var(--primary); display: grid; place-items: center; color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.topbar .brand-mark .ic { width: 16px; height: 16px; }
+.topbar .brand-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+.topbar .brand-title {
+  font-size: .84rem; font-weight: 600; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.topbar .brand-sub { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.topbar nav { display: flex; align-items: center; gap: .15rem; }
+.topbar nav a, .topbar .tb-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .45rem .7rem; border-radius: 7px;
+  font-size: .8rem; font-weight: 500; color: rgba(255,255,255,.72);
+  text-decoration: none; background: none; border: 0; cursor: pointer; font-family: inherit;
+  transition: color .15s, background .15s; position: relative; white-space: nowrap;
+}
+.topbar nav a:hover, .topbar .tb-btn:hover { color: #fff; background: rgba(255,255,255,.07); }
+.topbar nav a.active { color: #fff; }
+.topbar nav a.active::after {
+  content: ''; position: absolute; left: .7rem; right: .7rem; bottom: -9px; height: 2px;
+  background: var(--accent); border-radius: 2px;
+}
+.topbar .tb-tools { display: flex; align-items: center; gap: .1rem; padding-left: .9rem; margin-left: .3rem; border-left: 1px solid rgba(255,255,255,.1); }
+.topbar .tb-btn { padding: .45rem .55rem; }
+.topbar .tb-btn .tb-label { display: none; }
+.topbar .progress {
+  position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
+  background: linear-gradient(90deg, var(--accent), #ff9a3d);
+  transition: width .1s linear;
+}
+
+/* Tooltip für Icon-Buttons */
+[data-tip] { position: relative; }
+[data-tip]:hover::before {
+  content: attr(data-tip); position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff; font: 500 .7rem/1 var(--font-ui); padding: .45rem .6rem; border-radius: 6px;
+  white-space: nowrap; pointer-events: none; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,.08); z-index: 10;
+}
+
+@media (max-width: 860px) {
+  .topbar nav a .nav-label { display: none; }
+  .topbar .brand-sub { display: none; }
+}
+@media (max-width: 520px) {
+  .topbar .brand-text { display: none; }
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .6rem 1rem; border-radius: var(--radius-sm); border: 1px solid transparent;
+  font: 600 .84rem/1.2 var(--font-ui); cursor: pointer; text-decoration: none;
+  transition: background .15s, border-color .15s, color .15s, transform .1s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-ghost { background: var(--surface); color: var(--text); border-color: var(--line-strong); }
+.btn-ghost:hover { border-color: var(--text); }
+.btn:disabled { opacity: .5; cursor: default; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font: 500 .68rem/1 var(--font-ui); letter-spacing: .01em;
+  padding: .28rem .5rem .28rem .42rem; border-radius: 999px; white-space: nowrap;
+  color: var(--muted);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+}
+.badge .ic { width: 12px; height: 12px; vertical-align: 0; }
+.badge-peer        { color: #0b6e4f; }
+.badge-institution { color: #1f3fbf; }
+.badge-book        { color: #6b3fa0; }
+.badge-preprint    { color: #b8650a; }
+.badge-web         { color: #5b6371; }
+.badge-austria     { color: #b00e29; }
+.badge-austria .ic { width: 14px; }
+.badge-openaccess  { color: #0b7a6e; }
+.badge-paywall     { color: #a8323e; }
+.badge-math        { color: #1f3fbf; }
+.badge-empirical   { color: #0e7490; }
+.badge-review      { color: #6d28d9; }
+.badge-theory      { color: #b45309; }
+.badge-practice    { color: #3f7d20; }
+.badge-technology  { color: #1d4ed8; }
+.badge-age         { color: #374151; }
+.badge-cited       { color: #fff; background: var(--primary); border-color: var(--primary); font-weight: 600; }
+
+/* ── Sterne ── */
+.stars { display: inline-flex; align-items: center; gap: 1px; white-space: nowrap; }
+.stars .ic { width: 14px; height: 14px; vertical-align: 0; }
+.stars .on  { color: var(--star); fill: var(--star); }
+.stars .off { color: var(--star-off); fill: var(--star-off); }
+.score-num { font: 600 .7rem/1 var(--font-mono); color: var(--muted); margin-left: .4rem; }
+
+/* ── Footer ── */
+.site-footer {
+  max-width: 1240px; margin: 4rem auto 0; padding: 1.5rem 1.25rem 2.5rem;
+  border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font: 400 .74rem/1.5 var(--font-ui); color: var(--faint);
+}
+.site-footer a { color: var(--muted); text-decoration: none; }
+.site-footer a:hover { color: var(--primary); }
+
+/* ── Druck ── */
+@media print {
+  .topbar, .no-print { display: none !important; }
+  body { padding-top: 0 !important; }
+}

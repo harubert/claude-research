@@ -5,28 +5,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bildstil wählen — Präsentation</title>
 <script src="../API Key.js"></script>
+<script src="../assets/icons.js"></script>
+<link rel="stylesheet" href="fonts/fonts.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:    #0b0c0f;
-  --card:  #13151a;
-  --border:#222530;
-  --gold:  #c9a84c;
-  --blue:  #163374;
-  --text:  #e8e8e6;
-  --muted: #666;
-  --sans:  'Helvetica Neue',Arial,sans-serif;
-  --serif: Georgia,serif;
+  --bg:    #0b1220;
+  --card:  #121b2d;
+  --border:#1f2a40;
+  --gold:  #ff5a36;
+  --blue:  #1f3fbf;
+  --text:  #e9ecf2;
+  --muted: #7d8699;
+  --sans:  'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif: 'Fraunces',Georgia,serif;
 }
 html{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px}
 body{max-width:1320px;margin:0 auto;padding:2.5rem 2rem 8rem}
 
+/* ── Icons ── */
+.ic{width:14px;height:14px;flex-shrink:0;display:inline-block;vertical-align:-2px}
+[data-icon]{display:inline-flex;align-items:center}
+
 /* ── Header ── */
 header{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-header h1{font-family:var(--serif);font-size:1.8rem;font-weight:400;letter-spacing:-.01em;color:#fff}
+header h1{font-family:var(--serif);font-size:2.2rem;font-weight:600;letter-spacing:-.01em;color:#fff}
 header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
 .hdr-right{text-align:right}
-.hdr-right a{color:var(--gold);font-size:.8rem;text-decoration:none;border-bottom:1px solid rgba(201,168,76,.35);padding-bottom:.1rem}
+.hdr-right a{color:var(--gold);font-size:.8rem;text-decoration:none;border-bottom:1px solid rgba(255,90,54,.35);padding-bottom:.1rem;display:inline-flex;align-items:center;gap:.4rem}
 .hdr-right a:hover{border-bottom-color:var(--gold)}
 
 /* ── Grid ── */
@@ -93,7 +99,8 @@ header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
 .card-prompt.visible{display:block}
 .card-actions{display:flex;gap:.5rem;margin-top:auto}
 .btn{
-  border:none;border-radius:5px;padding:.4rem .9rem;
+  display:inline-flex;align-items:center;gap:.35rem;
+  border:none;border-radius:6px;padding:.45rem .9rem;
   font-size:.72rem;font-family:var(--sans);font-weight:600;
   cursor:pointer;transition:opacity .15s,background .15s;
   white-space:nowrap;
@@ -102,15 +109,15 @@ header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
 .btn-preview{background:#1e2130;color:#aaa}
 .btn-preview:hover:not(:disabled){background:#252840;color:#ddd}
 .btn-use{background:var(--blue);color:#fff}
-.btn-use:hover:not(:disabled){background:#1e4099}
-.btn-use.active{background:var(--gold);color:#0b0c0f}
+.btn-use:hover:not(:disabled){background:#2a4fe0}
+.btn-use.active{background:var(--gold);color:#fff}
 .btn-prompt{background:none;color:var(--muted);border:1px solid #222;font-weight:400;font-size:.66rem}
 .btn-prompt:hover{color:#aaa;border-color:#444}
 
 /* ── Fixed bottom bar ── */
 #bottom-bar{
   position:fixed;bottom:0;left:0;right:0;
-  background:rgba(11,12,15,.96);
+  background:rgba(11,18,32,.94);
   border-top:1px solid var(--border);
   backdrop-filter:blur(12px);
   padding:.85rem 2rem;
@@ -121,7 +128,7 @@ header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
 #bottom-bar .sel-name{color:var(--gold);font-weight:600;margin-left:.4rem}
 #bottom-bar .sel-none{color:#444;font-style:italic}
 .btn-go{
-  background:var(--gold);color:#0b0c0f;border:none;
+  background:var(--gold);color:#fff;border:none;
   border-radius:6px;padding:.5rem 1.4rem;
   font-size:.82rem;font-weight:700;font-family:var(--sans);
   cursor:pointer;text-decoration:none;
@@ -144,10 +151,10 @@ header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
 <header>
   <div>
     <h1>Bildstil wählen</h1>
-    <p>10 kuratorierte Stilwelten · fal.ai Flux · Vorschaubilder auf Klick</p>
+    <p>18 kuratierte Stilwelten · fal.ai Flux · Vorschaubilder auf Klick</p>
   </div>
   <div class="hdr-right">
-    <a href="index.html">← Zur Präsentation</a>
+    <a href="index.html"><span data-icon="arrow-left"></span>Zur Präsentation</a>
   </div>
 </header>
 
@@ -160,7 +167,7 @@ header p{font-size:.78rem;color:var(--muted);margin-top:.3rem}
     Ausgewählter Stil:
     <span id="sel-name" class="sel-none">— noch keiner gewählt —</span>
   </div>
-  <a class="btn-go" id="btn-go" href="index.html">Zur Präsentation →</a>
+  <a class="btn-go" id="btn-go" href="index.html">Zur Präsentation <span data-icon="arrow-right"></span></a>
 </div>
 
 <script>
@@ -339,6 +346,7 @@ var STYLES = [
 ];
 
 var LS_KEY = 'fal_presentation_style';
+function _ic(n) { return window.icon ? window.icon(n) : ''; }
 var selectedId = localStorage.getItem(LS_KEY + '_id') || null;
 
 // ── Render cards ──
@@ -360,8 +368,8 @@ function renderGrid() {
         '<div class="card-desc">' + s.desc + '</div>' +
         '<pre class="card-prompt" id="prompt-' + s.id + '">' + s.prompt + '</pre>' +
         '<div class="card-actions">' +
-          '<button class="btn btn-preview" id="btn-prev-' + s.id + '" onclick="generatePreview(\'' + s.id + '\')">▶ Vorschau</button>' +
-          '<button class="btn btn-use' + (s.id === selectedId ? ' active' : '') + '" id="btn-use-' + s.id + '" onclick="selectStyle(\'' + s.id + '\')">Verwenden</button>' +
+          '<button class="btn btn-preview" id="btn-prev-' + s.id + '" onclick="generatePreview(\'' + s.id + '\')">' + _ic('play') + 'Vorschau</button>' +
+          '<button class="btn btn-use' + (s.id === selectedId ? ' active' : '') + '" id="btn-use-' + s.id + '" onclick="selectStyle(\'' + s.id + '\')">' + (s.id === selectedId ? _ic('check') + 'Ausgewählt' : 'Verwenden') + '</button>' +
           '<button class="btn btn-prompt" onclick="togglePrompt(\'' + s.id + '\')">Prompt</button>' +
         '</div>' +
       '</div>';
@@ -386,7 +394,7 @@ async function generatePreview(id) {
 
   prevEl.classList.remove('generating');
   btnEl.disabled = false;
-  btnEl.textContent = '↺ Neu';
+  btnEl.innerHTML = _ic('refresh') + 'Neu';
 
   if (url) {
     cacheSet(id, url);
@@ -407,7 +415,7 @@ function selectStyle(id) {
   document.querySelectorAll('.btn-use').forEach(function(b){ b.classList.remove('active'); b.textContent = 'Verwenden'; });
   document.getElementById('card-' + id).classList.add('selected');
   document.getElementById('btn-use-' + id).classList.add('active');
-  document.getElementById('btn-use-' + id).textContent = '✓ Ausgewählt';
+  document.getElementById('btn-use-' + id).innerHTML = _ic('check') + 'Ausgewählt';
   updateBottomBar();
 }
 
@@ -467,11 +475,11 @@ function restorePreviews() {
     probeImage(url,
       function() {                          // ok → anzeigen
         setImg(imgEl, url);
-        if (btnEl) btnEl.textContent = '↺ Neu';
+        if (btnEl) btnEl.innerHTML = _ic('refresh') + 'Neu';
       },
       function() {                          // abgelaufen → Hinweis
         if (phEl) phEl.textContent = 'URL abgelaufen — bitte neu generieren';
-        if (btnEl) btnEl.textContent = '↺ Neu';
+        if (btnEl) btnEl.innerHTML = _ic('refresh') + 'Neu';
       }
     );
   });
