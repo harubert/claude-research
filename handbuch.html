@@ -6,6 +6,7 @@
   <title>Handbuch — Forschungsartikel-Template</title>
   <link rel="stylesheet" href="assets/css/site.css"/>
   <link rel="stylesheet" href="assets/css/paper.css"/>
+  <script src="assets/theme.js"></script>
   <script src="assets/icons.js"></script>
   <style>
     body { font-family: var(--font-ui); font-size: .95rem; }
@@ -14,14 +15,14 @@
       background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 1rem 1.2rem; margin: .8rem 0; font-size: .88rem;
     }
-    .function-card h4 { display: flex; align-items: center; gap: .5rem; margin: 0 0 .35rem; font-size: .92rem; color: var(--ink); }
+    .function-card h4 { display: flex; align-items: center; gap: .5rem; margin: 0 0 .35rem; font-size: .92rem; color: var(--heading); }
     .function-card h4 .ic { color: var(--primary); }
     .function-card p  { margin: 0; color: var(--muted); line-height: 1.55; }
     .function-card p + p { margin-top: .4rem; }
 
     .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .4rem .9rem; margin-top: .6rem; }
     .tool { display: flex; align-items: center; gap: .55rem; font-size: .82rem; color: var(--muted); }
-    .tool .key { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: var(--paper); border: 1px solid var(--line-strong); color: var(--ink); }
+    .tool .key { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: var(--paper); border: 1px solid var(--line-strong); color: var(--heading); }
     .tool .key .ic { width: 14px; height: 14px; }
 
     .score-bar { display: flex; gap: .5rem; align-items: center; margin: .35rem 0; font-size: .86rem; }
@@ -36,7 +37,7 @@
       counter-increment: step; content: counter(step, decimal-leading-zero);
       position: absolute; left: 1.1rem; top: 1rem; font: 600 .78rem var(--font-mono); color: var(--accent);
     }
-    .install-step h4 { margin: 0 0 .25rem; font-size: .92rem; color: var(--ink); }
+    .install-step h4 { margin: 0 0 .25rem; font-size: .92rem; color: var(--heading); }
     .install-step p  { margin: 0; color: var(--muted); line-height: 1.55; }
     .install-step .optional { color: var(--faint); font-size: .8rem; font-weight: 400; }
   </style>
@@ -55,6 +56,7 @@
       <a href="presentation/index.html"><span data-icon="slides"></span><span class="nav-label">Folien</span></a>
       <a class="active" href="handbuch.html"><span data-icon="handbook"></span><span class="nav-label">Handbuch</span></a>
     </nav>
+    <div class="tb-tools"><div data-theme-switch></div></div>
   </div>
 </header>
 
@@ -493,9 +495,16 @@ Empfehlung für maximale Kompatibilität: <strong>PNG</strong> verwenden.</p>
 <ul>
   <li><code>assets/css/site.css</code> — Farben, Schriften, Kopfleiste, Buttons, Badges</li>
   <li><code>assets/css/paper.css</code> — Typografie des Artikels</li>
+  <li><code>assets/theme.js</code> — Stil-Umschalter (sechs Stile)</li>
   <li><code>assets/icons.js</code> — einheitliches SVG-Icon-Set. In HTML: <code>&lt;span data-icon="book"&gt;&lt;/span&gt;</code>, in JavaScript: <code>icon("book")</code>. <code>build.py</code> liest dieselbe Datei.</li>
 </ul>
 <p><strong>Keine Emojis</strong> in Oberflächen und Texten — ausschließlich SVG-Icons aus <code>icons.js</code>.</p>
+
+<div class="function-card">
+  <h4><span data-icon="palette"></span>Sechs Stile zum Umschalten</h4>
+  <p>Über den Stil-Button in der Kopfleiste (auf der Startseite oben rechts) lassen sich Startseite, Artikel, Quellenverzeichnis und Handbuch in sechs Stilen anzeigen: <strong>Akademie</strong> (Standard), <strong>Klassik</strong> (Bordeaux, Creme, Playfair), <strong>Nacht</strong> (Dunkelmodus), <strong>Labor</strong> (technisch, Space Grotesk), <strong>Wald</strong> (Tannengrün, Ocker) und <strong>Minimal</strong> (Schwarz-Weiß).</p>
+  <p>Die Wahl wird im Browser gespeichert und gilt für alle Seiten. Technisch: <code>assets/theme.js</code> setzt <code>&lt;html data-theme="…"&gt;</code>, die Stile selbst sind Token-Sätze in <code>assets/css/site.css</code>. Für Links oder Screenshots kann ein Stil auch per URL gesetzt werden, z. B. <code>quellen.html?theme=nacht</code>.</p>
+</div>
 
 <footer class="site-footer" style="max-width:none;padding-left:0;padding-right:0">
   <span>Handbuch zum Forschungsartikel-Template</span>

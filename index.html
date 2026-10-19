@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>[TITEL] — [AUTOR]</title>
   <link rel="stylesheet" href="assets/css/site.css"/>
+  <script src="assets/theme.js"></script>
   <script src="assets/icons.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,9 +16,9 @@
     .hero {
       position: relative; overflow: hidden; color: #fff;
       background:
-        radial-gradient(900px 420px at 85% -10%, rgba(31,63,191,.55), transparent 70%),
-        radial-gradient(600px 300px at 0% 110%, rgba(255,90,54,.18), transparent 70%),
-        var(--ink);
+        radial-gradient(900px 420px at 85% -10%, color-mix(in srgb, var(--primary) 60%, transparent), transparent 70%),
+        radial-gradient(600px 300px at 0% 110%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%),
+        var(--hero-bg);
       padding: 2rem 0 9rem;
     }
     .hero::before {
@@ -33,6 +34,7 @@
     .wordmark { display: flex; align-items: center; gap: .6rem; font: 600 .82rem var(--font-ui); color: #fff; text-decoration: none; }
     .wordmark .brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--primary); display: grid; place-items: center; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
     .wordmark .brand-mark .ic { width: 17px; height: 17px; }
+    .hero-actions { display: flex; align-items: center; gap: 1.1rem; }
     .hero-top .gh { display: inline-flex; align-items: center; gap: .45rem; color: rgba(255,255,255,.6); font-size: .78rem; text-decoration: none; }
     .hero-top .gh:hover { color: #fff; }
     .hero .kicker { color: rgba(255,255,255,.6); }
@@ -61,7 +63,7 @@
     .card-icon { width: 44px; height: 44px; border-radius: 11px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); }
     .card-icon .ic { width: 22px; height: 22px; }
     .card-num { font: 600 .68rem var(--font-mono); color: var(--faint); letter-spacing: .1em; }
-    .card h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; letter-spacing: -.01em; color: var(--ink); line-height: 1.15; }
+    .card h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; letter-spacing: -.01em; color: var(--heading); line-height: 1.15; }
     .card p { font-size: .86rem; color: var(--muted); line-height: 1.55; }
     .card-go { margin-top: auto; display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; font-weight: 600; color: var(--primary); }
     .card-go .ic { transition: transform .2s; }
@@ -78,7 +80,10 @@
   <div class="hero-inner">
     <div class="hero-top">
       <a class="wordmark" href="index.html"><span class="brand-mark" data-icon="mark"></span>Forschungsartikel</a>
-      <a class="gh" href="https://github.com/harubert/claude-research" target="_blank" rel="noopener"><span data-icon="github"></span>Template auf GitHub</a>
+      <div class="hero-actions">
+        <a class="gh" href="https://github.com/harubert/claude-research" target="_blank" rel="noopener"><span data-icon="github"></span>Template auf GitHub</a>
+        <div data-theme-switch></div>
+      </div>
     </div>
     <div class="kicker"><span class="dot"></span><span id="page-kicker">[VERANSTALTUNG] &nbsp;/&nbsp; [DATUM]</span></div>
     <h1 id="page-title">[TITEL DES ARTIKELS]</h1>

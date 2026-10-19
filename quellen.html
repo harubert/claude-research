@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quellenverzeichnis — {{TITEL}}</title>
   <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="assets/theme.js"></script>
   <script src="assets/icons.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,13 +15,13 @@
 
     /* ── Kopf ── */
     .page-head { padding: 3rem 0 2rem; }
-    .page-head h1 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.7rem); font-weight: 600; letter-spacing: -.02em; line-height: 1.05; color: var(--ink); margin: .8rem 0 .6rem; }
+    .page-head h1 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.7rem); font-weight: 600; letter-spacing: -.02em; line-height: 1.05; color: var(--heading); margin: .8rem 0 .6rem; }
     .page-head p { font-size: .9rem; color: var(--muted); max-width: 46rem; }
 
     /* ── Kennzahlen ── */
     .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.25rem; }
     .stat { background: var(--surface); padding: 1rem 1.1rem .9rem; font-size: .76rem; color: var(--muted); }
-    .stat strong { display: block; font: 600 1.85rem/1.1 var(--font-mono); color: var(--ink); margin-bottom: .2rem; letter-spacing: -.02em; }
+    .stat strong { display: block; font: 600 1.85rem/1.1 var(--font-mono); color: var(--heading); margin-bottom: .2rem; letter-spacing: -.02em; }
     .stat:first-child strong { color: var(--primary); }
     @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } }
 
@@ -39,7 +40,7 @@
     details.criteria { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 2rem; }
     details.criteria > summary {
       list-style: none; cursor: pointer; padding: .95rem 1.15rem; display: flex; align-items: center; gap: .7rem;
-      font-weight: 600; font-size: .88rem; color: var(--ink);
+      font-weight: 600; font-size: .88rem; color: var(--heading);
     }
     details.criteria > summary::-webkit-details-marker { display: none; }
     details.criteria > summary .sum-hint { margin-left: auto; font-weight: 400; font-size: .76rem; color: var(--faint); }
@@ -51,7 +52,7 @@
     .dim-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
     @media (max-width: 860px) { .dim-cards { grid-template-columns: 1fr; } }
     .dim-card { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .95rem 1rem 1rem; }
-    .dim-card h4 { display: flex; align-items: center; gap: .5rem; font-size: .84rem; font-weight: 700; color: var(--ink); margin-bottom: .2rem; }
+    .dim-card h4 { display: flex; align-items: center; gap: .5rem; font-size: .84rem; font-weight: 700; color: var(--heading); margin-bottom: .2rem; }
     .dim-card h4 .ic { color: var(--primary); }
     .dim-card .dim-sub { font-size: .74rem; color: var(--muted); margin-bottom: .6rem; }
     .dim-card ul { list-style: none; }
@@ -60,7 +61,7 @@
     .stars-badges-row { display: grid; grid-template-columns: minmax(260px, auto) 1fr; gap: 1rem; }
     @media (max-width: 860px) { .stars-badges-row { grid-template-columns: 1fr; } }
     .stars-card, .badges-card { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .95rem 1rem; }
-    .stars-card h4, .badges-card h4 { font-size: .84rem; font-weight: 700; color: var(--ink); margin-bottom: .7rem; }
+    .stars-card h4, .badges-card h4 { font-size: .84rem; font-weight: 700; color: var(--heading); margin-bottom: .7rem; }
     .tier-row { display: grid; grid-template-columns: 3rem auto 1fr; align-items: center; gap: .7rem; padding: .35rem 0; border-top: 1px solid var(--line); font-size: .78rem; }
     .tier-row span:first-child { font-family: var(--font-mono); font-weight: 600; }
     .badge-list { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; }
@@ -128,13 +129,13 @@
     }
     .copy-apa-btn .ic { width: 13px; height: 13px; }
     .copy-apa-btn:hover { color: var(--primary); border-color: var(--line); }
-    .card-title { font-family: var(--font-display); font-weight: 600; font-size: 1.06rem; line-height: 1.32; color: var(--ink); letter-spacing: -.005em; }
+    .card-title { font-family: var(--font-display); font-weight: 600; font-size: 1.06rem; line-height: 1.32; color: var(--heading); letter-spacing: -.005em; }
     .card-title a { color: inherit; text-decoration: none; }
     .card-title a:hover { color: var(--primary); }
     .card-meta { font-size: .8rem; color: var(--muted); margin-top: .3rem; }
     .card-meta em { color: var(--text); }
     .badges { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .65rem; }
-    .card-abstract { font: .86rem/1.6 var(--font-read); color: #3b4250; margin-top: .65rem; }
+    .card-abstract { font: .86rem/1.6 var(--font-read); color: var(--text); margin-top: .65rem; }
     .card-footer { margin-top: .7rem; display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: center; font-size: .74rem; color: var(--faint); }
     .card-footer a { display: inline-flex; align-items: center; gap: .3rem; color: var(--primary); text-decoration: none; font-weight: 500; }
     .card-footer a:hover { text-decoration: underline; }
@@ -181,6 +182,7 @@
       <a href="handbuch.html"><span data-icon="handbook"></span><span class="nav-label">Handbuch</span></a>
     </nav>
     <div class="tb-tools">
+      <div data-theme-switch style="margin-right:.5rem"></div>
       <div class="rpill" id="rpill" title="Live-Aktualisierung: lädt die Seite alle 20 s neu">
         <span id="reload-clock">00:00:00</span>
         <span id="reload-countdown"></span>

@@ -5,6 +5,7 @@ base = pathlib.Path(__file__).parent
 meta    = json.loads((base / "content/meta.json").read_text(encoding="utf-8"))
 # site.css (Designsystem) + paper.css (Artikel) werden inline eingebettet.
 # Font-Pfade sind relativ zu assets/css/ → für standalone.html (Projektstamm) umschreiben.
+theme_js = (base / "assets/theme.js").read_text(encoding="utf-8")
 css     = ((base / "assets/css/site.css").read_text(encoding="utf-8") + "\n" +
            (base / "assets/css/paper.css").read_text(encoding="utf-8")
           ).replace("../../presentation/fonts/", "presentation/fonts/")
@@ -41,6 +42,10 @@ fd_md = _strip_comments(_fd_path.read_text(encoding="utf-8")) if _fd_path.exists
 
 # Minimaler Markdown→HTML-Konverter (kein externes Package nötig)
 
+# Kursiv: *text* — aber nicht das Gender-Sternchen (Schüler*innen):
+# öffnendes * nicht direkt nach einem Buchstaben, schließendes nicht direkt davor.
+_EM_RE = re.compile(r'(?<![\w*])\*(?![\s*])(.+?)(?<![\s*])\*(?![\w*])')
+
 # Global figure counter (reset per build, shared across chapters)
 _fig_counter = [0]
 
@@ -62,7 +67,7 @@ def md2html(md):
 
     def inline(t):
         t = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', t)
-        t = re.sub(r'\*(.+?)\*', r'<em>\1</em>', t)
+        t = _EM_RE.sub(r'<em>\1</em>', t)
         t = re.sub(r'`(.+?)`', r'<code>\1</code>', t)
         t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', t)
         return t
@@ -355,7 +360,7 @@ _TOOLTIP_CSS = (
     ".lit-ref:hover .src-tooltip{display:block}\n"
     ".tip-above .src-tooltip{top:auto;bottom:100%}\n"
     ".tip-title{font-weight:600;font-size:.87rem;line-height:1.4;margin-bottom:.3rem}\n"
-    ".tip-title a{color:var(--ink);text-decoration:none}\n"
+    ".tip-title a{color:var(--heading);text-decoration:none}\n"
     ".tip-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.74rem;color:var(--muted)}\n"
     ".tip-abstract{font-size:.76rem;color:var(--muted);margin-top:.55rem;"
     "border-top:1px solid var(--line);padding-top:.55rem}\n"
@@ -376,7 +381,7 @@ _TOOLTIP_CSS = (
     "border:none;cursor:pointer;color:var(--faint);border-radius:8px;display:grid;place-items:center}\n"
     "#cite-modal-close:hover{color:var(--text);background:var(--paper)}\n"
     ".cite-modal-kicker{font:600 .66rem/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem}\n"
-    ".cite-modal-title{font-family:var(--font-display);font-weight:600;font-size:1.15rem;line-height:1.3;margin:0 2rem .45rem 0;color:var(--ink)}\n"
+    ".cite-modal-title{font-family:var(--font-display);font-weight:600;font-size:1.15rem;line-height:1.3;margin:0 2rem .45rem 0;color:var(--heading)}\n"
     ".cite-modal-title a{color:inherit;text-decoration:none}\n"
     ".cite-modal-title a:hover{color:var(--primary)}\n"
     ".cite-modal-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;font-size:.8rem;color:var(--muted);margin-bottom:.6rem}\n"
@@ -673,6 +678,7 @@ final = f"""<!DOCTYPE html>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>{meta['title']}</title>
+<script>{theme_js}</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"/>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
@@ -701,7 +707,8 @@ final = f"""<!DOCTYPE html>
       <a href="presentation/index.html">{ic("slides")}<span class="nav-label">Folien</span></a>
       <a href="handbuch.html">{ic("handbook")}<span class="nav-label">Handbuch</span></a>
     </nav>
-    <div id="nav-cluster" class="tb-tools">
+    <div class="tb-tools"><div data-theme-switch></div></div>
+    <div id="nav-cluster" class="tb-tools" style="border-left:0;padding-left:0;margin-left:0">
       <button class="tb-btn" data-tip="Dokumentinfo" onclick="(function(){{var p=document.getElementById('stats-panel');p.style.display=p.style.display==='none'?'block':'none'}})()">{ic("info")}</button>
       <button class="tb-btn" data-tip="Export: LaTeX / Web-Paket" onclick="ltxOpenOverlay()">{ic("download")}</button>
       <button class="tb-btn" data-tip="Drucken" onclick="window.print()">{ic("printer")}</button>
@@ -798,7 +805,7 @@ def inline_tex(t):
     t = escape_tex(t)
     # Bold before italic
     t = re.sub(r'\*\*(.+?)\*\*', r'\\textbf{\1}', t)
-    t = re.sub(r'\*(.+?)\*', r'\\textit{\1}', t)
+    t = _EM_RE.sub(r'\\textit{\1}', t)
     t = re.sub(r'`(.+?)`', r'\\texttt{\1}', t)
     for i, url in enumerate(bare_urls):
         # Strip trailing punctuation that is unlikely part of URL
@@ -1094,11 +1101,11 @@ _LATEX_OVERLAY_HTML = f"""\
 <div id="latex-overlay" style="display:none;position:fixed;inset:0;background:rgba(13,22,38,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:9000;align-items:center;justify-content:center;padding:1rem">
 <div style="background:var(--surface);border-radius:14px;padding:1.5rem 1.6rem 1.2rem;max-width:460px;width:100%;box-shadow:var(--shadow-lg);font:.86rem/1.5 var(--font-ui);color:var(--text);border-top:3px solid var(--accent)">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-    <div><div class="kicker" style="margin-bottom:.35rem">Export</div><strong style="font:600 1.15rem/1.2 var(--font-display);color:var(--ink)">Artikel herunterladen</strong></div>
+    <div><div class="kicker" style="margin-bottom:.35rem">Export</div><strong style="font:600 1.15rem/1.2 var(--font-display);color:var(--heading)">Artikel herunterladen</strong></div>
     <button aria-label="Schließen" onclick="document.getElementById('latex-overlay').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--faint);width:32px;height:32px;border-radius:8px;display:grid;place-items:center">{ic("x")}</button>
   </div>
   <div style="display:flex;gap:.25rem;margin-bottom:1.1rem;background:var(--paper);padding:.25rem;border-radius:8px" id="export-tabs">
-    <button class="exp-tab exp-tab-active" onclick="expSwitchTab('latex')" id="exp-tab-latex" style="flex:1;padding:.45rem .6rem;border:0;border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer;font:600 .78rem var(--font-ui);box-shadow:var(--shadow-sm)">LaTeX</button>
+    <button class="exp-tab exp-tab-active" onclick="expSwitchTab('latex')" id="exp-tab-latex" style="flex:1;padding:.45rem .6rem;border:0;border-radius:6px;background:var(--surface);color:var(--heading);cursor:pointer;font:600 .78rem var(--font-ui);box-shadow:var(--shadow-sm)">LaTeX</button>
     <button class="exp-tab" onclick="expSwitchTab('web')" id="exp-tab-web" style="flex:1;padding:.45rem .6rem;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font:600 .78rem var(--font-ui)">Web-Paket (ZIP)</button>
   </div>
   <div id="exp-panel-latex">
@@ -1262,7 +1269,7 @@ _LATEX_OVERLAY_JS = (
     'document.getElementById("exp-panel-latex").style.display=tab==="latex"?"block":"none";'
     'document.getElementById("exp-panel-web").style.display=tab==="web"?"block":"none";'
     '["latex","web"].forEach(function(t){var b=document.getElementById("exp-tab-"+t),on=t===tab;'
-    'b.style.background=on?"var(--surface)":"transparent";b.style.color=on?"var(--ink)":"var(--muted)";'
+    'b.style.background=on?"var(--surface)":"transparent";b.style.color=on?"var(--heading)":"var(--muted)";'
     'b.style.boxShadow=on?"var(--shadow-sm)":"none";});'
     '};\n'
     '/* ── Web-Paket (ZIP) ── */\n'
@@ -1331,6 +1338,7 @@ for _wp_name, _wp_path in [
     ("assets/css/paper.css", base / "assets" / "css" / "paper.css"),
     ("assets/css/site.css", base / "assets" / "css" / "site.css"),
     ("assets/icons.js", base / "assets" / "icons.js"),
+    ("assets/theme.js", base / "assets" / "theme.js"),
     ("index.html", base / "index.html"),
     ("presentation/index.html", base / "presentation" / "index.html"),
     ("presentation/stile.html", base / "presentation" / "stile.html"),
