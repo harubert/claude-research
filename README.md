@@ -16,7 +16,8 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 - **Research desiderata** — after the literature review, Claude derives five concrete, still-unexplored research projects (gap, research question, design, contribution) from the sources
 - **Built-in quality control** — two review passes (sources & citations, content & language) plus a final complete review, logged in `content/review.md`
 - **Clean academic design** — one design system across article, source database, landing page and slides; custom SVG icon set, no emojis
-- **Six switchable styles** — Akademie, Klassik, Nacht (dark mode), Labor, Wald, Minimal; chosen once in the navigation bar, remembered across all pages
+- **Seven switchable styles** — Akademie, Print (sober black & white), Klassik, Nacht (dark mode), Labor, Wald, Minimal; plus serif/sans-serif and text size for the article, carried over into the LaTeX export
+- **Custom badges** — topic-specific badges (school levels, methods, regions …) defined in `meta.json`; every badge automatically becomes a filter
 - **Publication-ready export** — `build.py` generates `standalone.html` (interactive, printable) and `standalone.tex` (LaTeX/Overleaf-ready)
 - **Presentation** — Reveal.js slides with AI-generated background images (fal.ai Flux), 3 layout modes, 8 font themes, 18 visual styles
 - **PowerPoint export** — one-click `.pptx` generation with editable text and embedded background images
@@ -32,8 +33,14 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 **One entry point for article, slides, source database and manual**
 ![Landing page](docs/screenshots/landingpage.png)
 
-**Six switchable styles — Akademie, Klassik, Nacht, Labor, Wald, Minimal**
-![Six styles](docs/screenshots/stile.png)
+**Seven switchable styles — Akademie, Print, Klassik, Nacht, Labor, Wald, Minimal**
+![Seven styles](docs/screenshots/stile.png)
+
+**Print — sober black and white, like a printed document**
+![Print style](docs/screenshots/print-quellen.png)
+
+**Badges with their own form in the strict styles (Print, Minimal, Labor, Klassik)**
+![Badge styles](docs/screenshots/badges-stile.png)
 
 ### Article
 
@@ -60,13 +67,13 @@ Claude Research is a template that turns VS Code + Claude Code into a full scien
 **Statistics dashboard — source count, peer-review rate, score distribution, type and language breakdown**
 ![Stats overview](docs/screenshots/quellen-statistiken.png)
 
-**Source cards with score, badges, citation backlinks and one-click APA copy**
+**Source cards with score, badges, citation backlinks and one-click APA copy — every badge in the data becomes a filter, including custom ones**
 ![Source cards](docs/screenshots/quellen-karten.png)
 
 **Rating methodology — authority, recency and relevance dimensions explained**
 ![Rating methodology](docs/screenshots/quellen-methodik.png)
 
-**Style switcher in the navigation bar**
+**Style switcher in the navigation bar — style, text font (serif / sans-serif) and size**
 ![Style menu](docs/screenshots/stil-menue.png)
 
 ### Presentation
@@ -140,7 +147,7 @@ claude-research/
 │   ├── css/site.css        ← Design system (colors, fonts, nav, badges)
 │   ├── css/paper.css       ← Article typography
 │   ├── icons.js            ← SVG icon set (single source for all icons)
-│   └── theme.js            ← Style switcher (6 styles)
+│   └── theme.js            ← Style & font switcher (7 styles)
 ├── presentation/
 │   ├── index.html          ← Reveal.js presentation with FAB toolbar
 │   ├── stile.html          ← Visual style gallery (18 styles)
@@ -160,7 +167,8 @@ claude-research/
 | APA 7 compliance | Inline citations auto-linked, chapter bibliographies generated |
 | Research desiderata | Five evidence-based, unexplored research projects as a dedicated article section |
 | Review passes | Two check passes + complete review before handover |
-| Style switcher | Six CSS styles incl. dark mode for landing page, article, sources and manual |
+| Style switcher | Seven CSS styles incl. print and dark mode; serif/sans-serif and text size, also for LaTeX |
+| Custom badges | Any number of topic-specific badges as filters |
 | URL verification | Every source URL checked for accessibility |
 | PDF download | Open-access PDFs saved locally; paywall → excerpt extraction |
 | HTML article | Responsive, printable, with TOC and citation modals |

@@ -98,7 +98,9 @@
     .filter-btn .ic { width: 13px; height: 13px; }
     .filter-btn:hover { border-color: var(--ink); }
     .filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .tier-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .filter-btn .stars .ic { width: 11px; height: 11px; }
+    .filter-btn.active .stars .off { color: rgba(255,255,255,.28); fill: rgba(255,255,255,.28); }
+    .filter-btn .count { font: 500 .64rem/1 var(--font-mono); opacity: .55; margin-left: .1rem; }
 
     #result-count { font: .74rem var(--font-mono); color: var(--muted); margin-bottom: .8rem; letter-spacing: .02em; }
 
@@ -158,6 +160,12 @@
     #reload-btn.on { background: var(--accent); }
     #reload-btn .ic { width: 12px; height: 12px; }
     @media (max-width: 720px) { .rpill #reload-clock { display: none; } }
+    [data-theme="print"] .rpill { background: #fff; border: 1px solid #000; border-radius: 0; color: #000; }
+    [data-theme="print"] #reload-btn { background: #000; border-radius: 0; }
+    [data-theme="print"] .stats { border-color: #000; background: #000; }
+    [data-theme="print"] .source-card::before { display: none; }
+    [data-theme="print"] .source-card { border-color: #000; }
+    [data-theme="print"] .score-big { color: #000; }
 
     @media print {
       body { padding-top: 0; }
@@ -281,10 +289,10 @@
     <div class="chip-group">
       <span class="chip-label">Score</span>
       <button class="filter-btn active" data-filter-stars="all">Alle</button>
-      <button class="filter-btn" data-filter-stars="5"><span class="tier-dot" style="background:var(--s5)"></span>9–10</button>
-      <button class="filter-btn" data-filter-stars="4"><span class="tier-dot" style="background:var(--s4)"></span>7–8</button>
-      <button class="filter-btn" data-filter-stars="3"><span class="tier-dot" style="background:var(--s3)"></span>5–6</button>
-      <button class="filter-btn" data-filter-stars="2"><span class="tier-dot" style="background:var(--s2)"></span>3–4</button>
+      <button class="filter-btn" data-filter-stars="5" title="Score 9–10"><span class="stars" data-stars="5"></span></button>
+      <button class="filter-btn" data-filter-stars="4" title="Score 7–8"><span class="stars" data-stars="4"></span></button>
+      <button class="filter-btn" data-filter-stars="3" title="Score 5–6"><span class="stars" data-stars="3"></span></button>
+      <button class="filter-btn" data-filter-stars="2" title="Score 3–4"><span class="stars" data-stars="2"></span></button>
     </div>
     <div class="filter-sep"></div>
     <div class="chip-group">
@@ -318,11 +326,13 @@
 ══════════════════════════════════════════ */
 const SOURCES_URL = "sources/sources.json";
 const ICON = window.icon || function () { return ""; };
-const BADGE_LABELS = window.BADGE_LABELS || {};
+const BADGE_LABELS = Object.assign({}, window.BADGE_LABELS || {});
+/* Eigene Badges aus meta.json → custom_badges (von build.py eingebettet) */
+const CUSTOM_BADGES = window.CUSTOM_BADGES || {};
+Object.keys(CUSTOM_BADGES).forEach(k => { BADGE_LABELS[k] = CUSTOM_BADGES[k].label || k; });
 
 /* Badges, die in Filter und Legende erscheinen (Reihenfolge) */
 const BADGE_ORDER = ["peer", "institution", "openaccess", "austria", "empirical", "review", "theory", "practice", "technology", "book", "preprint", "web", "paywall"];
-const BADGE_FILTERS = ["peer", "institution", "openaccess", "austria", "empirical", "review", "theory", "practice", "technology"];
 const BADGE_DESC = {
   peer: "Begutachtete Fachpublikation", openaccess: "Frei zugänglich", institution: "Offizielle Institution",
   austria: "Österreichbezug", preprint: "arXiv, noch nicht peer-reviewed", book: "Monografie oder Buchkapitel",
@@ -350,15 +360,22 @@ function starsHtml(n) {
   return '<span class="stars">' + ICON("star", "on").repeat(n) + ICON("star", "off").repeat(5 - n) + "</span>";
 }
 
-function badgeHtml(b) {
-  return `<span class="badge badge-${b}">${ICON(b)}${BADGE_LABELS[b] || b}</span>`;
+function badgeIcon(b) {
+  const c = CUSTOM_BADGES[b];
+  return ICON((c && c.icon) || b) || ICON("tag");
 }
 
-function makeBar(items, colorMap) {
+function badgeHtml(b) {
+  const c = CUSTOM_BADGES[b];
+  const style = c && c.color ? ` style="color:${c.color}"` : "";
+  return `<span class="badge badge-${b}"${style}>${badgeIcon(b)}${BADGE_LABELS[b] || b}</span>`;
+}
+
+function makeBar(items, colorMap, labelMap) {
   const max = Math.max(...Object.values(items), 1);
   return Object.entries(items).map(([label, count]) => `
     <div class="bar-item">
-      <span class="label" title="${label}">${label}</span>
+      <span class="label" title="${labelMap ? "" : label}">${labelMap ? labelMap[label] : label}</span>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/max*100)}%;background:${colorMap?.[label]||'var(--primary)'}"></div></div>
       <span class="count">${count}</span>
     </div>`).join("");
@@ -500,12 +517,11 @@ function sortCards() {
 function renderStats(sources, citedSet) {
   const citedCount = citedSet ? citedSet.size : 0;
   const real = sources.filter(s => s.id !== "PLACEHOLDER");
-  const tierNames = { 5: "9–10 Kern", 4: "7–8", 3: "5–6", 2: "3–4" };
-  const byScore = { [tierNames[5]]: 0, [tierNames[4]]: 0, [tierNames[3]]: 0, [tierNames[2]]: 0 };
+  const byScore = { 5: 0, 4: 0, 3: 0, 2: 0 };
   const byType  = {};
   const byLang  = {};
   real.forEach(s => {
-    byScore[tierNames[tierOf(s.score)]]++;
+    byScore[tierOf(s.score)]++;
     const tl = TYPE_LABELS[s.type] || s.type || "—";
     byType[tl]  = (byType[tl]  || 0) + 1;
     const ll = (s.lang || "?").toUpperCase();
@@ -522,20 +538,33 @@ function renderStats(sources, citedSet) {
     <div class="stat"><strong>${real.filter(s=>s.score>=9).length}</strong>Kernquellen (9–10)</div>
     <div class="stat"><strong>${citedCount}</strong>Im Artikel zitiert</div>`;
 
-  const scoreColors = { [tierNames[5]]: "var(--s5)", [tierNames[4]]: "var(--s4)", [tierNames[3]]: "var(--s3)", [tierNames[2]]: "var(--s2)" };
-  document.getElementById("chart-score").innerHTML = makeBar(byScore, scoreColors);
+  /* Object.entries sortiert Zahlen-Schlüssel aufsteigend → absteigend umdrehen */
+  const byScoreDesc = {}; [5, 4, 3, 2].forEach(n => { byScoreDesc[" " + n] = byScore[n]; });
+  const scoreColors = { " 5": "var(--s5)", " 4": "var(--s4)", " 3": "var(--s3)", " 2": "var(--s2)" };
+  const scoreLabels = { " 5": starsHtml(5), " 4": starsHtml(4), " 3": starsHtml(3), " 2": starsHtml(2) };
+  document.getElementById("chart-score").innerHTML = makeBar(byScoreDesc, scoreColors, scoreLabels);
   document.getElementById("chart-type").innerHTML  = makeBar(byType, null);
   document.getElementById("chart-lang").innerHTML  = makeBar(byLang, null);
 }
 
 function renderStaticUI() {
-  document.querySelectorAll(".tier-row .stars").forEach(el => { el.outerHTML = starsHtml(+el.dataset.stars); });
-  document.getElementById("badge-legend").innerHTML = BADGE_ORDER.map(b =>
-    `<div class="badge-row">${badgeHtml(b)}<span>${BADGE_DESC[b] || ""}</span></div>`).join("");
+  document.querySelectorAll(".stars[data-stars]").forEach(el => { el.outerHTML = starsHtml(+el.dataset.stars); });
+  const legend = BADGE_ORDER.concat(Object.keys(CUSTOM_BADGES).filter(k => !BADGE_ORDER.includes(k)));
+  document.getElementById("badge-legend").innerHTML = legend.map(b =>
+    `<div class="badge-row">${badgeHtml(b)}<span>${(CUSTOM_BADGES[b] && CUSTOM_BADGES[b].desc) || BADGE_DESC[b] || ""}</span></div>`).join("");
+}
+
+/* Badge-Filter aus den Daten: jedes vorkommende Badge wird ein Filter (mit Anzahl).
+   Standard-Badges in fester Reihenfolge, eigene Badges dahinter. */
+function renderBadgeFilters(sources) {
+  const counts = {};
+  sources.forEach(s => (s.badges || []).forEach(b => { counts[b] = (counts[b] || 0) + 1; }));
+  const order = BADGE_ORDER.filter(b => counts[b])
+    .concat(Object.keys(counts).filter(b => !BADGE_ORDER.includes(b)).sort());
   const group = document.getElementById("badge-filters");
-  BADGE_FILTERS.forEach(b => {
+  order.forEach(b => {
     group.insertAdjacentHTML("beforeend",
-      `<button class="filter-btn" data-filter-badge="${b}">${ICON(b)}${BADGE_LABELS[b] || b}</button>`);
+      `<button class="filter-btn" data-filter-badge="${b}">${badgeIcon(b)}${BADGE_LABELS[b] || b}<span class="count">${counts[b]}</span></button>`);
   });
 }
 
@@ -562,6 +591,7 @@ async function init() {
     container.innerHTML = allSources.map(s => renderCard(s, citedSet.has(s.id))).join("");
 
     renderStats(allSources, citedSet);
+    renderBadgeFilters(allSources);
     sortCards();
     applyFilters();
   } catch(err) {

@@ -72,6 +72,22 @@
     .card.primary h2, .card.primary .card-go { color: #fff; }
     .card.primary p, .card.primary .card-num { color: rgba(255,255,255,.72); }
     .card.primary .card-icon { background: rgba(255,255,255,.14); color: #fff; }
+
+    /* Stil „Print“: weißer Kopf, schwarze Linien, keine Effekte */
+    [data-theme="print"] .hero { color: #000; background: #fff; border-bottom: 2px solid #000; padding-bottom: 3rem; }
+    [data-theme="print"] .hero::before { display: none; }
+    [data-theme="print"] .hero .kicker, [data-theme="print"] .hero .subtitle, [data-theme="print"] .hero-top .gh { color: #444; }
+    [data-theme="print"] .hero-meta { border-top-color: #000; }
+    [data-theme="print"] .hero-meta div { color: #000; }
+    [data-theme="print"] .hero-meta span { color: #555; }
+    [data-theme="print"] .wordmark { color: #000; }
+    [data-theme="print"] .wordmark .brand-mark { background: #000; color: #fff; border-radius: 0; }
+    [data-theme="print"] main { margin-top: 2.5rem; }
+    [data-theme="print"] .card { border: 1px solid #000; border-radius: 0; }
+    [data-theme="print"] .card:hover { transform: none; box-shadow: 4px 4px 0 #000; }
+    [data-theme="print"] .card-icon { background: none; border: 1px solid #000; color: #000; border-radius: 0; }
+    [data-theme="print"] .card.primary { background: #000; color: #fff; }
+    [data-theme="print"] .card.primary .card-icon { border-color: #fff; color: #fff; background: none; }
   </style>
 </head>
 <body>

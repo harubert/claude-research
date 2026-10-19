@@ -314,6 +314,8 @@ Wenn alle Schritte abgeschlossen sind (Artikel, Quellen, Forschungsdesiderata, P
 > - **quellen.html** — Quellenverzeichnis
 > - **presentation/index.html** — Folien (Zahnrad → Funken-Symbol für Bildgenerierung)
 >
+> Für das Quellenverzeichnis habe ich folgende eigene Badges angelegt: [Liste]. Du kannst beliebig viele weitere als Filter ergänzen — sag mir einfach, nach welchen Kriterien du filtern möchtest.
+>
 > Sag mir, was du ändern möchtest — einzelne Kapitel überarbeiten, mehr Quellen ergänzen, die Präsentation anpassen, oder etwas ganz anderes.
 >
 > **Zusätzliche Option:** Möchtest du auf Basis dieses Artikels auch einen **Syllabus für eine Lehrveranstaltung** erstellen? (Stoffverteilung, Lernziele, Pflichtlektüre, eine Beispiel-PowerPoint für Einheit 1) Falls ja, sage einfach „Lehrveranstaltung" — ich frage dann nach LV-Typ, Einheiten, ECTS und Zielgruppe.
@@ -345,7 +347,7 @@ projektordner/
 ├── assets/css/site.css         ← Designsystem: Farben, Schriften, Kopfleiste, Badges
 ├── assets/css/paper.css        ← Artikel-Typografie
 ├── assets/icons.js             ← SVG-Icon-Set (einzige Icon-Quelle)
-├── assets/theme.js             ← Stil-Umschalter: 6 Stile (Akademie, Klassik, Nacht, Labor, Wald, Minimal)
+├── assets/theme.js             ← Stil- und Schrift-Umschalter: 7 Stile (Akademie, Print, Klassik, Nacht, Labor, Wald, Minimal), Serif/Serifenlos, Schriftgröße
 ├── API Key.js                  ← fal.ai API-Schlüssel (nicht weitergeben!)
 └── presentation/
     ├── index.html              ← Präsentationsfolien (erstellen!)
@@ -445,6 +447,14 @@ Wenn die `relevance_*`-Felder in meta.json noch leer sind, befülle sie in Schri
 
 **Themenspezifische Badges statt `math`:** Der alte Badge `math` war zu unspezifisch. Verwende stattdessen die obigen 5 neuen Badges (`empirical`, `review`, `theory`, `practice`, `technology`) — sie beschreiben den **Charakter** der Quelle und sind für jedes Thema relevant, nicht nur Mathematik.
 
+**Eigene, themenspezifische Badges (`custom_badges`):** Lege während der Recherche zusätzliche Badges an, wenn sie für das Thema einen echten Filterwert haben (z. B. Schulstufen `vs`/`sek1`/`sek2`, Länder, Methoden, Zielgruppen) — typischerweise 3–8 Stück. Schlüssel in `badges` der Quelle eintragen und in `content/meta.json` beschreiben:
+```json
+"custom_badges": {
+  "sek1": { "label": "SEK I", "desc": "Sekundarstufe I", "icon": "school", "color": "#0e7490" }
+}
+```
+`icon` = Name aus `assets/icons.js` (z. B. `school`, `users`, `globe-pin`, `ruler`, `tag`), `color` optional. Jedes vorkommende Badge wird im Quellenverzeichnis automatisch zum Filter. In der Übergabe (Schritt 9) die angelegten Badges nennen und anbieten, weitere zu ergänzen.
+
 ---
 
 ## Zitierweise im Text
@@ -477,7 +487,7 @@ Prüfe mit grep ob `[S` im Text vorkommt und ersetze jeden Fund durch die korrek
 - Deutsch, österreichische Variante (z. B. „heuer")
 - Wissenschaftlich aber zugänglich — keine unnötige Fachterminologie
 - **Gendergerechte Sprache mit Gender-Sternchen (*)** — IMMER und überall: Schüler\*innen, Lehrer\*innen, Forscher\*innen, Autor\*innen, Teilnehmer\*innen. Gilt für Artikel, Präsentation, alle Texte. NIEMALS generisches Maskulinum, NIEMALS Doppelpunkt-Form (Schüler:innen).
-- Farben und Schriften nie fest im HTML verdrahten, sondern über die Tokens aus `assets/css/site.css` (`var(--primary)`, `var(--heading)`, `var(--surface)` …) — nur so funktionieren alle sechs Stile inkl. Dunkelmodus.
+- Farben und Schriften nie fest im HTML verdrahten, sondern über die Tokens aus `assets/css/site.css` (`var(--primary)`, `var(--heading)`, `var(--surface)` …) — nur so funktionieren alle sieben Stile inkl. Print und Dunkelmodus.
 - Keine Emojis — weder im Fließtext noch in Oberflächen, Buttons, Badges oder Folien. Für Symbole ausschließlich SVG-Icons aus `assets/icons.js` verwenden (`<span data-icon="name"></span>` bzw. `icon("name")`).
 - Keine übertriebenen Versprechen über KI-Fähigkeiten
 - Lokal-Bezug stärken wo möglich (nationale Institutionen, Hochschulen, Bildungsministerium)

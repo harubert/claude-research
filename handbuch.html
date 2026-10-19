@@ -278,6 +278,15 @@
   </tbody>
 </table>
 
+<h3>Eigene Badges</h3>
+<p>Neben den Standard-Badges lassen sich beliebig viele eigene, themenspezifische Badges anlegen — etwa Schulstufen, Länder, Methoden oder Zielgruppen. Claude legt bei der Recherche selbst passende Badges an; du kannst jederzeit weitere ergänzen. Jedes Badge, das in <code>sources.json</code> vorkommt, erscheint im Quellenverzeichnis automatisch als Filter (mit Anzahl). Beschriftung, Icon und Farbe stehen in <code>content/meta.json</code>:</p>
+<pre>"custom_badges": {
+  "sek1":    { "label": "SEK I",     "desc": "Sekundarstufe I",        "icon": "school", "color": "#0e7490" },
+  "lehramt": { "label": "Lehramt",   "desc": "Lehrer*innenbildung",    "icon": "users" },
+  "dach":    { "label": "D-A-CH",    "desc": "Deutschsprachiger Raum", "icon": "globe-pin" }
+}</pre>
+<p>Ohne Eintrag in <code>custom_badges</code> erscheint ein Badge mit seinem Schlüssel als Beschriftung und einem neutralen Etikett-Icon. Verfügbare Icons stehen in <code>assets/icons.js</code>.</p>
+
 <!-- ══════════════════════════════════════════════════════════ -->
 <h2 id="score">8. Qualitätsbewertung (Score)</h2>
 
@@ -501,9 +510,15 @@ Empfehlung für maximale Kompatibilität: <strong>PNG</strong> verwenden.</p>
 <p><strong>Keine Emojis</strong> in Oberflächen und Texten — ausschließlich SVG-Icons aus <code>icons.js</code>.</p>
 
 <div class="function-card">
-  <h4><span data-icon="palette"></span>Sechs Stile zum Umschalten</h4>
-  <p>Über den Stil-Button in der Kopfleiste (auf der Startseite oben rechts) lassen sich Startseite, Artikel, Quellenverzeichnis und Handbuch in sechs Stilen anzeigen: <strong>Akademie</strong> (Standard), <strong>Klassik</strong> (Bordeaux, Creme, Playfair), <strong>Nacht</strong> (Dunkelmodus), <strong>Labor</strong> (technisch, Space Grotesk), <strong>Wald</strong> (Tannengrün, Ocker) und <strong>Minimal</strong> (Schwarz-Weiß).</p>
-  <p>Die Wahl wird im Browser gespeichert und gilt für alle Seiten. Technisch: <code>assets/theme.js</code> setzt <code>&lt;html data-theme="…"&gt;</code>, die Stile selbst sind Token-Sätze in <code>assets/css/site.css</code>. Für Links oder Screenshots kann ein Stil auch per URL gesetzt werden, z. B. <code>quellen.html?theme=nacht</code>.</p>
+  <h4><span data-icon="palette"></span>Sieben Stile zum Umschalten</h4>
+  <p>Über den Stil-Button in der Kopfleiste (auf der Startseite oben rechts) lassen sich Startseite, Artikel, Quellenverzeichnis und Handbuch in sieben Stilen anzeigen: <strong>Akademie</strong> (Standard), <strong>Print</strong> (nüchtern schwarz-weiß wie eine Drucksache), <strong>Klassik</strong> (Bordeaux, Creme, Playfair), <strong>Nacht</strong> (Dunkelmodus), <strong>Labor</strong> (technisch, Space Grotesk), <strong>Wald</strong> (Tannengrün, Ocker) und <strong>Minimal</strong> (Schwarz-Weiß mit einem Akzent). Die strengen Stile (Print, Minimal, Labor, Klassik) haben eigene Badge- und Filterformen.</p>
+  <p>Die Wahl wird im Browser gespeichert und gilt für alle Seiten. Technisch: <code>assets/theme.js</code> setzt <code>&lt;html data-theme="…"&gt;</code>, die Stile selbst sind Token-Sätze in <code>assets/css/site.css</code>. Per URL lässt sich ein Stil direkt setzen, z. B. <code>quellen.html?theme=print</code>.</p>
+</div>
+
+<div class="function-card">
+  <h4><span data-icon="type"></span>Schrift im Artikeltext</h4>
+  <p>Im selben Menü: <strong>Schrift im Text</strong> — <em>Auto</em> (Vorgabe des Stils), <em>Serif</em> oder <em>Serifenlos</em> — und <strong>Schriftgröße</strong> (Klein, Normal, Groß). Per URL: <code>standalone.html?font=sans&amp;size=l</code>.</p>
+  <p>Der <strong>LaTeX-Export</strong> übernimmt die Wahl automatisch als Vorbelegung (Serif = Charter, Serifenlos = Helvetica) und lässt sich im Export-Dialog umstellen. Für die vom Build erzeugten <code>.tex</code>-Dateien gilt <code>"latex_font": "serif"</code> bzw. <code>"sans"</code> in <code>content/meta.json</code>.</p>
 </div>
 
 <footer class="site-footer" style="max-width:none;padding-left:0;padding-right:0">

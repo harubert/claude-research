@@ -130,3 +130,7 @@ nav.toc a:hover { color: var(--primary); }
   section.abstract, nav.toc { box-shadow: none; }
   .no-print { display: none; }
 }
+
+/* ── Schriftgröße im Artikel (über theme.js: <html data-size="s|l">) ── */
+html[data-size="s"] { font-size: 15.5px; }
+html[data-size="l"] { font-size: 19px; }

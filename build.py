@@ -172,9 +172,18 @@ BADGE_LABELS = {
     "practice":"Praxis","technology":"Technologie"
 }
 
+# Eigene, themenspezifische Badges aus meta.json:
+#   "custom_badges": {"sek1": {"label": "SEK I", "desc": "Sekundarstufe I", "icon": "school", "color": "#0e7490"}}
+CUSTOM_BADGES = meta.get("custom_badges") or {}
+for _k, _v in CUSTOM_BADGES.items():
+    BADGE_LABELS[_k] = (_v or {}).get("label", _k)
+
 def badge_html(b):
-    """Badge-Pill mit Icon (Klassen aus site.css)."""
-    return f'<span class="badge badge-{b}">{ic(b)}{BADGE_LABELS.get(b, b)}</span>'
+    """Badge-Pill mit Icon (Klassen aus site.css). Unbekannte Badges bekommen das Icon 'tag'."""
+    c = CUSTOM_BADGES.get(b) or {}
+    icon = ic(c.get("icon") or b) or ic("tag")
+    style = f' style="color:{c["color"]}"' if c.get("color") else ""
+    return f'<span class="badge badge-{b}"{style}>{icon}{BADGE_LABELS.get(b, b)}</span>'
 
 def score_color(s):
     return "var(--s5)" if s>=9 else "var(--s4)" if s>=7 else "var(--s3)" if s>=5 else "var(--s2)"
@@ -397,7 +406,7 @@ _TOOLTIP_CSS = (
 _JS_ICONS = json.dumps({
     "on": ic("star", "on"), "off": ic("star", "off"),
     "x": ic("x"), "ext": ic("external"),
-    "badges": {b: badge_html(b) for b in BADGE_LABELS},
+    "badges": {b: badge_html(b) for b in set(BADGE_LABELS) | {x for s in real_sources for x in (s.get("badges") or [])}},
 }, ensure_ascii=False).replace("</", "<\\/")
 
 _TOOLTIP_JS = (
@@ -935,7 +944,7 @@ def _badge_tex(badges, cited=False, bw=False):
         parts.append(r'\badgepill[black!55]{zitiert}' if bw else r'\badgepill[green!50!black]{zitiert}')
     for b in (badges or []):
         color = "black!50" if bw else BADGE_TEX_COLORS.get(b, "gray")
-        label = BADGE_LABELS_SHORT.get(b, b)
+        label = BADGE_LABELS_SHORT.get(b) or BADGE_LABELS.get(b, b)
         parts.append(f'\\badgepill[{color}]{{{escape_tex(label)}}}')
     return r'\,' + ' '.join(parts) if parts else ''
 
@@ -997,6 +1006,10 @@ date_tex     = escape_tex(meta.get('date', ''))
 event_tex    = escape_tex(meta.get('event', ''))
 note_tex     = escape_tex(meta.get('note', ''))
 
+# Schrift im LaTeX-Export: meta.json → "latex_font": "serif" (Charter, Standard) | "sans" (Helvetica)
+_LATEX_FONT = (r"\usepackage[scaled=.92]{helvet}" + "\n" + r"\renewcommand{\familydefault}{\sfdefault}" + "\n"
+               if meta.get("latex_font") == "sans" else r"\usepackage{charter}" + "\n")
+
 def _make_latex_doc(bw=False):
     variant = "Schwarz-Weiß" if bw else "Farbe"
     # Badge-Pill-Makro: Farbe vs. Grau
@@ -1024,6 +1037,7 @@ def _make_latex_doc(bw=False):
         r"\documentclass[a5paper,11pt,ngerman]{scrartcl}" + "\n"
         r"\usepackage[utf8]{inputenc}" + "\n"
         r"\usepackage[T1]{fontenc}" + "\n"
+        + _LATEX_FONT +
         r"\usepackage[ngerman]{babel}" + "\n"
         r"\usepackage[left=1.8cm,right=1.8cm,top=2cm,bottom=2cm]{geometry}" + "\n"
         r"\usepackage[stretch=20,shrink=20,babel=true,protrusion=true]{microtype}" + "\n"
@@ -1115,6 +1129,10 @@ _LATEX_OVERLAY_HTML = f"""\
       <td {_EXP_TD}><label style="margin-right:.9rem"><input type="radio" name="ltx-color" value="farbe" checked> Farbe</label><label><input type="radio" name="ltx-color" value="sw"> Schwarz-Weiß</label></td>
     </tr>
     <tr>
+      <td {_EXP_TDL}>Schrift</td>
+      <td {_EXP_TD}><label style="margin-right:.9rem"><input type="radio" name="ltx-font" value="serif" checked> Serif (Charter)</label><label><input type="radio" name="ltx-font" value="sans"> Serifenlos (Helvetica)</label></td>
+    </tr>
+    <tr>
       <td {_EXP_TDL}>Schriftgröße</td>
       <td {_EXP_TD}><select id="ltx-size" {_EXP_SEL}>
         <option value="9pt">9 pt — Taschenbuch</option>
@@ -1186,6 +1204,10 @@ _LATEX_OVERLAY_JS = (
     '"11pt":{"1.0":315,"1.15":275,"1.25":252}};\n'
     'var MF={eng:1.10,normal:1.0,bundsteg:0.93};\n'
     'window.ltxOpenOverlay=function(){'
+    '/* Schrift im Export vorbelegen: wie im Artikel gewählt (Stil-Menü) */'
+    'var h=document.documentElement,sans=h.getAttribute("data-font")==="sans"'
+    '||(!h.getAttribute("data-font")&&h.getAttribute("data-theme")==="labor");'
+    'var r=document.querySelector(\'input[name="ltx-font"][value="\'+(sans?"sans":"serif")+\'"]\');if(r)r.checked=true;'
     'document.getElementById("latex-overlay").style.display="flex";'
     'ltxUpdateEstimate();};\n'
     'window.ltxUpdateEstimate=function(){'
@@ -1201,6 +1223,9 @@ _LATEX_OVERLAY_JS = (
     'var st=document.getElementById("ltx-stretch").value;'
     'var mg=document.getElementById("ltx-margins").value;'
     'var bw=document.querySelector(\'input[name="ltx-color"]:checked\').value==="sw";'
+    'var sf=document.querySelector(\'input[name="ltx-font"]:checked\').value==="sans";'
+    'var fnt=sf?"\\\\usepackage[scaled=.92]{helvet}\\n\\\\renewcommand{\\\\familydefault}{\\\\sfdefault}"'
+    ':"\\\\usepackage{charter}";'
     'var ts=mg==="bundsteg";'
     'var co="a5paper,fontsize="+sz+",ngerman"+(ts?",twoside":"");'
     'var gm=ts?"\\\\usepackage[inner=2.5cm,outer=1.5cm,top=2cm,bottom=2cm,twoside]{geometry}"'
@@ -1213,11 +1238,12 @@ _LATEX_OVERLAY_JS = (
     'var d=new Date().toLocaleDateString("de-AT");'
     'var cm=bw?"Schwarz-Weiß":"Farbe";'
     'var pre=['
-    '"% LaTeX Export — "+d+" ("+cm+", "+sz+", Abstand "+st+", Ränder "+mg+")",'
+    '"% LaTeX Export — "+d+" ("+cm+", "+(sf?"serifenlos":"Serif")+", "+sz+", Abstand "+st+", Ränder "+mg+")",'
     '"% pdflatex standalone.tex  |  latexonline.cc",'
     '"\\\\documentclass["+co+"]{scrartcl}",'
     '"\\\\usepackage[utf8]{inputenc}",'
     '"\\\\usepackage[T1]{fontenc}",'
+    'fnt,'
     '"\\\\usepackage[ngerman]{babel}",'
     'gm,'
     '"\\\\usepackage[stretch=20,shrink=20,babel=true,protrusion=true]{microtype}",'
@@ -1248,7 +1274,10 @@ _LATEX_OVERLAY_JS = (
     'var sz=document.getElementById("ltx-size").value;'
     'var bw=document.querySelector(\'input[name="ltx-color"]:checked\').value==="sw";'
     'var tex=_ltxBuild();'
-    'var fn="KI_Geometrie_"+sz+"_"+(bw?"sw":"farbe")+".tex";'
+    'var sf=document.querySelector(\'input[name="ltx-font"]:checked\').value==="sans";'
+    'var base=(document.title||"artikel").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")'
+    '.replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,40)||"artikel";'
+    'var fn=base+"_"+sz+"_"+(sf?"sans":"serif")+"_"+(bw?"sw":"farbe")+".tex";'
     'var bl=new Blob([tex],{type:"text/plain;charset=utf-8"});'
     'var a=document.createElement("a");'
     'a.href=URL.createObjectURL(bl);a.download=fn;'
@@ -1389,7 +1418,8 @@ if quellen_path.exists():
         f"<!-- DATA_INJECT_START -->"
         f"<script>window.SOURCES_DATA={src_json_embed};"
         f"window.CITED_IDS={cited_json_embed};"
-        f"window.CIT_LOCATIONS={cit_loc_embed};</script>"
+        f"window.CIT_LOCATIONS={cit_loc_embed};"
+        f"window.CUSTOM_BADGES={json.dumps(CUSTOM_BADGES, ensure_ascii=False)};</script>"
         f"<!-- DATA_INJECT_END -->"
     )
     quellen_new = re.sub(
