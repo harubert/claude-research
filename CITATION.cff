@@ -9,6 +9,7 @@ authors:
     orcid: "https://orcid.org/0000-0002-3224-2384"
 version: "1.0.1"
 date-released: "2026-11-14"
+doi: "10.5281/zenodo.24218595"
 license: MIT
 repository-code: "https://github.com/harubert/claude-research"
 abstract: >-
