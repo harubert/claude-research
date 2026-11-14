@@ -1,5 +1,7 @@
 # Claude Research
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24218595.svg)](https://doi.org/10.5281/zenodo.24218595)
+
 **A complete AI-assisted workflow for scientific articles — from literature review to publication-ready output.**
 
 Built entirely inside VS Code with Claude Code. No specialist software, no complex setup — just a folder, an editor, and a conversation.
