@@ -1,0 +1,22 @@
+{
+  "title": "Claude Research: an AI-assisted workflow for scientific articles",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Schroffenegger, Thomas",
+      "affiliation": "Pädagogische Hochschule Vorarlberg",
+      "orcid": "0000-0002-3224-2384"
+    }
+  ],
+  "description": "Complete AI-assisted scientific research workflow: literature review, interactive citations, article writing, LaTeX export and presentation. Powered by Claude Code inside VS Code.",
+  "keywords": [
+    "literature review",
+    "scientific writing",
+    "research workflow",
+    "large language models",
+    "Claude Code"
+  ],
+  "version": "1.0.1"
+}
